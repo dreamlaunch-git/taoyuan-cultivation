@@ -182,12 +182,41 @@ function fairyElementName(t){
   return "靈光";
 }
 function fairyQuality(t){
-  if(/白金|仙品|仙器|神器|神兵/.test(t))return "platinum";
-  if(/橘|玄品|極品/.test(t))return "orange";
-  if(/紫|靈品|高級/.test(t))return "purple";
-  if(/藍|精品/.test(t))return "blue";
-  if(/綠|良品/.test(t))return "green";
+  if(/白金|鉑金/.test(t))return "platinum";
+  if(/橘色|橙色|橘/.test(t))return "orange";
+  if(/紫色|紫/.test(t))return "purple";
+  if(/藍色|藍/.test(t))return "blue";
+  if(/綠色|綠/.test(t))return "green";
+  if(/白色|白品/.test(t))return "white";
+  if(/仙品|仙器|神器|神兵/.test(t))return "platinum";
+  if(/玄品|極品/.test(t))return "orange";
+  if(/靈品|高級/.test(t))return "purple";
+  if(/精品/.test(t))return "blue";
+  if(/良品/.test(t))return "green";
   return null;
+}
+function fairyRequestedName(t,type){
+  var explicit=t.match(/(?:名字|名稱|名為|叫做|叫)[：:\s「『【［\[]*([^，。；;！!?\n]{2,28})/);
+  if(explicit){
+    var n=explicit[1].replace(/[」』】］\]]+$/,"").trim();
+    if(n)return n;
+  }
+  var prefix=(t.match(/([【［\[][^【】［］\[\]]{1,14}[】］\]])/)||[])[1]||"";
+  var endings=type==="weapon"?"劍|刀|槍|弓|刃|杖|扇|戟|斧|錘":type==="armor"?"袍|衣|甲|鎧|衫|裙|冠": "戒|環|項鍊|手鐲|墜|佩";
+  var re=new RegExp("([\\u4e00-\\u9fffA-Za-z0-9·]{2,14}(?:"+endings+"))","g"),m,last="";
+  while((m=re.exec(t)))last=m[1];
+  if(last){
+    last=last.replace(/^(?:仙品|玄品|靈品|極品|精品|良品|白金|橘色|橙色|紫色|藍色|綠色|白色)+/,"");
+    return (prefix&&last.indexOf(prefix)<0?prefix:"")+last;
+  }
+  return "";
+}
+function fairyDisplayName(requested,type){
+  if(!requested)return "";
+  if(account==="admin")return requested;
+  if(chance(55))return requested;
+  var tail=type==="weapon"?"·靈契":type==="armor"?"·護靈":"·寄靈";
+  return requested+tail;
 }
 function fairyAffixes(t){
   var a=[];
@@ -236,20 +265,25 @@ function fairyCreate(t){
     render();save();return;
   }
 
-  var type=/劍|刀|槍|弓|武器|法器/.test(full)?"weapon":/衣|袍|甲|鎧|護甲/.test(full)?"armor":/戒|環|項鍊|飾品|手鐲/.test(full)?"ring":null;
+  var type=/劍|刀|槍|弓|刃|杖|扇|戟|斧|錘|武器|法器/.test(full)?"weapon":/衣|袍|甲|鎧|衫|裙|冠|護甲/.test(full)?"armor":/戒|環|項鍊|飾品|手鐲|墜|佩/.test(full)?"ring":null;
   if(type){
-    var q=fairyQuality(full);
-    if(absurd&&(!q||q==="platinum"))q="orange";
-    var it=mkItem(q,type),el3=fairyElementName(full),baseName=type==="weapon"?"靈刃":type==="armor"?"法衣":"靈戒";
-    it.name=el3+baseName;
-    var rich=Math.min(18,Math.max(0,full.length-8));
-    it.mult=Math.min(absurd?132:150,Math.max(it.mult,108+rich));
+    var wishQ=fairyQuality(full),grantQ=null,wishGranted=false;
+    if(account==="admin"){grantQ=wishQ;wishGranted=!!wishQ}
+    else if(wishQ&&chance(10)){grantQ=wishQ;wishGranted=true}
+    var it=mkItem(grantQ,type),el3=fairyElementName(full),baseName=type==="weapon"?"靈刃":type==="armor"?"法衣":"靈戒";
+    var requestedName=fairyRequestedName(full,type);
+    it.name=fairyDisplayName(requestedName,type)||(el3+baseName);
+    var rich=Math.min(12,Math.max(0,full.length-10));
+    it.mult=Math.min(absurd?128:145,Math.max(it.mult,104+rich));
     var extra=fairyAffixes(full);
-    extra.forEach(function(x){if(it.aff.indexOf(x)<0)it.aff.push(x)});
+    extra.slice(0,2).forEach(function(x){if(it.aff.indexOf(x)<0)it.aff.push(x)});
     if(absurd)it.aff.push("世界規則封印：過量能力已壓縮");
-    else it.aff.push("心念塑形 +"+rnd(4,10));
+    else it.aff.push("心念塑形 +"+rnd(2,7));
     state.inv.push(it);state.fairyDraft="";
-    fairySay("這次聽懂了。照「"+el3+"」的外觀和你描述的用途，捏成【"+it.name+"】。品質是 "+it.qn+"，已塞進你的背包。");
+    var qualityText="";
+    if(wishQ&&account!=="admin")qualityText=wishGranted?"品質許願成功，這次真的中了 "+it.qn+"。":"品質許願沒中，依正常機率生成為 "+it.qn+"。";
+    else qualityText="品質是 "+it.qn+"。";
+    fairySay("這次聽懂了。照你的描述捏成【"+it.name+"】。"+qualityText+" 已塞進你的背包。");
     render();save();return;
   }
 
