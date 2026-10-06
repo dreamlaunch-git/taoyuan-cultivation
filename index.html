@@ -120,8 +120,8 @@ var SK={sword:["御劍訣",3000,1.55],pierce:["破甲劍氣",7000,1.25],heal:["�
 var EN=[100,100,95,90,80,70,60,45,30,18,8], account=null,state=null,battle=null,timer=null,selected=null,fairy=false,activeChannel="world";
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a} function chance(p){return Math.random()*100<p} function hpass(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h)^s.charCodeAt(i);return(h>>>0).toString(36)}
 function key(){return "taoyuan_"+account}
-function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,stone:800,wash:5,iron:8,inv:[],eq:{weapon:null,armor:null,ring:null},gems:[],runes:[],skills:["sword","pierce","heal","thunder"],mastery:0,steps:0,boss:0,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false,fairyDraft:""}}
-function load(){try{state=JSON.parse(localStorage.getItem(key()))||fresh()}catch(e){state=fresh()}if(!state.chat)state.chat=[];if(!state.fairyChat)state.fairyChat=[];if(typeof state.fairyUnlocked!=="boolean")state.fairyUnlocked=false;if(typeof state.fairyDraft!=="string")state.fairyDraft="";(state.inv||[]).forEach(function(it){if(typeof it.washCount!=="number")it.washCount=0});fairy=state.fairyUnlocked;activeChannel="world";save()}
+function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,stone:800,wash:5,iron:8,inv:[],eq:{weapon:null,armor:null,ring:null},gems:[],runes:[],skills:["sword","pierce","heal","thunder"],mastery:0,steps:0,boss:0,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false,fairyDraft:"",fairyBond:0,fairyLastIntent:""}}
+function load(){try{state=JSON.parse(localStorage.getItem(key()))||fresh()}catch(e){state=fresh()}if(!state.chat)state.chat=[];if(!state.fairyChat)state.fairyChat=[];if(typeof state.fairyUnlocked!=="boolean")state.fairyUnlocked=false;if(typeof state.fairyDraft!=="string")state.fairyDraft="";if(typeof state.fairyBond!=="number")state.fairyBond=0;if(typeof state.fairyLastIntent!=="string")state.fairyLastIntent="";(state.inv||[]).forEach(function(it){if(typeof it.washCount!=="number")it.washCount=0});fairy=state.fairyUnlocked;activeChannel="world";save()}
 function save(){localStorage.setItem(key(),JSON.stringify(state))}
 function quality(force){if(force)return QS.filter(function(q){return q[0]===force})[0];var n=Math.random()*100,s=0;for(var i=0;i<QS.length;i++){s+=QS[i][2];if(n<s)return QS[i]}return QS[0]}
 function mkItem(force,type){type=type||["weapon","armor","ring"][rnd(0,2)];var q=quality(force), mult=rnd(100,150), names={weapon:["青竹劍","流雲劍","寒溪劍"],armor:["青麻道袍","竹紋法衣","雲紗衣"],ring:["青玉戒","聚靈環","松紋戒"]}, affNames=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害"], aff=[],n=Math.max(1,QS.findIndex(function(x){return x[0]===q[0]})+1);for(var i=0;i<Math.min(n,5);i++)aff.push(affNames[rnd(0,5)]+" +"+rnd(2,12));return {id:Date.now()+"_"+Math.random(),type:type,name:names[type][rnd(0,2)],q:q[0],qn:q[1],mult:mult,enh:0,aff:aff,set:(["purple","orange","platinum"].indexOf(q[0])>=0&&chance(20))?"青竹靈套":null,washCount:0}}
@@ -249,8 +249,8 @@ function giftItem(it){
   var qi=Math.max(0,QS.findIndex(function(q){return q[0]===it.q}));
   unequipItem(it);
   state.inv=state.inv.filter(function(x){return x.id!==it.id});
-  selected=null;
-  var rewardChance=18+qi*8,roll=Math.random()*100,msg="小精靈抱著【"+it.name+"】轉了一圈：「這個我收下啦。」";
+  selected=null;state.fairyBond=Math.min(99,(state.fairyBond||0)+1);
+  var rewardChance=18+qi*8+Math.min(8,Math.floor(state.fairyBond/3)),roll=Math.random()*100,msg=fairyPick(["小精靈抱著【"+it.name+"】轉了一圈：「這個我收下啦。」","小精靈接過【"+it.name+"】，對著光看了半天：「嗯，這個有點意思。」","小精靈把【"+it.name+"】往袖子裡一塞：「成交。欸，不對，你是送我。」"]);
   if(roll<rewardChance){
     var r=Math.random()*100;
     if(r<12){
@@ -267,7 +267,7 @@ function giftItem(it){
       msg+=" 她從袖子裡倒出 "+s+" 枚靈石當回禮。";
     }
   }else{
-    msg+=" 這次沒有實體回禮，只在你手背留下一點會發光的星屑。";
+    msg+=fairyPick([" 這次沒有實體回禮，只在你手背留下一點會發光的星屑。"," 她翻遍袖子，什麼都沒翻出來，只好拍了拍你的肩。"," 她很認真地說下次補你。可信度大概七成。"]);
   }
   state.fairyChat.push(["系統小精靈",msg]);
   if(state.fairyChat.length>80)state.fairyChat=state.fairyChat.slice(-80);
@@ -368,15 +368,125 @@ function fairyAffixes(t){
   if(/雷|冰|火|風|毒|光|暗/.test(t))a.push("元素共鳴 +"+rnd(4,11));
   return a;
 }
+function fairyPick(a){return a[rnd(0,a.length-1)]}
+function fairyTone(){
+  if(state.fairyBond>=12)return "close";
+  if(state.fairyBond>=5)return "warm";
+  return "new";
+}
+function fairyReact(intent,raw){
+  var tone=fairyTone(),r="";
+  if(intent==="hello")r=fairyPick(tone==="close"?[
+    "你又來啦。這次別只喊我，說吧，想折騰什麼？",
+    "抓到你了。今天要造東西、聊天，還是又想試探世界規則？",
+    "嗯哼，我在。先說好，太離譜的願望我會幫你削邊。"
+  ]:[
+    "在呀。你想聊天，還是想讓我捏個東西？",
+    "聽見了聽見了。說吧，今天想要什麼怪東西？",
+    "我在這。你可以隨便講，不用背咒語。"
+  ]);
+  if(intent==="bye")r=fairyPick([
+    "去吧去吧，別死在竹林裡。下次回來記得帶點有趣的東西。",
+    "先走啦？行，我把頻道門縫留著。",
+    "好，慢走。要是撿到奇怪裝備，丟給我看看。"
+  ]);
+  if(intent==="thanks")r=fairyPick([
+    "不用客氣。你描述得越清楚，我下手就越準。",
+    "收下這句謝謝了。比洗髓石便宜多了。",
+    "嘿，這句我喜歡。下次許願我會認真多聽半拍。"
+  ]);
+  if(intent==="laugh")r=fairyPick([
+    "你笑什麼，我剛剛可是很認真在捏。",
+    "笑成這樣，小心我給你裝備加一條「心情很好」。",
+    "行啦行啦，被你笑到了。"
+  ]);
+  if(intent==="praise")r=fairyPick([
+    "這句可以，多講兩句我就要膨脹了。",
+    "我知道。……好啦，其實被誇還是挺爽的。",
+    "有眼光。系統縫隙出品，也是有審美的。"
+  ]);
+  if(intent==="insult")r=fairyPick([
+    "先別急著罵，把你想要的東西講人話，我還能救。",
+    "我聽到了。你再兇，我就把語氣詞全塞回去給你。",
+    "行，這次算我沒聽懂。重講一次，我接。"
+  ]);
+  if(intent==="who")r=fairyPick([
+    "我是卡在系統縫隙裡的小精靈。正規權限不多，歪門小技巧不少。",
+    "名字就叫系統小精靈。來歷嘛……你先當我是桃源村裡不該存在的那一格。",
+    "我是那種『正常遊戲說不會給你的東西，我偶爾能偷捏一點』的存在。"
+  ]);
+  if(intent==="where")r=fairyPick([
+    "住哪？大概住在你點不到的那一層介面後面。",
+    "我沒有房子，只有頻道。你打開我就算有地方住。",
+    "系統縫隙。租金零，採光也零。"
+  ]);
+  if(intent==="age")r=fairyPick([
+    "年齡這東西對我沒什麼用。照系統時間算，我可能比你這個存檔還年輕。",
+    "不告訴你。反正不是幾百歲老妖怪。",
+    "問年齡很危險欸。換個題目。"
+  ]);
+  if(intent==="like")r=fairyPick([
+    "我喜歡描述得很具體的東西，還有那些明明沒用但超有個性的名字。",
+    "發光的、奇怪的、帶故事的，我都喜歡。尤其是你撿到又捨不得分解的那種。",
+    "我喜歡有記憶點的裝備。普通到沒故事的，我看兩眼就睏。"
+  ]);
+  if(intent==="bored")r=fairyPick([
+    "無聊就給我出題。比如：『一把看起來很貴，其實只會發光的劍』。",
+    "那你描述一件完全不實用但很酷的東西，我來試著捏。",
+    "可以去青竹林晃兩步，也可以留下來跟我講垃圾話。"
+  ]);
+  if(intent==="help")r=fairyPick([
+    "我能幫你造裝備、少量資源、寶石、符文，也能陪你聊。裝備送我，有時我也會回禮。",
+    "簡單說：你負責想，我負責盡量做。太超模的東西會被世界規則削掉。",
+    "想要什麼就講外觀、名字、用途、詞條。管理員可以講得更狠一點。"
+  ]);
+  if(intent==="cute")r=fairyPick([
+    "咳。這個評價我收下了。",
+    "你才……算了，謝啦。",
+    "被你這樣講，我今天回禮機率都想偷偷往上抬一點了。"
+  ]);
+  return r||fairyPick([
+    "嗯，我有在聽。你繼續。",
+    "這句我接到了。再多講一點，我比較好猜你的意思。",
+    "有意思。你是想聊天，還是想把這句變成一件東西？"
+  ]);
+}
+function fairyIntent(raw){
+  if(/^(嗨|哈囉|哈羅|hello|hi|你好|在嗎|喂|欸|嘿)[！!。．~～ ]*$/i.test(raw))return "hello";
+  if(/掰掰|拜拜|再見|晚安|先走|下次見/.test(raw))return "bye";
+  if(/謝謝|感謝|多謝|謝啦|3q/i.test(raw))return "thanks";
+  if(/哈哈|笑死|笑爛|www|XD|xd/.test(raw))return "laugh";
+  if(/可愛|好可愛|很萌|萌欸/.test(raw))return "cute";
+  if(/厲害|聰明|真棒|很強|好強|不錯|好酷|酷欸/.test(raw))return "praise";
+  if(/笨|白痴|智障|廢|爛|機器人|死板|不聰明/.test(raw))return "insult";
+  if(/你是誰|你叫什麼|你是什麼/.test(raw))return "who";
+  if(/你住哪|你在哪|住在哪|在哪裡/.test(raw))return "where";
+  if(/幾歲|年齡|多大/.test(raw))return "age";
+  if(/你喜歡什麼|喜歡什麼|有什麼喜歡/.test(raw))return "like";
+  if(/無聊|好無聊|沒事做/.test(raw))return "bored";
+  if(/你會什麼|能幹嘛|可以做什麼|怎麼玩|功能|幫我什麼/.test(raw))return "help";
+  return "";
+}
 function fairyCreate(t){
   var raw=t.trim(),draft=state.fairyDraft||"",full=(draft?draft+"；":"")+raw,me=$("#name").textContent||"修士";
-  var wants=/給我|我要|想要|幫我|做一|造一|捏一|來一|製作|變出|弄一|送我|需要/.test(full);
+  var wants=/給我|我要|想要|幫我|幫忙|可以給|能不能給|能不能做|可不可以做|做一|造一|捏一|來一|來把|來件|來顆|來個|製作|變出|弄一|搞一|送我|需要|想弄|想做|想來/.test(full);
   var absurd=/無敵|秒殺|一擊必殺|無限|不死|全能|999999|一億|最強到/.test(full);
 
-  if(/^(嗨|哈囉|你好|在嗎|喂|欸)[！!。．~～ ]*$/.test(raw)){state.fairyDraft="";fairySay("在呀。你想聊天，還是想讓我捏個東西？");return}
-  if(/你是誰|你叫什麼/.test(raw)){state.fairyDraft="";fairySay("我是系統縫隙裡偷偷跑出來的小精靈。正規功能不一定會，奇怪的東西倒是很會捏。");return}
-  if(/謝謝|感謝|愛你/.test(raw)){state.fairyDraft="";fairySay("收到了。下次描述得越清楚，我捏出來就越接近你腦袋裡那個樣子。");return}
-  if(/笨|傻|不聰明/.test(raw)){fairySay("喂，我只是住在靜態網頁裡，不是住在仙界主機房裡。再講清楚一點，我能接得更準。");return}
+  var ci=fairyIntent(raw);
+  if(ci){
+    if(ci==="thanks"||ci==="praise"||ci==="cute")state.fairyBond=Math.min(99,state.fairyBond+1);
+    if(ci==="insult")state.fairyBond=Math.max(0,state.fairyBond-1);
+    state.fairyLastIntent=ci;state.fairyDraft="";
+    fairySay(fairyReact(ci,raw));return;
+  }
+  if(/愛你|喜歡你|想你/.test(raw)){
+    state.fairyBond=Math.min(99,state.fairyBond+1);state.fairyLastIntent="affection";state.fairyDraft="";
+    fairySay(fairyPick([
+      "這種話不要突然丟過來，我會當真的欸。",
+      "嗯……收到了。頻道燈好像亮了一點。",
+      "好啦，我也比較不討厭你一點點。就一點點。"
+    ]));return;
+  }
 
   if((/錢|靈石|仙玉|盤纏/.test(full))&&(wants||/錢/.test(raw))){
     var n=/很多|大量|一堆|無限|一億|全部/.test(full)?188:rnd(58,128);
@@ -437,14 +547,35 @@ function fairyCreate(t){
   if(wants||draft){
     state.fairyDraft=full.slice(-140);
     var knownLook=/透明|水晶|玻璃|晶瑩|亮晶晶|紅|藍|黑|白|金|粉|火|冰|雷|風|竹|桃/.test(full);
-    if(knownLook)fairySay("外觀我記住了。現在告訴我它到底是武器、衣甲、飾品、寶石，還是符文？");
-    else fairySay("可以捏，但我還缺一個關鍵。先告訴我你要的是什麼種類，再補外觀或用途，我會把前面說過的內容一起算進去。");
+    if(knownLook)fairySay(fairyPick([
+      "外觀我記住了。現在只差種類：武器、衣甲、飾品、寶石，還是符文？",
+      "好，樣子我抓到了。你再補一句它是什麼，我就能下手。",
+      "這個視覺我喜歡。現在告訴我它最後要變成哪一類東西。"
+    ]));
+    else fairySay(fairyPick([
+      "可以捏，但還少一塊拼圖。先告訴我是什麼種類，再補外觀或用途。",
+      "我大概知道你想幹嘛了，但種類還不夠明確。武器、衣甲、飾品、寶石、符文，挑一個方向。",
+      "別急，我有記前面那句。你再補『這是什麼』，我就能接著做。"
+    ]));
     return;
   }
 
-  if(/[？?]|嗎|呢|怎麼|為什麼/.test(raw)){state.fairyDraft="";fairySay("這題我有在聽，但我現在最擅長的是幫你造東西、給少量資源，還有陪你聊兩句。你可以直接用自然一點的方式跟我說。");return}
+  if(/[？?]|嗎|呢|怎麼|為什麼/.test(raw)){
+    state.fairyDraft="";
+    fairySay(fairyPick([
+      "這題我不一定答得像正經系統，但我可以陪你猜。你要問遊戲、裝備，還是問我？",
+      "嗯……這不是許願句。你可以繼續問，我先照我聽懂的回答。",
+      "有問號就代表你不是在下指令。好，我切聊天模式，你繼續。"
+    ]));return
+  }
   state.fairyDraft="";
-  fairySay("嗯，我在聽。你不用照格式講，直接說你想要什麼、長什麼樣、拿來做什麼，我會自己拼起來。");
+  var tail=state.fairyLastIntent==="laugh"?"剛剛笑完現在突然正經，我有點不習慣。":"";
+  fairySay(fairyPick([
+    "我在聽。這句不像指令，比較像你在跟我聊天。"+tail,
+    "嗯，這句我先當聊天收下。你想往哪個方向接？",
+    "你不用照格式講。想到什麼就講，我會自己把關鍵字撿起來。",
+    "可以，再多說一點。你要我吐槽、回答，還是幫你把它做成東西？"
+  ]));
 }
 function openModal(name){$$(".modal-layer").forEach(function(x){x.classList.add("hidden")});$("#"+name+"Modal").classList.remove("hidden")}
 function close(){ $$(".modal-layer").forEach(function(x){x.classList.add("hidden")}) }
