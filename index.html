@@ -120,8 +120,8 @@ var SK={sword:["御劍訣",3000,1.55],pierce:["破甲劍氣",7000,1.25],heal:["�
 var EN=[100,100,95,90,80,70,60,45,30,18,8], account=null,state=null,battle=null,timer=null,selected=null,fairy=false,activeChannel="world";
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a} function chance(p){return Math.random()*100<p} function hpass(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h)^s.charCodeAt(i);return(h>>>0).toString(36)}
 function key(){return "taoyuan_"+account}
-function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,stone:800,wash:5,iron:8,inv:[],eq:{weapon:null,armor:null,ring:null},gems:[],runes:[],skills:["sword","pierce","heal","thunder"],mastery:0,steps:0,boss:0,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false}}
-function load(){try{state=JSON.parse(localStorage.getItem(key()))||fresh()}catch(e){state=fresh()}if(!state.chat)state.chat=[];if(!state.fairyChat)state.fairyChat=[];if(typeof state.fairyUnlocked!=="boolean")state.fairyUnlocked=false;fairy=state.fairyUnlocked;activeChannel="world";save()}
+function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,stone:800,wash:5,iron:8,inv:[],eq:{weapon:null,armor:null,ring:null},gems:[],runes:[],skills:["sword","pierce","heal","thunder"],mastery:0,steps:0,boss:0,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false,fairyDraft:""}}
+function load(){try{state=JSON.parse(localStorage.getItem(key()))||fresh()}catch(e){state=fresh()}if(!state.chat)state.chat=[];if(!state.fairyChat)state.fairyChat=[];if(typeof state.fairyUnlocked!=="boolean")state.fairyUnlocked=false;if(typeof state.fairyDraft!=="string")state.fairyDraft="";fairy=state.fairyUnlocked;activeChannel="world";save()}
 function save(){localStorage.setItem(key(),JSON.stringify(state))}
 function quality(force){if(force)return QS.filter(function(q){return q[0]===force})[0];var n=Math.random()*100,s=0;for(var i=0;i<QS.length;i++){s+=QS[i][2];if(n<s)return QS[i]}return QS[0]}
 function mkItem(force,type){type=type||["weapon","armor","ring"][rnd(0,2)];var q=quality(force), mult=rnd(100,150), names={weapon:["青竹劍","流雲劍","寒溪劍"],armor:["青麻道袍","竹紋法衣","雲紗衣"],ring:["青玉戒","聚靈環","松紋戒"]}, affNames=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害"], aff=[],n=Math.max(1,QS.findIndex(function(x){return x[0]===q[0]})+1);for(var i=0;i<Math.min(n,5);i++)aff.push(affNames[rnd(0,5)]+" +"+rnd(2,12));return {id:Date.now()+"_"+Math.random(),type:type,name:names[type][rnd(0,2)],q:q[0],qn:q[1],mult:mult,enh:0,aff:aff,set:(["purple","orange","platinum"].indexOf(q[0])>=0&&chance(20))?"青竹靈套":null}}
@@ -168,13 +168,102 @@ function sendChat(){
     fairyCreate(t);return;
   }
 }
+function fairySay(t){state.fairyChat.push(["系統小精靈",t]);if(state.fairyChat.length>80)state.fairyChat=state.fairyChat.slice(-80);save();renderChat()}
+function fairyElementName(t){
+  if(/透明|水晶|玻璃|晶瑩|亮晶晶|琉璃/.test(t))return "琉璃";
+  if(/雷|閃電|電/.test(t))return "天雷";
+  if(/冰|寒|霜|雪/.test(t))return "玄冰";
+  if(/火|炎|熾|紅/.test(t))return "赤炎";
+  if(/風|輕盈|速度/.test(t))return "流風";
+  if(/桃|粉|花/.test(t))return "桃華";
+  if(/竹|青|翠/.test(t))return "青竹";
+  if(/黑|暗|影/.test(t))return "玄夜";
+  if(/金|亮|耀/.test(t))return "曜金";
+  return "靈光";
+}
+function fairyQuality(t){
+  if(/白金|仙品|仙器|神器|神兵/.test(t))return "platinum";
+  if(/橘|玄品|極品/.test(t))return "orange";
+  if(/紫|靈品|高級/.test(t))return "purple";
+  if(/藍|精品/.test(t))return "blue";
+  if(/綠|良品/.test(t))return "green";
+  return null;
+}
+function fairyAffixes(t){
+  var a=[];
+  if(/快|迅速|速度|輕盈/.test(t))a.push("攻擊速度 +"+rnd(4,10));
+  if(/暴擊|鋒利|致命/.test(t))a.push("暴擊率 +"+rnd(4,10));
+  if(/硬|防禦|護體|堅固/.test(t))a.push("防禦 +"+rnd(5,12));
+  if(/生命|回血|治療|恢復/.test(t))a.push("生命 +"+rnd(8,18));
+  if(/法術|技能|靈力|威力/.test(t))a.push("技能傷害 +"+rnd(5,12));
+  if(/雷|冰|火|風|毒|光|暗/.test(t))a.push("元素共鳴 +"+rnd(4,11));
+  return a;
+}
 function fairyCreate(t){
-  var type=/劍|刀|武器/.test(t)?"weapon":/衣|袍|甲/.test(t)?"armor":/戒|環|飾品/.test(t)?"ring":null;
-  if(!type){state.fairyChat.push(["系統小精靈","外觀、用途、形狀再說清楚一點，我才捏得出來。"]);save();renderChat();return}
-  var it=mkItem(/白金|仙品|神兵/.test(t)?"platinum":/橘|玄品/.test(t)?"orange":/紫|靈品/.test(t)?"purple":null,type);
-  it.name="小精靈造物·"+t.slice(0,8);it.aff.push("奇物共鳴 +"+rnd(3,9));state.inv.push(it);
-  state.fairyChat.push(["系統小精靈","捏好了。【"+it.name+"】已塞進你的背包。"]);
-  save();render();renderChat();
+  var raw=t.trim(),draft=state.fairyDraft||"",full=(draft?draft+"；":"")+raw,me=$("#name").textContent||"修士";
+  var wants=/給我|我要|想要|幫我|做一|造一|捏一|來一|製作|變出|弄一|送我|需要/.test(full);
+  var absurd=/無敵|秒殺|一擊必殺|無限|不死|全能|999999|一億|最強到/.test(full);
+
+  if(/^(嗨|哈囉|你好|在嗎|喂|欸)[！!。．~～ ]*$/.test(raw)){state.fairyDraft="";fairySay("在呀。你想聊天，還是想讓我捏個東西？");return}
+  if(/你是誰|你叫什麼/.test(raw)){state.fairyDraft="";fairySay("我是系統縫隙裡偷偷跑出來的小精靈。正規功能不一定會，奇怪的東西倒是很會捏。");return}
+  if(/謝謝|感謝|愛你/.test(raw)){state.fairyDraft="";fairySay("收到了。下次描述得越清楚，我捏出來就越接近你腦袋裡那個樣子。");return}
+  if(/笨|傻|不聰明/.test(raw)){fairySay("喂，我只是住在靜態網頁裡，不是住在仙界主機房裡。再講清楚一點，我能接得更準。");return}
+
+  if((/錢|靈石|仙玉|盤纏/.test(full))&&(wants||/錢/.test(raw))){
+    var n=/很多|大量|一堆|無限|一億|全部/.test(full)?188:rnd(58,128);
+    state.stone+=n;state.fairyDraft="";
+    fairySay("懂了，你說的是亮晶晶的盤纏。給你 "+n+" 枚靈石。太離譜的數量會被世界規則咬掉，所以我只偷渡這些。");
+    render();save();return;
+  }
+
+  if(/寶石|晶石|靈晶|水晶/.test(full)&&wants){
+    var el=fairyElementName(full),gem=el==="琉璃"?"琉璃靈晶":el+"石";
+    state.gems.push(gem);state.fairyDraft="";
+    fairySay("這個我懂。外觀我照你說的捏了，一枚【"+gem+"】已經放進寶石袋。");
+    render();save();return;
+  }
+
+  if(/符文|符咒|靈符|護符/.test(full)&&wants){
+    var el2=fairyElementName(full),rn=el2+"靈紋";
+    state.runes.push(rn);state.fairyDraft="";
+    fairySay("符紋完成。【"+rn+"】收好，別貼反了，我不負責爆煙。");
+    render();save();return;
+  }
+
+  if(/丹藥|丹|藥|治療|回血|回滿/.test(full)&&wants){
+    state.hp=stats().hp;state.fairyDraft="";
+    fairySay("給你一枚回春小丹。嗯，順便幫你把氣血補滿了。");
+    render();save();return;
+  }
+
+  var type=/劍|刀|槍|弓|武器|法器/.test(full)?"weapon":/衣|袍|甲|鎧|護甲/.test(full)?"armor":/戒|環|項鍊|飾品|手鐲/.test(full)?"ring":null;
+  if(type){
+    var q=fairyQuality(full);
+    if(absurd&&(!q||q==="platinum"))q="orange";
+    var it=mkItem(q,type),el3=fairyElementName(full),baseName=type==="weapon"?"靈刃":type==="armor"?"法衣":"靈戒";
+    it.name=el3+baseName;
+    var rich=Math.min(18,Math.max(0,full.length-8));
+    it.mult=Math.min(absurd?132:150,Math.max(it.mult,108+rich));
+    var extra=fairyAffixes(full);
+    extra.forEach(function(x){if(it.aff.indexOf(x)<0)it.aff.push(x)});
+    if(absurd)it.aff.push("世界規則封印：過量能力已壓縮");
+    else it.aff.push("心念塑形 +"+rnd(4,10));
+    state.inv.push(it);state.fairyDraft="";
+    fairySay("這次聽懂了。照「"+el3+"」的外觀和你描述的用途，捏成【"+it.name+"】。品質是 "+it.qn+"，已塞進你的背包。");
+    render();save();return;
+  }
+
+  if(wants||draft){
+    state.fairyDraft=full.slice(-140);
+    var knownLook=/透明|水晶|玻璃|晶瑩|亮晶晶|紅|藍|黑|白|金|粉|火|冰|雷|風|竹|桃/.test(full);
+    if(knownLook)fairySay("外觀我記住了。現在告訴我它到底是武器、衣甲、飾品、寶石，還是符文？");
+    else fairySay("可以捏，但我還缺一個關鍵。先告訴我你要的是什麼種類，再補外觀或用途，我會把前面說過的內容一起算進去。");
+    return;
+  }
+
+  if(/[？?]|嗎|呢|怎麼|為什麼/.test(raw)){state.fairyDraft="";fairySay("這題我有在聽，但我現在最擅長的是幫你造東西、給少量資源，還有陪你聊兩句。你可以直接用自然一點的方式跟我說。");return}
+  state.fairyDraft="";
+  fairySay("嗯，我在聽。你不用照格式講，直接說你想要什麼、長什麼樣、拿來做什麼，我會自己拼起來。");
 }
 function openModal(name){$$(".modal-layer").forEach(function(x){x.classList.add("hidden")});$("#"+name+"Modal").classList.remove("hidden")}
 function close(){ $$(".modal-layer").forEach(function(x){x.classList.add("hidden")}) }
