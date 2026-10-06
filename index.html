@@ -15,6 +15,96 @@
 .modal-layer{position:fixed;inset:0;background:#020402aa;z-index:50;display:grid;place-items:center;padding:16px;backdrop-filter:blur(5px)}.modal{position:relative;width:min(1050px,96vw);max-height:90vh;overflow:auto;border-radius:18px;padding:18px}.narrow{width:min(700px,94vw)}.close{position:absolute;right:12px;top:12px;width:36px;height:36px;padding:0;border-radius:50%;font-size:1.4rem}.modal h2{margin-top:0;color:#f1dda1}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{background:#04080455;border:1px solid #ffffff1d;border-radius:11px;padding:11px}.stat{display:flex;justify-content:space-between;margin:.45rem 0}.bar{height:10px;background:#050805;border-radius:99px;overflow:hidden;border:1px solid #ffffff1c}.bar i{display:block;height:100%;background:linear-gradient(90deg,#568253,#9ac486)}.bar.enemy i{background:linear-gradient(90deg,#91483f,#d87769)}.tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid #ffffff1f;padding-bottom:8px}.tab.active{background:#4b5a42}.tabpane{display:none;padding-top:12px}.tabpane.active{display:block}.equip-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px}.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.slot,.item{background:#060a06aa;border:2px solid #bbb;border-radius:10px;padding:8px;min-height:80px}.inv{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}.white{border-color:#ddd}.green{border-color:#65d879;box-shadow:0 0 10px #55ff6633}.blue{border-color:#67aaff;box-shadow:0 0 12px #5599ff44}.purple{border-color:#b879ff;box-shadow:0 0 14px #a65cff55}.orange{border-color:#ff9b45;box-shadow:0 0 16px #ff7a2d55}.platinum{border-color:#f4fbff;box-shadow:0 0 7px #fff,0 0 22px #bdeaff88}.item button{margin-top:5px;padding:.35rem .55rem}.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}.drop{color:#f0cf72}.danger{color:#ef8880}
 @media(max-width:800px){#login{place-items:start center;padding-top:16vh;background-position:center 42%}.login-card{width:min(360px,90vw);padding:22px}.login-card h1{font-size:2rem;margin:.2rem 0 1.1rem}.res{display:none}.actions{top:74px;right:8px;flex-direction:row;flex-wrap:wrap;justify-content:flex-end}.zone{left:8px;top:130px;right:8px}.story{left:8px;right:8px;bottom:190px;transform:none;width:auto;min-width:0}.chat{left:8px;right:8px;bottom:8px;width:auto}.equip-layout,.grid2{grid-template-columns:1fr}.slots{grid-template-columns:1fr}}
 </style>
+
+<style id="ui-v2">
+/* 桃源修仙錄 UI v2 */
+.glass{
+  background:linear-gradient(155deg,rgba(22,30,21,.58),rgba(7,12,8,.48));
+  border-color:rgba(232,218,165,.28);
+  box-shadow:0 10px 30px rgba(0,0,0,.34);
+  backdrop-filter:blur(6px);
+}
+.bg{
+  filter:blur(.35px) brightness(.96) saturate(1.02);
+  background-position:center 44%;
+}
+.shade{
+  background:linear-gradient(to bottom,rgba(3,8,4,.10),rgba(3,8,4,.20) 58%,rgba(2,5,3,.34));
+}
+.top{
+  background:linear-gradient(100deg,rgba(12,19,13,.64),rgba(12,19,13,.44));
+}
+#name{font-size:1.05rem;letter-spacing:.05em}
+.badge{background:rgba(5,10,6,.28)}
+.actions button{white-space:nowrap}
+.zone{background:rgba(13,20,14,.46)}
+.story{background:linear-gradient(165deg,rgba(12,19,13,.62),rgba(7,12,8,.48))}
+.log{background:rgba(3,8,4,.48)}
+.chat{background:linear-gradient(165deg,rgba(12,19,13,.72),rgba(7,12,8,.60))}
+.chat-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.chat-tabs{margin-bottom:0}
+.chat-toggle{width:34px;height:30px;padding:0;border-radius:9px;font-size:1rem;line-height:1}
+.modal{background:linear-gradient(155deg,rgba(20,28,20,.94),rgba(8,13,9,.92));backdrop-filter:blur(12px)}
+.close{background:rgba(23,31,22,.92)}
+@media(max-width:800px){
+  body{overflow:hidden}
+  #game{height:100dvh;min-height:100dvh}
+  .bg{background-position:center 38%;filter:blur(.2px) brightness(1) saturate(1.03)}
+  .shade{background:linear-gradient(to bottom,rgba(1,5,2,.06),rgba(2,6,3,.10) 55%,rgba(2,5,3,.24))}
+  .top{
+    top:8px;left:8px;right:8px;height:50px;padding:7px 10px;border-radius:13px;
+    display:flex;align-items:center;overflow:hidden;
+  }
+  .top>div:first-child{display:flex;align-items:center;gap:4px;min-width:0}
+  #name{font-size:1.05rem;white-space:nowrap}
+  .badge{font-size:.66rem;padding:.12rem .38rem;margin-left:0;white-space:nowrap}
+  .res{display:none}
+  .actions{
+    top:66px;left:8px;right:8px;height:47px;padding:5px 6px;border-radius:12px;
+    display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:flex-start;
+    gap:5px;overflow-x:auto;scrollbar-width:none;background:rgba(11,18,12,.48)
+  }
+  .actions::-webkit-scrollbar{display:none}
+  .actions button{
+    flex:0 0 auto;min-width:0;padding:.38rem .68rem;border-radius:9px;
+    font-size:.84rem;background:linear-gradient(rgba(83,101,75,.78),rgba(43,56,40,.74))
+  }
+  .zone{display:none}
+  .story{
+    left:10px;right:10px;bottom:64px;transform:none;width:auto;min-width:0;
+    padding:8px;border-radius:15px;max-height:38dvh;
+  }
+  #eventLog{height:72px;font-size:.88rem;line-height:1.42;padding:7px}
+  .battlelog{height:92px;font-size:.83rem}
+  .move{margin-top:6px}
+  .move button{font-size:.86rem;padding:.38rem .72rem;border-radius:9px}
+  .move .row{gap:5px;margin:5px}
+  .move>button[data-move="n"],.move>button[data-move="s"]{padding-left:1rem;padding-right:1rem}
+  #forestBtn,#villageBtn{font-size:.86rem;padding:.42rem .88rem}
+  .chat{
+    left:8px;right:8px;bottom:8px;width:auto;padding:6px 8px;border-radius:13px;
+    transition:max-height .2s ease,background .2s ease;
+    max-height:245px;
+  }
+  .chat.collapsed{max-height:48px;overflow:hidden;background:rgba(10,17,11,.66)}
+  .chat.collapsed .chatlog,.chat.collapsed .chatrow{display:none}
+  .chat-tabs{gap:5px}
+  .chat-tab{padding:.28rem .65rem;font-size:.78rem}
+  .chatlog{height:120px;font-size:.78rem;padding:6px;margin-top:6px}
+  .chatrow{margin-top:5px}
+  .chatrow input{padding:.42rem .55rem;font-size:.84rem}
+  .chatrow button{padding:.4rem .65rem;font-size:.82rem}
+  .modal-layer{padding:10px}
+  .modal{width:94vw;max-height:84dvh;padding:15px;border-radius:16px}
+  .modal h2{font-size:1.1rem;padding-right:42px}
+  .close{right:9px;top:9px;width:34px;height:34px}
+  .grid2,.equip-layout{grid-template-columns:1fr}
+  .slots{grid-template-columns:repeat(3,1fr);gap:5px}
+  .slot,.item{min-height:64px;padding:7px;font-size:.82rem}
+  .inv{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+}
+</style>
+
 </head>
 <body>
 <section id="login">
@@ -36,9 +126,9 @@
 <section class="story glass">
   <div id="enemyBox" class="hidden"><b id="enemyName"></b><span id="enemyRank" class="badge"></span><div class="bar enemy" style="margin:7px 0"><i id="enemyBar"></i></div><div id="battleLog" class="log battlelog"></div></div>
   <div id="eventLog" class="log"></div>
-  <div id="move" class="move"><button data-move="n">往北</button><div class="row"><button data-move="w">往西</button><button data-move="rest">原地查看</button><button data-move="e">往東</button></div><button data-move="s">往南</button><div style="margin-top:8px"><button id="forestBtn" class="primary">前往青竹林</button><button id="villageBtn" class="hidden">返回桃源村</button></div></div>
+  <div id="move" class="move"><button data-move="n">往北</button><div class="row"><button data-move="w">往西</button><button data-move="rest">探查四周</button><button data-move="e">往東</button></div><button data-move="s">往南</button><div style="margin-top:8px"><button id="forestBtn" class="primary">前往青竹林</button><button id="villageBtn" class="hidden">返回桃源村</button></div></div>
 </section>
-<section class="chat glass" id="chatBox"><div class="chat-tabs"><button id="worldTab" class="chat-tab active" data-channel="world">世界</button><button id="fairyTab" class="chat-tab hidden" data-channel="fairy">小精靈</button></div><div id="chatLog" class="chatlog"></div><div class="chatrow"><input id="chatInput" placeholder="說點什麼…"><button id="chatSend">送出</button></div></section>
+<section class="chat glass collapsed" id="chatBox"><div class="chat-head"><div class="chat-tabs"><button id="worldTab" class="chat-tab active" data-channel="world">世界</button><button id="fairyTab" class="chat-tab hidden" data-channel="fairy">小精靈</button></div><button id="chatToggle" class="chat-toggle" aria-label="展開或收合聊天">⌃</button></div><div id="chatLog" class="chatlog"></div><div class="chatrow"><input id="chatInput" placeholder="說點什麼…"><button id="chatSend">送出</button></div></section>
 
 <section id="statusModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>角色狀態</h2><div class="grid2"><div class="card"><div class="stat">生命 <span id="hpText"></span></div><div class="bar"><i id="hpBar"></i></div><div class="stat">攻擊 <b id="atkText"></b></div><div class="stat">防禦 <b id="defText"></b></div><div class="stat">攻速 <b id="spdText"></b></div><div class="stat">暴擊 <b id="critText"></b></div></div><div class="card"><h3>技能配置</h3><div id="skills"></div><p class="muted small">戰鬥中不可更換。</p></div></div></div></section>
 
@@ -69,7 +159,7 @@ function quality(force){if(force)return QS.filter(function(q){return q[0]===forc
 function mkItem(force,type){type=type||["weapon","armor","ring"][rnd(0,2)];var q=quality(force), mult=rnd(100,150), names={weapon:["青竹劍","流雲劍","寒溪劍"],armor:["青麻道袍","竹紋法衣","雲紗衣"],ring:["青玉戒","聚靈環","松紋戒"]}, affNames=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害"], aff=[],n=Math.max(1,QS.findIndex(function(x){return x[0]===q[0]})+1);for(var i=0;i<Math.min(n,5);i++)aff.push(affNames[rnd(0,5)]+" +"+rnd(2,12));return {id:Date.now()+"_"+Math.random(),type:type,name:names[type][rnd(0,2)],q:q[0],qn:q[1],mult:mult,enh:0,aff:aff,set:(["purple","orange","platinum"].indexOf(q[0])>=0&&chance(20))?"青竹靈套":null}}
 function stats(){var a=state.atk,d=state.def,h=state.maxHp;Object.keys(state.eq).forEach(function(k){var it=state.inv.find(function(x){return x.id===state.eq[k]});if(!it)return;var sc=(it.mult/100)*(1+it.enh*.1);if(it.type==="weapon")a+=Math.round(12*sc);if(it.type==="armor"){d+=Math.round(8*sc);h+=Math.round(35*sc)}if(it.type==="ring")a+=Math.round(4*sc)});return {atk:a,def:d,hp:h,spd:state.spd,crit:state.crit}}
 function log(t,cls){var d=document.createElement("div");d.textContent=new Date().toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})+"  "+t;if(cls)d.className=cls;$("#eventLog").prepend(d)}
-function login(){var u=$("#user").value.trim(),p=$("#pass").value,acc=ACC[u];if(!acc||acc.pass!==p){$("#loginMsg").textContent="名號或密令不正確。";return}account=acc.id;load();$("#login").classList.add("hidden");$("#game").classList.remove("hidden");$("#name").textContent=u;$("#role").textContent=acc.role==="admin"?"蓓爾":"測試修士";$("#adminQuick").style.display=acc.role==="admin"?"":"none";render();log("你在桃源村石橋旁醒來，遠處竹林被晨霧吞吐。")}
+function login(){var u=$("#user").value.trim(),p=$("#pass").value,acc=ACC[u];if(!acc||acc.pass!==p){$("#loginMsg").textContent="名號或密令不正確。";return}account=acc.id;load();$("#login").classList.add("hidden");$("#game").classList.remove("hidden");$("#name").textContent=u;$("#role").textContent=acc.role==="admin"?"管理員":"修士";$("#adminQuick").style.display=acc.role==="admin"?"":"none";render();log("你在桃源村石橋旁醒來，遠處竹林被晨霧吞吐。")}
 function render(){var s=stats();$("#stone").textContent=state.stone;$("#wash").textContent=state.wash;$("#iron").textContent=state.iron;$("#hpText").textContent=Math.max(0,Math.ceil(state.hp))+" / "+s.hp;$("#hpBar").style.width=Math.max(0,Math.min(100,state.hp/s.hp*100))+"%";$("#atkText").textContent=s.atk;$("#defText").textContent=s.def;$("#spdText").textContent=s.spd.toFixed(2);$("#critText").textContent=s.crit+"%";$("#locBadge").textContent=state.loc==="village"?"桃源村":"青竹林";$("#zoneTitle").textContent=state.loc==="village"?"桃源村":"青竹林";$("#zoneDesc").textContent=state.loc==="village"?"山泉穿村而過，鐵匠鋪與藥鋪沿石橋散開。":"竹霧深處妖氣微動，四處行走可能遭遇妖物。";$("#forestBtn").classList.toggle("hidden",state.loc!=="village");$("#villageBtn").classList.toggle("hidden",state.loc==="village");renderSkills();renderItems();renderChat();renderGems();$("#mastery").textContent="鍛造熟練度 Lv."+(Math.floor(state.mastery/5)+1)+"（累計 "+state.mastery+" 次）"}
 function renderSkills(){var box=$("#skills");box.innerHTML="";state.skills.forEach(function(x,i){var r=document.createElement("div");r.className="stat";r.innerHTML="<span>"+(i+1)+". "+SK[x][0]+"</span><span class='muted small'>CD "+(SK[x][1]/1000)+"s</span>";box.appendChild(r)})}
 function renderItems(){var slots=$("#slots");slots.innerHTML="";[["weapon","武器"],["armor","道袍"],["ring","戒指"]].forEach(function(p){var it=state.inv.find(function(x){return x.id===state.eq[p[0]]});var d=document.createElement("div");d.className="slot "+(it?it.q:"");d.innerHTML="<b>"+p[1]+"</b>"+(it?it.name+" +"+it.enh:"未裝備");slots.appendChild(d)});var inv=$("#inventory");inv.innerHTML="";state.inv.forEach(function(it){var d=document.createElement("div");d.className="item "+it.q;d.innerHTML="<b>【"+it.qn+"】"+it.name+"</b><br><span class='small'>倍率 "+it.mult+"% · +"+it.enh+"</span><br><span class='muted small'>"+it.aff.join("、")+"</span><br><button data-view='"+it.id+"'>查看</button>";inv.appendChild(d)});$$("[data-view]").forEach(function(b){b.onclick=function(){detail(b.dataset.view)}})}
@@ -101,7 +191,7 @@ function sendChat(){
     if(!state.fairyUnlocked&&t==="系統爸爸出來吧！"){
       state.fairyUnlocked=true;fairy=true;
       state.fairyChat.push(["系統小精靈","誰在叫爸爸……咳，誰在呼叫本系統？"]);
-      save();activeChannel="fairy";renderChat();return;
+      save();activeChannel="fairy";$("#chatBox").classList.remove("collapsed");renderChat();updateChatToggle();return;
     }
     save();renderChat();return;
   }
@@ -118,6 +208,8 @@ function fairyCreate(t){
   state.fairyChat.push(["系統小精靈","捏好了。【"+it.name+"】已塞進你的背包。"]);
   save();render();renderChat();
 }
+function updateChatToggle(){var box=$("#chatBox"),b=$("#chatToggle");if(!b)return;b.textContent=box.classList.contains("collapsed")?"⌃":"⌄";b.title=box.classList.contains("collapsed")?"展開聊天":"收合聊天"}
+function toggleChat(){var box=$("#chatBox");box.classList.toggle("collapsed");updateChatToggle()}
 function openModal(name){$$(".modal-layer").forEach(function(x){x.classList.add("hidden")});$("#"+name+"Modal").classList.remove("hidden")}
 function close(){ $$(".modal-layer").forEach(function(x){x.classList.add("hidden")}) }
 function admin(a){if(account!=="admin")return;if(a==="rich")state.stone+=10000;if(a==="mats"){state.wash+=50;state.iron+=50}if(a==="plat")state.inv.push(mkItem("platinum"));if(a==="gem")state.gems.push("五階天雷石");if(a==="rune")state.runes.push("青玄御劍符");if(a==="heal")state.hp=stats().hp;if(a==="elite"){close();startBattle("elite")}if(a==="boss"){close();startBattle("boss")}save();render()}
