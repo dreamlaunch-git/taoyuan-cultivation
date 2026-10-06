@@ -118,7 +118,7 @@ var ACC={"青禾":{id:"test01",role:"player",hash:"jzdw71"},"雲岫":{id:"test02
 var QS=[["white","白",54],["green","綠",25],["blue","藍",13],["purple","紫",5.5],["orange","橘",2],["platinum","白金",.5]];
 var MON={wolf:["野狼",95,12,3,"普通"],rat:["竹鼠妖",70,9,2,"普通"],snake:["毒蛇",82,11,2,"普通"],bandit:["山賊",120,14,5,"普通"],elite:["赤目狼王",360,28,10,"菁英"],boss:["百年竹妖",980,44,18,"區域小BOSS"]};
 var SK={sword:["御劍訣",3000,1.55],pierce:["破甲劍氣",7000,1.25],heal:["回春術",12000,0],thunder:["雷引術",11000,2.25]};
-var EN=[100,100,95,90,80,70,60,45,30,18,8], account=null,state=null,battle=null,timer=null,selected=null,fairy=false,activeChannel="world";
+var EN=[100,100,95,90,80,70,60,45,30,18,8], account=null,state=null,battle=null,timer=null,selected=null,fairy=false,activeChannel="world",moveLocked=false;
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a} function chance(p){return Math.random()*100<p} function hpass(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h)^s.charCodeAt(i);return(h>>>0).toString(36)}
 function key(){return "taoyuan_"+account}
 function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,stone:800,wash:5,iron:8,inv:[],eq:{weapon:null,armor:null,ring:null},gems:[],runes:[],skills:["sword","pierce","heal","thunder"],mastery:0,steps:0,boss:0,level:1,exp:0,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false,fairyDraft:"",fairyBond:0,fairyMood:0,fairyLastIntent:""}}
@@ -154,7 +154,7 @@ function healAtVillage(){
   if(state.loc!=="village"||battle)return;
   state.hp=stats().hp;save();render();log("桃源靈泉洗去疲憊，氣血已完全恢復。","drop");
 }
-function render(){var s=stats();$("#stone").textContent=state.stone;$("#wash").textContent=state.wash;$("#iron").textContent=state.iron;$("#hpText").textContent=Math.max(0,Math.ceil(state.hp))+" / "+s.hp;$("#hpBar").style.width=Math.max(0,Math.min(100,state.hp/s.hp*100))+"%";$("#atkText").textContent=s.atk;$("#defText").textContent=s.def;$("#spdText").textContent=s.spd.toFixed(2);$("#critText").textContent=s.crit+"%";$("#locBadge").textContent=state.loc==="village"?"桃源村":"青竹林";$("#locBadge").title=state.loc==="village"?"點擊桃源村回滿氣血":"目前位於青竹林";$("#levelBadge").textContent="Lv."+state.level;var need=expNeed(state.level);$("#xpFill").style.width=(state.level>=50?100:Math.min(100,state.exp/need*100))+"%";$("#xpFill").parentElement.title=state.level>=50?"已達最高等級 50":"經驗 "+state.exp+" / "+need;$("#zoneTitle").textContent=state.loc==="village"?"桃源村":"青竹林";$("#zoneDesc").textContent=state.loc==="village"?"山泉穿村而過，鐵匠鋪與藥鋪沿石橋散開。":"竹霧深處妖氣微動，四處行走可能遭遇妖物。";$("#forestBtn").classList.toggle("hidden",state.loc!=="village");$("#villageBtn").classList.toggle("hidden",state.loc==="village");renderSkills();renderItems();renderChat();renderGems();$("#mastery").textContent="鍛造熟練度 Lv."+(Math.floor(state.mastery/5)+1)+"（累計 "+state.mastery+" 次）"}
+function render(){var s=stats();$("#stone").textContent=state.stone;$("#wash").textContent=state.wash;$("#iron").textContent=state.iron;$("#hpText").textContent=Math.max(0,Math.ceil(state.hp))+" / "+s.hp;$("#hpBar").style.width=Math.max(0,Math.min(100,state.hp/s.hp*100))+"%";$("#atkText").textContent=s.atk;$("#defText").textContent=s.def;$("#spdText").textContent=s.spd.toFixed(2);$("#critText").textContent=s.crit+"%";$("#locBadge").textContent=state.loc==="village"?"桃源村":"青竹林";$("#locBadge").title=state.loc==="village"?"點擊桃源村回滿氣血":"目前位於青竹林";$("#levelBadge").textContent="Lv."+state.level;var need=expNeed(state.level);$("#xpFill").style.width=(state.level>=50?100:Math.min(100,state.exp/need*100))+"%";$("#xpFill").parentElement.title=state.level>=50?"已達最高等級 50":"經驗 "+state.exp+" / "+need;$("#zoneTitle").textContent=state.loc==="village"?"桃源村":"青竹林";$("#zoneDesc").textContent=state.loc==="village"?"山泉穿村而過，鐵匠鋪與藥鋪沿石橋散開。":"竹霧深處妖氣微動，四處行走可能遭遇妖物。";$("#forestBtn").classList.toggle("hidden",state.loc!=="village");$("#villageBtn").classList.toggle("hidden",state.loc==="village");$("[data-move]").forEach(function(b){b.disabled=!!battle;b.style.opacity=battle?".55":"1"});renderSkills();renderItems();renderChat();renderGems();$("#mastery").textContent="鍛造熟練度 Lv."+(Math.floor(state.mastery/5)+1)+"（累計 "+state.mastery+" 次）"}
 function renderSkills(){var box=$("#skills");box.innerHTML="";state.skills.forEach(function(x,i){var r=document.createElement("div");r.className="stat";r.innerHTML="<span>"+(i+1)+". "+SK[x][0]+"</span><span class='muted small'>CD "+(SK[x][1]/1000)+"s</span>";box.appendChild(r)})}
 function renderItems(){
   var slots=$("#slots");slots.innerHTML="";
@@ -303,7 +303,58 @@ function giftItem(it){
 function forge(){if(state.stone<300||state.iron<3)return log("打造材料不足。","danger");state.stone-=300;state.iron-=3;state.mastery++;var it=mkItem(null,$("#forgeType").value);state.inv.push(it);log("鐵匠敲落最後一錘，打造出【"+it.name+"】"+it.qn+"品質 "+it.mult+"%。","drop");save();render()}
 function renderGems(){var gc={},rc={};state.gems.forEach(function(x){gc[x]=(gc[x]||0)+1});state.runes.forEach(function(x){rc[x]=(rc[x]||0)+1});$("#gemsList").innerHTML=Object.keys(gc).map(function(k){return "<div>"+k+" × "+gc[k]+"</div>"}).join("")||"<span class='muted'>尚無寶石</span>";$("#runesList").innerHTML=Object.keys(rc).map(function(k){return "<div>"+k+" × "+rc[k]+"</div>"}).join("")||"<span class='muted'>尚無符文</span>"}
 function enterForest(){state.loc="forest";save();render();log("你穿過村北木門，踏入青竹林。")}
-function move(){if(state.loc!=="forest"||battle)return;state.steps++;state.boss+=rnd(1,3);log("你沿著竹林石徑繼續前行。");var p=Math.min(24+state.steps*4,60);if(chance(p)){state.steps=0;var k;if(state.boss>35&&chance(18)){k="boss";state.boss=0}else{var r=Math.random();k=r<.08?"elite":r<.38?"wolf":r<.62?"rat":r<.82?"snake":"bandit"}startBattle(k)}else if(chance(13)){state.stone+=rnd(15,45);log("你在竹根旁拾到一些靈石。","drop")}save();render()}
+function move(dir){
+  if(moveLocked)return;
+  if(battle){log("戰鬥中無法移動，先把眼前的敵人解決。","danger");return}
+  dir=dir||"rest";
+  var names={n:"往北",s:"往南",e:"往東",w:"往西",rest:"探查四周"};
+  moveLocked=true;setTimeout(function(){moveLocked=false},180);
+
+  if(state.loc==="village"){
+    var villageLines={
+      n:["你沿石橋往北走，竹林的霧氣越來越近。","北邊木門外傳來竹葉摩擦聲，青竹林就在前方。"],
+      s:["你往村南走了一段，經過幾戶升著炊煙的人家。","村南溪水清亮，幾個孩子正在石岸邊追逐。"],
+      e:["你往東穿過小巷，藥鋪門口飄著淡淡草木香。","東側桃樹下有人曬著剛採回來的靈草。"],
+      w:["你往西走到鐵匠鋪附近，敲鐵聲一下一下傳來。","村西的石牆旁堆著幾筐尚未分類的礦石。"],
+      rest:["你停下腳步環顧桃源村，溪流、石橋與桃花都安靜得有些不真實。","你在原地仔細觀察，遠處青竹林被薄霧遮住了一半。"]
+    };
+    log(fairyPick(villageLines[dir]||villageLines.rest));
+    if(dir==="rest"&&chance(12)){state.stone+=rnd(3,12);log("你在石縫旁撿到幾枚零散靈石。","drop")}
+    save();render();return;
+  }
+
+  if(state.loc!=="forest"){log("這裡暫時沒有可以前進的道路。","danger");return}
+
+  var forestLines={
+    n:["你沿著偏北的竹徑前行，霧氣漸濃。","你撥開低垂竹葉，往北踏進更深的林間。"],
+    s:["你往南繞過一片濕滑青石，身後竹影不停晃動。","你沿南側小徑前進，溪水聲忽近忽遠。"],
+    e:["你朝東邊穿行，幾縷陽光從竹葉縫隙落下。","你往東跨過盤根，林中傳來短促鳥鳴。"],
+    w:["你往西走進一段陰涼竹徑，空氣裡帶著潮濕泥土味。","你往西繞過一塊巨石，前方竹林忽然安靜下來。"],
+    rest:["你停下腳步探查四周，注意著竹影間任何不自然的動靜。","你屏住呼吸觀察四周，風把竹葉吹得沙沙作響。"]
+  };
+  log(fairyPick(forestLines[dir]||forestLines.rest));
+
+  if(dir==="rest"){
+    if(chance(16)){state.stone+=rnd(8,28);log("你在竹根旁發現幾枚被泥土半掩的靈石。","drop")}
+    else if(chance(8)){state.wash+=1;log("你在枯葉下找到一顆洗髓石。","drop")}
+    save();render();return;
+  }
+
+  state.steps++;
+  state.boss+=rnd(1,3);
+  var p=Math.min(24+state.steps*4,60);
+  if(chance(p)){
+    state.steps=0;
+    var k;
+    if(state.boss>35&&chance(18)){k="boss";state.boss=0}
+    else{var r=Math.random();k=r<.08?"elite":r<.38?"wolf":r<.62?"rat":r<.82?"snake":"bandit"}
+    startBattle(k);
+  }else if(chance(13)){
+    state.stone+=rnd(15,45);
+    log("你在竹根旁拾到一些靈石。","drop");
+  }
+  save();render();
+}
 function startBattle(k){var m=MON[k];battle={k:k,name:m[0],hp:m[1],max:m[1],atk:m[2],def:m[3],rank:m[4],last:0};$("#enemyBox").classList.remove("hidden");$("#enemyName").textContent=m[0];$("#enemyRank").textContent=m[4];$("#battleLog").innerHTML="<div>遭遇【"+m[0]+"】，自動戰鬥開始。</div>";tick();timer=setInterval(tick,1100)}
 function tick(){if(!battle)return;var s=stats(),now=Date.now(),dmg=Math.max(1,Math.round(s.atk*(chance(30)?1.55:1)-battle.def*.55+rnd(-2,4)));battle.hp-=dmg;$("#battleLog").innerHTML+="<div>你御劍攻擊，造成 "+dmg+" 傷害。</div>";if(battle.hp<=0){win();return}var ed=Math.max(1,Math.round(battle.atk-s.def*.45+rnd(-2,3)));state.hp-=ed;$("#battleLog").innerHTML+="<div>"+battle.name+" 攻來，你受到 "+ed+" 傷害。</div>";if(state.hp<=0){clearInterval(timer);battle=null;state.loc="village";state.hp=Math.ceil(stats().hp*.6);log("你眼前一黑，被採藥人拖回桃源村。","danger");$("#enemyBox").classList.add("hidden");save();render();return}$("#enemyBar").style.width=Math.max(0,battle.hp/battle.max*100)+"%";$("#battleLog").scrollTop=$("#battleLog").scrollHeight;save();render()}
 function win(){clearInterval(timer);var old=battle;$("#battleLog").innerHTML+="<div>【"+old.name+"】倒下了。</div>";battle=null;gainExp(monsterExp(old));state.stone+=rnd(15,45)*(old.rank==="區域小BOSS"?4:old.rank==="菁英"?2:1);var ep=old.rank==="區域小BOSS"?100:old.rank==="菁英"?42:12;if(chance(ep)){var it=mkItem(old.rank==="區域小BOSS"&&chance(25)?"purple":null);state.inv.push(it);log("掉落裝備：【"+it.name+"】"+it.qn+"品質 "+it.mult+"%。","drop")}if(chance(old.rank==="區域小BOSS"?48:old.rank==="菁英"?20:7)){state.gems.push(["赤炎石","玄龜石","血玉石","天雷石"][rnd(0,3)]);log("掉落寶石。","drop")}if(chance(old.rank==="區域小BOSS"?25:old.rank==="菁英"?9:2)){state.runes.push(["青玄御劍符","九霄雷紋","狂戰血紋"][rnd(0,2)]);log("掉落符文。","drop")}setTimeout(function(){$("#enemyBox").classList.add("hidden")},650);save();render()}
@@ -675,7 +726,7 @@ function fairyCreate(t){
 function openModal(name){$$(".modal-layer").forEach(function(x){x.classList.add("hidden")});$("#"+name+"Modal").classList.remove("hidden")}
 function close(){ $$(".modal-layer").forEach(function(x){x.classList.add("hidden")}) }
 function admin(a){if(account!=="admin")return;if(a==="rich")state.stone+=10000;if(a==="mats"){state.wash+=50;state.iron+=50}if(a==="plat")state.inv.push(mkItem("platinum"));if(a==="gem")state.gems.push("五階天雷石");if(a==="rune")state.runes.push("青玄御劍符");if(a==="heal")state.hp=stats().hp;if(a==="elite"){close();startBattle("elite")}if(a==="boss"){close();startBattle("boss")}save();render()}
-$("#loginBtn").onclick=login;$("#locBadge").onclick=healAtVillage;$("#user").onkeydown=function(e){if(e.key==="Enter")$("#pass").focus()};$("#pass").onkeydown=function(e){if(e.key==="Enter")login()};$("#forestBtn").onclick=enterForest;$("#villageBtn").onclick=function(){if(!battle){state.loc="village";state.hp=stats().hp;save();render();log("你返回桃源村，桃源靈泉為你洗去傷勢，氣血已完全恢復。","drop")}};$$("[data-move]").forEach(function(b){b.onclick=move});$$("[data-open]").forEach(function(b){b.onclick=function(){openModal(b.dataset.open)}});$$("[data-close]").forEach(function(b){b.onclick=close});$$(".modal-layer").forEach(function(m){m.onmousedown=function(e){if(e.target===m)close()}});document.onkeydown=function(e){if(e.key==="Escape")close()};$("#forgeBtn").onclick=forge;document.querySelectorAll(".chat-tab").forEach(function(b){b.onclick=function(){switchChannel(b.dataset.channel)}});$("#chatSend").onclick=sendChat;$("#chatInput").onkeydown=function(e){if(e.key==="Enter")sendChat()};$$("[data-admin]").forEach(function(b){b.onclick=function(){admin(b.dataset.admin)}})
+$("#loginBtn").onclick=login;$("#locBadge").onclick=healAtVillage;$("#user").onkeydown=function(e){if(e.key==="Enter")$("#pass").focus()};$("#pass").onkeydown=function(e){if(e.key==="Enter")login()};$("#forestBtn").onclick=enterForest;$("#villageBtn").onclick=function(){if(!battle){state.loc="village";state.hp=stats().hp;save();render();log("你返回桃源村，桃源靈泉為你洗去傷勢，氣血已完全恢復。","drop")}};$("[data-move]").forEach(function(b){b.onclick=function(){move(b.dataset.move)}});$$("[data-open]").forEach(function(b){b.onclick=function(){openModal(b.dataset.open)}});$$("[data-close]").forEach(function(b){b.onclick=close});$$(".modal-layer").forEach(function(m){m.onmousedown=function(e){if(e.target===m)close()}});document.onkeydown=function(e){if(e.key==="Escape")close()};$("#forgeBtn").onclick=forge;document.querySelectorAll(".chat-tab").forEach(function(b){b.onclick=function(){switchChannel(b.dataset.channel)}});$("#chatSend").onclick=sendChat;$("#chatInput").onkeydown=function(e){if(e.key==="Enter")sendChat()};$$("[data-admin]").forEach(function(b){b.onclick=function(){admin(b.dataset.admin)}})
 })();
 </script>
 </body></html>
