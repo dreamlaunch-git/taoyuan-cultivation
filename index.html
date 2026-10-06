@@ -121,19 +121,124 @@ var EN=[100,100,95,90,80,70,60,45,30,18,8], account=null,state=null,battle=null,
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a} function chance(p){return Math.random()*100<p} function hpass(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h)^s.charCodeAt(i);return(h>>>0).toString(36)}
 function key(){return "taoyuan_"+account}
 function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,stone:800,wash:5,iron:8,inv:[],eq:{weapon:null,armor:null,ring:null},gems:[],runes:[],skills:["sword","pierce","heal","thunder"],mastery:0,steps:0,boss:0,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false,fairyDraft:""}}
-function load(){try{state=JSON.parse(localStorage.getItem(key()))||fresh()}catch(e){state=fresh()}if(!state.chat)state.chat=[];if(!state.fairyChat)state.fairyChat=[];if(typeof state.fairyUnlocked!=="boolean")state.fairyUnlocked=false;if(typeof state.fairyDraft!=="string")state.fairyDraft="";fairy=state.fairyUnlocked;activeChannel="world";save()}
+function load(){try{state=JSON.parse(localStorage.getItem(key()))||fresh()}catch(e){state=fresh()}if(!state.chat)state.chat=[];if(!state.fairyChat)state.fairyChat=[];if(typeof state.fairyUnlocked!=="boolean")state.fairyUnlocked=false;if(typeof state.fairyDraft!=="string")state.fairyDraft="";(state.inv||[]).forEach(function(it){if(typeof it.washCount!=="number")it.washCount=0});fairy=state.fairyUnlocked;activeChannel="world";save()}
 function save(){localStorage.setItem(key(),JSON.stringify(state))}
 function quality(force){if(force)return QS.filter(function(q){return q[0]===force})[0];var n=Math.random()*100,s=0;for(var i=0;i<QS.length;i++){s+=QS[i][2];if(n<s)return QS[i]}return QS[0]}
-function mkItem(force,type){type=type||["weapon","armor","ring"][rnd(0,2)];var q=quality(force), mult=rnd(100,150), names={weapon:["青竹劍","流雲劍","寒溪劍"],armor:["青麻道袍","竹紋法衣","雲紗衣"],ring:["青玉戒","聚靈環","松紋戒"]}, affNames=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害"], aff=[],n=Math.max(1,QS.findIndex(function(x){return x[0]===q[0]})+1);for(var i=0;i<Math.min(n,5);i++)aff.push(affNames[rnd(0,5)]+" +"+rnd(2,12));return {id:Date.now()+"_"+Math.random(),type:type,name:names[type][rnd(0,2)],q:q[0],qn:q[1],mult:mult,enh:0,aff:aff,set:(["purple","orange","platinum"].indexOf(q[0])>=0&&chance(20))?"青竹靈套":null}}
+function mkItem(force,type){type=type||["weapon","armor","ring"][rnd(0,2)];var q=quality(force), mult=rnd(100,150), names={weapon:["青竹劍","流雲劍","寒溪劍"],armor:["青麻道袍","竹紋法衣","雲紗衣"],ring:["青玉戒","聚靈環","松紋戒"]}, affNames=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害"], aff=[],n=Math.max(1,QS.findIndex(function(x){return x[0]===q[0]})+1);for(var i=0;i<Math.min(n,5);i++)aff.push(affNames[rnd(0,5)]+" +"+rnd(2,12));return {id:Date.now()+"_"+Math.random(),type:type,name:names[type][rnd(0,2)],q:q[0],qn:q[1],mult:mult,enh:0,aff:aff,set:(["purple","orange","platinum"].indexOf(q[0])>=0&&chance(20))?"青竹靈套":null,washCount:0}}
 function stats(){var a=state.atk,d=state.def,h=state.maxHp;Object.keys(state.eq).forEach(function(k){var it=state.inv.find(function(x){return x.id===state.eq[k]});if(!it)return;var sc=(it.mult/100)*(1+it.enh*.1);if(it.type==="weapon")a+=Math.round(12*sc);if(it.type==="armor"){d+=Math.round(8*sc);h+=Math.round(35*sc)}if(it.type==="ring")a+=Math.round(4*sc)});return {atk:a,def:d,hp:h,spd:state.spd,crit:state.crit}}
 function log(t,cls){var d=document.createElement("div");d.textContent=new Date().toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})+"  "+t;if(cls)d.className=cls;$("#eventLog").prepend(d)}
 function login(){var u=$("#user").value.trim(),p=$("#pass").value,acc=ACC[u];if(!acc||acc.hash!==hpass(p)){$("#loginMsg").textContent="名號或密令不正確。";return}account=acc.id;load();$("#login").classList.add("hidden");$("#game").classList.remove("hidden");$("#name").textContent=u;$("#role").textContent=acc.role==="admin"?"管理員":"修士";$("#adminQuick").style.display=acc.role==="admin"?"":"none";render();log("你在桃源村石橋旁醒來，遠處竹林被晨霧吞吐。")}
 function render(){var s=stats();$("#stone").textContent=state.stone;$("#wash").textContent=state.wash;$("#iron").textContent=state.iron;$("#hpText").textContent=Math.max(0,Math.ceil(state.hp))+" / "+s.hp;$("#hpBar").style.width=Math.max(0,Math.min(100,state.hp/s.hp*100))+"%";$("#atkText").textContent=s.atk;$("#defText").textContent=s.def;$("#spdText").textContent=s.spd.toFixed(2);$("#critText").textContent=s.crit+"%";$("#locBadge").textContent=state.loc==="village"?"桃源村":"青竹林";$("#zoneTitle").textContent=state.loc==="village"?"桃源村":"青竹林";$("#zoneDesc").textContent=state.loc==="village"?"山泉穿村而過，鐵匠鋪與藥鋪沿石橋散開。":"竹霧深處妖氣微動，四處行走可能遭遇妖物。";$("#forestBtn").classList.toggle("hidden",state.loc!=="village");$("#villageBtn").classList.toggle("hidden",state.loc==="village");renderSkills();renderItems();renderChat();renderGems();$("#mastery").textContent="鍛造熟練度 Lv."+(Math.floor(state.mastery/5)+1)+"（累計 "+state.mastery+" 次）"}
 function renderSkills(){var box=$("#skills");box.innerHTML="";state.skills.forEach(function(x,i){var r=document.createElement("div");r.className="stat";r.innerHTML="<span>"+(i+1)+". "+SK[x][0]+"</span><span class='muted small'>CD "+(SK[x][1]/1000)+"s</span>";box.appendChild(r)})}
 function renderItems(){var slots=$("#slots");slots.innerHTML="";[["weapon","武器"],["armor","道袍"],["ring","戒指"]].forEach(function(p){var it=state.inv.find(function(x){return x.id===state.eq[p[0]]});var d=document.createElement("div");d.className="slot "+(it?it.q:"");d.innerHTML="<b>"+p[1]+"</b>"+(it?it.name+" +"+it.enh:"未裝備");slots.appendChild(d)});var inv=$("#inventory");inv.innerHTML="";state.inv.forEach(function(it){var d=document.createElement("div");d.className="item "+it.q;d.innerHTML="<b>【"+it.qn+"】"+it.name+"</b><br><span class='small'>倍率 "+it.mult+"% · +"+it.enh+"</span><br><span class='muted small'>"+it.aff.join("、")+"</span><br><button data-view='"+it.id+"'>查看</button>";inv.appendChild(d)});$$("[data-view]").forEach(function(b){b.onclick=function(){detail(b.dataset.view)}})}
-function detail(id){selected=id;var it=state.inv.find(function(x){return x.id===id});if(!it)return;$("#detail").innerHTML="<b>【"+it.qn+"】"+it.name+"</b><p>基礎倍率："+it.mult+"%</p><p>強化：+"+it.enh+"</p><p>"+it.aff.join("<br>")+"</p>"+(it.set?"<p class='drop'>套裝："+it.set+"</p>":"")+"<button id='equipBtn'>裝備</button> <button id='enhBtn'>強化</button> <button id='washBtn'>洗詞條</button>";$("#equipBtn").onclick=function(){state.eq[it.type]=it.id;save();render();detail(id)};$("#enhBtn").onclick=function(){enhance(it)};$("#washBtn").onclick=function(){reroll(it)}}
-function enhance(it){if(it.enh>=10)return log("此裝備已達 +10。");var cost=80+(it.enh+1)*70;if(state.stone<cost)return log("靈石不足。","danger");state.stone-=cost;var rate=EN[it.enh+1];if(chance(rate)){it.enh++;log("強化成功！【"+it.name+"】提升至 +"+it.enh,"drop")}else log("強化失敗，材料化作一縷青煙。","danger");save();render();detail(it.id)}
-function reroll(it){if(state.wash<1)return log("洗髓石不足。","danger");state.wash--;var pool=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害"];it.aff=it.aff.map(function(){return pool[rnd(0,5)]+" +"+rnd(2,12)});log("【"+it.name+"】詞條已重新洗鍊。");save();render();detail(it.id)}
+function detail(id){
+  selected=id;
+  var it=state.inv.find(function(x){return x.id===id});
+  if(!it)return;
+  if(typeof it.washCount!=="number")it.washCount=0;
+  var washText=account==="admin"?"∞":"壽命 "+it.washCount+"/50";
+  var adminBtn=account==="admin"?" <button id='affixBtn'>指定詞條</button>":"";
+  var giftBtn=state.fairyUnlocked?" <button id='giftBtn'>贈送小精靈</button>":"";
+  $("#detail").innerHTML="<b>【"+it.qn+"】"+it.name+"</b><p>基礎倍率："+it.mult+"%</p><p>強化：+"+it.enh+"</p><p>洗鍊："+washText+"</p><p>"+it.aff.join("<br>")+"</p>"+(it.set?"<p class='drop'>套裝："+it.set+"</p>":"")+"<button id='equipBtn'>裝備</button> <button id='enhBtn'>強化</button> <button id='washBtn'>洗詞條</button>"+adminBtn+" <button id='salvageBtn'>分解</button>"+giftBtn;
+  $("#equipBtn").onclick=function(){state.eq[it.type]=it.id;save();render();detail(id)};
+  $("#enhBtn").onclick=function(){enhance(it)};
+  $("#washBtn").onclick=function(){reroll(it)};
+  $("#salvageBtn").onclick=function(){salvageItem(it)};
+  if($("#giftBtn"))$("#giftBtn").onclick=function(){giftItem(it)};
+  if($("#affixBtn"))$("#affixBtn").onclick=function(){editAffixes(it)};
+}
+function enhance(it){
+  if(it.enh>=10)return log("此裝備已達 +10。");
+  var cost=80+(it.enh+1)*70;
+  if(account==="admin"){
+    it.enh++;
+    log("管理員強化成功：【"+it.name+"】提升至 +"+it.enh,"drop");
+    save();render();detail(it.id);return;
+  }
+  if(state.stone<cost)return log("靈石不足。","danger");
+  state.stone-=cost;
+  var rate=EN[it.enh+1];
+  if(chance(rate)){it.enh++;log("強化成功！【"+it.name+"】提升至 +"+it.enh,"drop")}
+  else log("強化失敗，材料化作一縷青煙。","danger");
+  save();render();detail(it.id);
+}
+function reroll(it){
+  if(typeof it.washCount!=="number")it.washCount=0;
+  var pool=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害"];
+  if(account!=="admin"){
+    if(it.washCount>=50)return log("此裝備已達 50 次洗鍊上限。","danger");
+    if(state.wash<1)return log("洗髓石不足。","danger");
+    state.wash--;it.washCount++;
+  }
+  it.aff=it.aff.map(function(){return pool[rnd(0,5)]+" +"+rnd(2,12)});
+  log("【"+it.name+"】詞條已重新洗鍊。"+(account==="admin"?" 管理員無次數限制。":"（"+it.washCount+"/50）"));
+  save();render();detail(it.id);
+}
+function parseAdminAffixes(t){
+  var defs={"攻擊":12,"防禦":12,"生命":18,"暴擊率":12,"攻擊速度":12,"技能傷害":12,"元素共鳴":12};
+  var names=Object.keys(defs),out=[];
+  names.forEach(function(n){
+    var re=new RegExp(n+"\\s*[+＋]?\\s*(\\d{1,3})?");
+    var m=t.match(re);
+    if(m){
+      var v=m[1]?Math.max(1,Math.min(99,parseInt(m[1],10))):defs[n];
+      out.push(n+" +"+v);
+    }
+  });
+  return out.slice(0,6);
+}
+function editAffixes(it){
+  if(account!=="admin")return;
+  var raw=prompt("輸入要指定的詞條，例如：攻擊+20、暴擊率+15、技能傷害+30",it.aff.join("、"));
+  if(raw===null)return;
+  var aff=parseAdminAffixes(raw);
+  if(!aff.length)return log("沒有辨識到可用詞條。","danger");
+  it.aff=aff;
+  log("管理員已改寫【"+it.name+"】詞條。","drop");
+  save();render();detail(it.id);
+}
+function unequipItem(it){
+  Object.keys(state.eq).forEach(function(k){if(state.eq[k]===it.id)state.eq[k]=null});
+}
+function salvageItem(it){
+  var qi=Math.max(0,QS.findIndex(function(q){return q[0]===it.q}));
+  var stones=35+qi*35+it.enh*18,iron=1+qi+Math.floor(it.enh/2);
+  unequipItem(it);
+  state.inv=state.inv.filter(function(x){return x.id!==it.id});
+  state.stone+=stones;state.iron+=iron;selected=null;
+  log("你分解了【"+it.name+"】，回收 "+stones+" 靈石、"+iron+" 玄鐵。","drop");
+  save();render();$("#detail").innerHTML="<span class='muted'>裝備已分解。</span>";
+}
+function giftItem(it){
+  if(!state.fairyUnlocked)return;
+  var qi=Math.max(0,QS.findIndex(function(q){return q[0]===it.q}));
+  unequipItem(it);
+  state.inv=state.inv.filter(function(x){return x.id!==it.id});
+  selected=null;
+  var rewardChance=18+qi*8,roll=Math.random()*100,msg="小精靈抱著【"+it.name+"】轉了一圈：「這個我收下啦。」";
+  if(roll<rewardChance){
+    var r=Math.random()*100;
+    if(r<12){
+      state.runes.push("星願刻印");
+      msg+=" 她偷偷塞回一枚【星願刻印】。";
+    }else if(r<32){
+      state.gems.push("精靈虹晶");
+      msg+=" 她回送你一顆【精靈虹晶】。";
+    }else if(r<58){
+      var w=1+Math.floor(qi/2);state.wash+=w;
+      msg+=" 她灑下一撮亮粉，化成 "+w+" 顆洗髓石。";
+    }else{
+      var s=rnd(70,150)+qi*45;state.stone+=s;
+      msg+=" 她從袖子裡倒出 "+s+" 枚靈石當回禮。";
+    }
+  }else{
+    msg+=" 這次沒有實體回禮，只在你手背留下一點會發光的星屑。";
+  }
+  state.fairyChat.push(["系統小精靈",msg]);
+  if(state.fairyChat.length>80)state.fairyChat=state.fairyChat.slice(-80);
+  log("你把【"+it.name+"】贈送給了小精靈。");
+  save();render();$("#detail").innerHTML="<span class='muted'>裝備已送給小精靈。</span>";
+}
 function forge(){if(state.stone<300||state.iron<3)return log("打造材料不足。","danger");state.stone-=300;state.iron-=3;state.mastery++;var it=mkItem(null,$("#forgeType").value);state.inv.push(it);log("鐵匠敲落最後一錘，打造出【"+it.name+"】"+it.qn+"品質 "+it.mult+"%。","drop");save();render()}
 function renderGems(){var gc={},rc={};state.gems.forEach(function(x){gc[x]=(gc[x]||0)+1});state.runes.forEach(function(x){rc[x]=(rc[x]||0)+1});$("#gemsList").innerHTML=Object.keys(gc).map(function(k){return "<div>"+k+" × "+gc[k]+"</div>"}).join("")||"<span class='muted'>尚無寶石</span>";$("#runesList").innerHTML=Object.keys(rc).map(function(k){return "<div>"+k+" × "+rc[k]+"</div>"}).join("")||"<span class='muted'>尚無符文</span>"}
 function enterForest(){state.loc="forest";save();render();log("你穿過村北木門，踏入青竹林。")}
@@ -273,16 +378,23 @@ function fairyCreate(t){
     var it=mkItem(grantQ,type),el3=fairyElementName(full),baseName=type==="weapon"?"靈刃":type==="armor"?"法衣":"靈戒";
     var requestedName=fairyRequestedName(full,type);
     it.name=fairyDisplayName(requestedName,type)||(el3+baseName);
-    var rich=Math.min(12,Math.max(0,full.length-10));
-    it.mult=Math.min(absurd?128:145,Math.max(it.mult,104+rich));
-    var extra=fairyAffixes(full);
-    extra.slice(0,2).forEach(function(x){if(it.aff.indexOf(x)<0)it.aff.push(x)});
-    if(absurd)it.aff.push("世界規則封印：過量能力已壓縮");
-    else it.aff.push("心念塑形 +"+rnd(2,7));
+    if(account==="admin"){
+      it.mult=150;
+      var aa=parseAdminAffixes(full);
+      if(aa.length)it.aff=aa;
+      var em=full.match(/強化\\s*[+＋]?\\s*(\\d{1,2})/);
+      if(em)it.enh=Math.max(0,Math.min(10,parseInt(em[1],10)));
+    }else{
+      var extra=fairyAffixes(full);
+      extra.slice(0,2).forEach(function(x){if(chance(35)&&it.aff.indexOf(x)<0)it.aff.push(x)});
+      if(absurd)it.aff.push("世界規則封印：過量能力已壓縮");
+      else if(chance(35))it.aff.push("心念塑形 +"+rnd(2,7));
+    }
     state.inv.push(it);state.fairyDraft="";
     var qualityText="";
-    if(wishQ&&account!=="admin")qualityText=wishGranted?"品質許願成功，這次真的中了 "+it.qn+"。":"品質許願沒中，依正常機率生成為 "+it.qn+"。";
-    else qualityText="品質是 "+it.qn+"。";
+    if(account==="admin")qualityText="管理員許願素質固定為 150%。品質是 "+it.qn+"。";
+    else if(wishQ)qualityText=wishGranted?"品質許願成功，這次真的中了 "+it.qn+"。":"品質許願沒中，依正常機率生成為 "+it.qn+"。";
+    else qualityText="品質依正常機率生成為 "+it.qn+"。";
     fairySay("這次聽懂了。照你的描述捏成【"+it.name+"】。"+qualityText+" 已塞進你的背包。");
     render();save();return;
   }
