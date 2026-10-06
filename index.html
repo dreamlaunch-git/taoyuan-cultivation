@@ -130,17 +130,52 @@ function log(t,cls){var d=document.createElement("div");d.textContent=new Date()
 function login(){var u=$("#user").value.trim(),p=$("#pass").value,acc=ACC[u];if(!acc||acc.hash!==hpass(p)){$("#loginMsg").textContent="名號或密令不正確。";return}account=acc.id;load();$("#login").classList.add("hidden");$("#game").classList.remove("hidden");$("#name").textContent=u;$("#role").textContent=acc.role==="admin"?"管理員":"修士";$("#adminQuick").style.display=acc.role==="admin"?"":"none";render();log("你在桃源村石橋旁醒來，遠處竹林被晨霧吞吐。")}
 function render(){var s=stats();$("#stone").textContent=state.stone;$("#wash").textContent=state.wash;$("#iron").textContent=state.iron;$("#hpText").textContent=Math.max(0,Math.ceil(state.hp))+" / "+s.hp;$("#hpBar").style.width=Math.max(0,Math.min(100,state.hp/s.hp*100))+"%";$("#atkText").textContent=s.atk;$("#defText").textContent=s.def;$("#spdText").textContent=s.spd.toFixed(2);$("#critText").textContent=s.crit+"%";$("#locBadge").textContent=state.loc==="village"?"桃源村":"青竹林";$("#zoneTitle").textContent=state.loc==="village"?"桃源村":"青竹林";$("#zoneDesc").textContent=state.loc==="village"?"山泉穿村而過，鐵匠鋪與藥鋪沿石橋散開。":"竹霧深處妖氣微動，四處行走可能遭遇妖物。";$("#forestBtn").classList.toggle("hidden",state.loc!=="village");$("#villageBtn").classList.toggle("hidden",state.loc==="village");renderSkills();renderItems();renderChat();renderGems();$("#mastery").textContent="鍛造熟練度 Lv."+(Math.floor(state.mastery/5)+1)+"（累計 "+state.mastery+" 次）"}
 function renderSkills(){var box=$("#skills");box.innerHTML="";state.skills.forEach(function(x,i){var r=document.createElement("div");r.className="stat";r.innerHTML="<span>"+(i+1)+". "+SK[x][0]+"</span><span class='muted small'>CD "+(SK[x][1]/1000)+"s</span>";box.appendChild(r)})}
-function renderItems(){var slots=$("#slots");slots.innerHTML="";[["weapon","武器"],["armor","道袍"],["ring","戒指"]].forEach(function(p){var it=state.inv.find(function(x){return x.id===state.eq[p[0]]});var d=document.createElement("div");d.className="slot "+(it?it.q:"");d.innerHTML="<b>"+p[1]+"</b>"+(it?it.name+" +"+it.enh:"未裝備");slots.appendChild(d)});var inv=$("#inventory");inv.innerHTML="";state.inv.forEach(function(it){var d=document.createElement("div");d.className="item "+it.q;d.innerHTML="<b>【"+it.qn+"】"+it.name+"</b><br><span class='small'>倍率 "+it.mult+"% · +"+it.enh+"</span><br><span class='muted small'>"+it.aff.join("、")+"</span><br><button data-view='"+it.id+"'>查看</button>";inv.appendChild(d)});$$("[data-view]").forEach(function(b){b.onclick=function(){detail(b.dataset.view)}})}
+function renderItems(){
+  var slots=$("#slots");slots.innerHTML="";
+  [["weapon","武器"],["armor","道袍"],["ring","戒指"]].forEach(function(p){
+    var it=state.inv.find(function(x){return x.id===state.eq[p[0]]});
+    var d=document.createElement("div");
+    d.className="slot "+(it?it.q:"");
+    if(it){
+      d.innerHTML="<b>"+p[1]+"</b><br>"+it.name+" +"+it.enh+"<br><button data-view='"+it.id+"'>查看</button> <button data-unequip='"+p[0]+"'>卸下</button>";
+    }else{
+      d.innerHTML="<b>"+p[1]+"</b><br><span class='muted small'>未裝備</span>";
+    }
+    slots.appendChild(d);
+  });
+  var inv=$("#inventory");inv.innerHTML="";
+  state.inv.forEach(function(it){
+    var equipped=state.eq[it.type]===it.id;
+    var d=document.createElement("div");d.className="item "+it.q;
+    d.innerHTML="<b>【"+it.qn+"】"+it.name+"</b><br><span class='small'>倍率 "+it.mult+"% · +"+it.enh+(equipped?" · 已裝備":"")+"</span><br><span class='muted small'>"+it.aff.join("、")+"</span><br><button data-view='"+it.id+"'>查看</button>";
+    inv.appendChild(d);
+  });
+  $$("[data-view]").forEach(function(b){b.onclick=function(){detail(b.dataset.view)}});
+  $$("[data-unequip]").forEach(function(b){b.onclick=function(){
+    var type=b.dataset.unequip,it=state.inv.find(function(x){return x.id===state.eq[type]});
+    if(it)log("你卸下了【"+it.name+"】。");
+    state.eq[type]=null;save();render();
+    if(selected&&it&&selected===it.id)detail(it.id);
+  }});
+}
 function detail(id){
   selected=id;
   var it=state.inv.find(function(x){return x.id===id});
   if(!it)return;
   if(typeof it.washCount!=="number")it.washCount=0;
+  var equipped=state.eq[it.type]===it.id;
   var washText=account==="admin"?"∞":"壽命 "+it.washCount+"/50";
   var adminBtn=account==="admin"?" <button id='affixBtn'>指定詞條</button>":"";
   var giftBtn=state.fairyUnlocked?" <button id='giftBtn'>贈送小精靈</button>":"";
-  $("#detail").innerHTML="<b>【"+it.qn+"】"+it.name+"</b><p>基礎倍率："+it.mult+"%</p><p>強化：+"+it.enh+"</p><p>洗鍊："+washText+"</p><p>"+it.aff.join("<br>")+"</p>"+(it.set?"<p class='drop'>套裝："+it.set+"</p>":"")+"<button id='equipBtn'>裝備</button> <button id='enhBtn'>強化</button> <button id='washBtn'>洗詞條</button>"+adminBtn+" <button id='salvageBtn'>分解</button>"+giftBtn;
-  $("#equipBtn").onclick=function(){state.eq[it.type]=it.id;save();render();detail(id)};
+  $("#detail").innerHTML="<b>【"+it.qn+"】"+it.name+"</b><p>基礎倍率："+it.mult+"%</p><p>強化：+"+it.enh+"</p><p>狀態："+(equipped?"已裝備":"未裝備")+"</p><p>洗鍊："+washText+"</p><p>"+it.aff.join("<br>")+"</p>"+(it.set?"<p class='drop'>套裝："+it.set+"</p>":"")+"<button id='equipBtn'>"+(equipped?"卸下":"裝備")+"</button> <button id='enhBtn'>強化</button> <button id='washBtn'>洗詞條</button>"+adminBtn+" <button id='salvageBtn'>分解</button>"+giftBtn;
+  $("#equipBtn").onclick=function(){
+    if(state.eq[it.type]===it.id){
+      state.eq[it.type]=null;log("你卸下了【"+it.name+"】。");
+    }else{
+      state.eq[it.type]=it.id;log("你裝備了【"+it.name+"】。");
+    }
+    save();render();detail(id);
+  };
   $("#enhBtn").onclick=function(){enhance(it)};
   $("#washBtn").onclick=function(){reroll(it)};
   $("#salvageBtn").onclick=function(){salvageItem(it)};
