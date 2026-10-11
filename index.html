@@ -89,7 +89,9 @@ body{overflow:hidden}
 <style id="systems-v4">
 .synth-card label,.auto-potion-card label{display:block;margin:.7rem 0}.synth-card select{width:100%;margin-top:.3rem;padding:.55rem;border-radius:9px;border:1px solid var(--line);background:#071007;color:var(--ink)}.synth-info{margin:.8rem 0;padding:.65rem;border-radius:9px;background:rgba(3,8,4,.48);border:1px solid rgba(255,255,255,.12);line-height:1.45}.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.shop-item{padding:11px;border:1px solid rgba(255,255,255,.14);border-radius:11px;background:rgba(3,8,4,.5)}.shop-item h3{margin:.05rem 0 .35rem}.shop-item p{margin:.2rem 0}.shop-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.shop-actions button{padding:.35rem .55rem}.switch-row{display:flex!important;align-items:center;justify-content:space-between;gap:12px}.switch-row input{width:20px;height:20px}.range-row input{width:100%;margin-top:.5rem}.auto-potion-card h3{margin-top:0}@media(max-width:800px){.shop-grid{grid-template-columns:1fr}.synth-card select{font-size:16px}.auto-potion-card input[type=range]{min-height:34px}}
 </style>
-</head>
+<style id="class-race-v5">
+.class-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.class-choice{text-align:left;padding:14px;min-height:112px;display:flex;flex-direction:column;gap:4px}.class-choice b{font-size:1.15rem;color:#f0d58d}.class-choice span{font-size:.82rem}.class-choice small{color:var(--muted);line-height:1.4}.class-choice.selected{outline:2px solid #d8bd72;background:linear-gradient(#6b5b35,#353f2f)}.align-row{display:flex;gap:8px}.align-row button.selected{outline:2px solid #d8bd72}.create-modal{width:min(820px,96vw)}.create-modal #createConfirm{width:100%;margin-top:10px}.passive-card{margin:.5rem 0;line-height:1.5}.bar.mana i{background:linear-gradient(90deg,#5479a8,#8db6eb)}.dealer{display:flex;align-items:center;gap:12px}.dealer-face{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);font-size:1.7rem;background:#120d10}.dealer p{margin:.2rem 0}.casino-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.casino-grid button{display:flex;flex-direction:column;gap:4px}.casino-grid small{color:var(--muted)}@media(max-width:800px){.class-grid{grid-template-columns:1fr}.class-choice{min-height:92px}.casino-grid{grid-template-columns:1fr}.create-modal{max-height:90dvh;overflow:auto}}
+</style></head>
 <body>
 <section id="login">
   <div class="login-card glass">
@@ -105,7 +107,7 @@ body{overflow:hidden}
 <main id="game" class="hidden">
 <div class="bg"></div><div class="shade"></div>
 <header class="top glass"><div class="identity"><b id="name">散修</b><span id="role" class="badge"></span><button id="locBadge" class="badge loc-btn" type="button">桃源村</button><span id="levelBadge" class="badge">Lv.1</span><span class="xp-mini"><span id="xpFill"></span></span></div><div class="res"><span>靈石 <b id="stone">0</b></span><span>洗髓石 <b id="wash">0</b></span><span>玄鐵 <b id="iron">0</b></span></div></header>
-<nav class="actions glass"><button data-open="status">狀態</button><button data-open="items">裝備/物品</button><button data-open="forge">打造</button><button data-open="synth">合成</button><button data-open="shop">雜貨店</button><button data-open="gems">寶石/符文</button><button data-open="admin" id="adminQuick">管理</button></nav>
+<nav class="actions glass"><button data-open="status">狀態</button><button data-open="items">裝備/物品</button><button data-open="forge">打造</button><button data-open="synth">合成</button><button data-open="shop">雜貨店</button><button data-open="casino">賭場</button><button data-open="gems">寶石/符文</button><button data-open="admin" id="adminQuick">管理</button></nav>
 <section class="scene-hud glass">
   <div class="scene-head">
     <div class="scene-copy"><small class="muted">目前場景</small><h2 id="zoneTitle">桃源村</h2><p id="zoneDesc" class="muted">山泉穿村而過，遠處竹林霧氣緩緩流動。</p></div>
@@ -117,11 +119,12 @@ body{overflow:hidden}
 </section>
 <details class="chat glass" id="chatBox"><summary class="chat-summary"><span class="summary-channel">世界</span><span id="fairySummary" class="summary-channel hidden">小精靈</span><span class="summary-arrow">⌃</span></summary><div class="chat-body"><div class="chat-tabs"><button id="worldTab" class="chat-tab active" data-channel="world">世界</button><button id="fairyTab" class="chat-tab hidden" data-channel="fairy">小精靈</button></div><div id="chatLog" class="chatlog"></div><div class="chatrow"><input id="chatInput" placeholder="說點什麼…"><button id="chatSend">送出</button></div></div></details>
 
-<section id="statusModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>角色狀態</h2><div class="grid2"><div class="card"><div class="stat">生命 <span id="hpText"></span></div><div class="bar"><i id="hpBar"></i></div><div class="stat">攻擊 <b id="atkText"></b></div><div class="stat">防禦 <b id="defText"></b></div><div class="stat">攻速 <b id="spdText"></b></div><div class="stat">暴擊 <b id="critText"></b></div><div class="stat">基礎回血 <b id="regenText"></b></div></div><div class="card"><h3>技能配置</h3><div id="skills"></div><p class="muted small">戰鬥中不可更換。</p></div></div></div></section>
+<section id="createModal" class="modal-layer hidden"><div class="modal glass create-modal"><h2>選擇你的修行之路</h2><p class="muted">每個帳號首次進入時選擇一次。</p><div class="class-grid"><button class="class-choice" data-class-choice="sword"><b>劍仙</b><span>人族</span><small>力量高 · 劍類加成 · 低血量生命護盾</small></button><button class="class-choice" data-class-choice="blood"><b>血魔</b><span>魔族</span><small>體質高 · 防具加成 · 低血量攻擊爆發</small></button><button class="class-choice" data-class-choice="ranger"><b>千里追</b><span>精靈</span><small>敏捷高 · 飾品加成 · 低血量閃避</small></button><button id="creatorChoice" class="class-choice hidden" data-class-choice="creator"><b>創造者</b><span>神族</span><small>管理員專屬 · 智力高 · 光暗分支</small></button></div><div id="alignmentBox" class="card hidden"><h3>創造者分支</h3><div class="align-row"><button data-align="light">光</button><button data-align="dark">暗</button></div></div><div id="createPreview" class="card"><span class="muted">選擇一個職業查看天賦。</span></div><button id="createConfirm" class="primary" disabled>踏上修行路</button></div></section>
+<section id="statusModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>角色狀態</h2><div class="grid2"><div class="card"><div class="stat">職業 <b id="classText"></b></div><div class="stat">種族 <b id="raceText"></b></div><div class="stat">力量 <b id="strText"></b></div><div class="stat">體質 <b id="vitText"></b></div><div class="stat">敏捷 <b id="agiText"></b></div><div class="stat">智力 <b id="intText"></b></div><div class="stat">生命 <span id="hpText"></span></div><div class="bar"><i id="hpBar"></i></div><div class="stat">攻擊 <b id="atkText"></b></div><div class="stat">防禦 <b id="defText"></b></div><div class="stat">攻速 <b id="spdText"></b></div><div class="stat">暴擊 <b id="critText"></b></div><div class="stat">基礎回血 <b id="regenText"></b></div><div class="stat">法力 <b id="manaText"></b></div><div class="bar mana"><i id="manaBar"></i></div><div class="stat">反傷 <b id="reflectText"></b></div><div class="stat">閃避 <b id="dodgeText"></b></div></div><div class="card"><h3>技能配置</h3><div id="passiveText" class="card passive-card"></div><div id="skills"></div><p class="muted small">戰鬥中不可更換。</p></div></div></div></section>
 
 <section id="itemsModal" class="modal-layer hidden"><div class="modal glass items-v3"><button class="close" data-close>×</button><h2>裝備與物品欄 <span id="invCount" class="badge">0 / 60</span></h2><div class="items-layout"><div><div id="slots" class="slots"></div><div class="bag-head"><b>物品欄</b><span class="muted small">點選物品後展開屬性</span></div><div id="inventory" class="inv60"></div></div><div id="detailCard" class="card detail-card hidden"><div class="detail-head"><h3>物品屬性</h3><button id="detailClose" class="detail-close" type="button">收起</button></div><div id="detail" class="muted"></div></div></div></div></section>
 
-<section id="forgeModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>桃源鐵匠鋪</h2><p class="muted">300 靈石 + 3 玄鐵。品質、倍率、詞條皆隨機。</p><select id="forgeType"><option value="weapon">劍</option><option value="armor">道袍</option><option value="ring">戒指</option></select> <button id="forgeBtn" class="primary">打造</button><div id="mastery" style="margin-top:10px"></div></div></section>
+<section id="forgeModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>桃源鐵匠鋪</h2><p class="muted">300 靈石 + 3 玄鐵。品質、倍率、詞條皆隨機。</p><select id="forgeType"><option value="mainhand">主手</option><option value="offhand">副手</option><option value="chest">衣服</option><option value="head">頭部</option><option value="pants">褲子</option><option value="shoes">鞋子</option><option value="ring">戒指</option><option value="necklace">項鍊</option><option value="belt">腰帶</option></select> <button id="forgeBtn" class="primary">打造</button><div id="mastery" style="margin-top:10px"></div></div></section>
 
 
 <section id="synthModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>裝備合成</h2>
@@ -137,7 +140,7 @@ body{overflow:hidden}
       </select>
     </label>
     <label>成品部位
-      <select id="synthType"><option value="weapon">武器</option><option value="armor">道袍</option><option value="ring">戒指</option></select>
+      <select id="synthType"><option value="mainhand">主手</option><option value="offhand">副手</option><option value="chest">衣服</option><option value="head">頭部</option><option value="pants">褲子</option><option value="shoes">鞋子</option><option value="ring">戒指</option><option value="necklace">項鍊</option><option value="belt">腰帶</option></select>
     </label>
     <div id="synthInfo" class="synth-info"></div>
     <button id="synthBtn" class="primary">合成裝備</button>
@@ -158,6 +161,7 @@ body{overflow:hidden}
 
 <section id="gemsModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>寶石與符文</h2><div class="grid2"><div class="card"><h3>寶石</h3><div id="gemsList"></div></div><div class="card"><h3>符文</h3><div id="runesList"></div></div></div></div></section>
 
+<section id="casinoModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>賭場 NPC［澳門性感荷官］</h2><div class="dealer card"><div class="dealer-face">♠</div><div><b>澳門性感荷官</b><p id="dealerLine" class="muted">「修士，押靈石就好。這裡不收命。」</p></div></div><p class="muted">只使用遊戲內靈石。獎品品質限定白～紫，部位隨機。</p><div class="casino-grid"><button data-gamble="100"><b>小押 100</b><small>紫裝 1%</small></button><button data-gamble="300"><b>中押 300</b><small>紫裝 4%</small></button><button data-gamble="800"><b>豪押 800</b><small>紫裝 8%</small></button></div><div id="casinoResult" class="card muted">荷官正在洗牌。</div></div></section>
 <section id="adminModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>系統管理員測試面板</h2><div class="admin-grid"><button data-admin="rich">+10000 靈石</button><button data-admin="mats">+50 材料</button><button data-admin="elite">召喚菁英怪</button><button data-admin="boss">召喚小 BOSS</button><button data-admin="plat">生成白金裝備</button><button data-admin="gem">生成寶石</button><button data-admin="rune">生成符文</button><button data-admin="heal">回滿生命</button></div></div></section>
 </main>
 
@@ -167,36 +171,40 @@ body{overflow:hidden}
 var $=function(s){return document.querySelector(s)}, $$=function(s){return Array.from(document.querySelectorAll(s))};
 var ACC={"青禾":{id:"test01",role:"player",hash:"jzdw71"},"雲岫":{id:"test02",role:"player",hash:"jzdw72"},"竹影":{id:"test03",role:"player",hash:"jzdw73"},"白露":{id:"test04",role:"player",hash:"jzdw6w"},"長風":{id:"test05",role:"player",hash:"jzdw6x"},"蓓爾":{id:"admin",role:"admin",hash:"1anj0fc"}};
 var QS=[["white","白",54],["green","綠",25],["blue","藍",13],["purple","紫",5.5],["orange","橘",2],["platinum","白金",.5]];
-var MON={wolf:["野狼",95,12,3,"普通"],rat:["竹鼠妖",70,9,2,"普通"],snake:["毒蛇",82,11,2,"普通"],bandit:["山賊",120,14,5,"普通"],elite:["赤目狼王",360,28,10,"菁英"],boss:["百年竹妖",980,44,18,"區域小BOSS"]};
-var SK={sword:["御劍訣",3000,1.55],pierce:["破甲劍氣",7000,1.25],heal:["回春術",12000,0],thunder:["雷引術",11000,2.25]};
+var MON={wolf:["野狼",95,12,3,"普通","neutral"],rat:["竹鼠妖",70,9,2,"普通","neutral"],snake:["毒蛇",82,11,2,"普通","neutral"],bandit:["山賊",120,14,5,"普通","human"],elite:["赤目狼王",360,28,10,"菁英","demon"],boss:["百年竹妖",980,44,18,"區域小BOSS","elf"]};
+var SK={
+swordslash:{name:"御劍斬",cd:4000,pow:1.65,mana:12,desc:"高傷害劍氣。"},swordguard:{name:"劍罡",cd:9000,pow:1.15,mana:16,desc:"攻擊並生成護盾。"},swordstorm:{name:"萬劍歸宗",cd:14000,pow:2.45,mana:28,desc:"劍仙爆發技。"},
+bloodbite:{name:"血刃噬",cd:4000,pow:1.45,mana:10,desc:"攻擊並吸血。"},bloodarmor:{name:"魔鎧震",cd:8500,pow:1.20,mana:15,desc:"攻擊並提高反傷。"},bloodburst:{name:"血獄爆",cd:13000,pow:2.05,mana:25,desc:"血越少越強。"},
+windshot:{name:"追風箭",cd:3200,pow:1.38,mana:9,desc:"快速射擊。"},shadowstep:{name:"影步",cd:8000,pow:1.05,mana:14,desc:"攻擊並提高閃避。"},soulmark:{name:"千里鎖魂",cd:12000,pow:2.20,mana:24,desc:"鎖定弱點重擊。"},
+creation:{name:"創世術",cd:4200,pow:1.60,mana:18,desc:"光暗術式。"},flux:{name:"法力潮汐",cd:9000,pow:1.30,mana:12,desc:"攻擊並回法。"},edict:{name:"神諭",cd:14000,pow:2.35,mana:30,desc:"神族高階術式。"}
+};
+var CLASS_DATA={
+sword:{name:"劍仙",race:"human",raceName:"人族",attrs:{str:16,vit:10,agi:9,int:6},skills:["swordslash","swordguard","swordstorm"],passive:"劍心通明：主手劍類裝備效果 +15%；力量較高；低於 30% 生命獲得最大生命 20% 護盾；主手素質轉化攻速。"},
+blood:{name:"血魔",race:"demon",raceName:"魔族",attrs:{str:9,vit:17,agi:7,int:5},skills:["bloodbite","bloodarmor","bloodburst"],passive:"不滅魔軀：防具效果 +15%；體質較高；低於 30% 生命獲得以最大生命 20% 換算的攻擊增幅；防具素質轉化反傷。"},
+ranger:{name:"千里追",race:"elf",raceName:"精靈",attrs:{str:8,vit:9,agi:17,int:6},skills:["windshot","shadowstep","soulmark"],passive:"風行者：飾品效果 +15%；敏捷較高；低於 30% 生命額外 +20% 閃避；飾品素質轉化暴擊。"},
+creator:{name:"創造者",race:"god",raceName:"神族",attrs:{str:8,vit:8,agi:8,int:18},skills:["creation","flux","edict"],passive:"創世權能：魔法效果 +15%；智力較高；低於 30% 生命時回復最大生命與最大法力各 20%；副手素質轉化法力。"}
+};
+var SLOT_LABEL={mainhand:"主手",offhand:"副手",chest:"衣服",head:"頭部",pants:"褲子",shoes:"鞋子",ring1:"戒指1",ring2:"戒指2",necklace:"項鍊",belt:"腰帶"};
 var EN=[100,100,95,90,80,70,60,45,30,18,8], POTION={small:{name:"小還丹",heal:80,price:35},medium:{name:"聚氣丹",heal:180,price:80},large:{name:"回春丹",heal:360,price:150}}, account=null,state=null,battle=null,timer=null,selected=null,fairy=false,activeChannel="world",moveLocked=false,encounterTimer=null,regenTimer=null,lastPotionAt=0;
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a} function chance(p){return Math.random()*100<p} function hpass(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h)^s.charCodeAt(i);return(h>>>0).toString(36)}
 function key(){return "taoyuan_"+account}
-function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,regen:2,stone:800,wash:5,iron:8,inv:[],eq:{weapon:null,armor:null,ring:null},gems:[],runes:[],skills:["sword","pierce","heal","thunder"],mastery:0,steps:0,boss:0,level:1,exp:0,potions:{small:0,medium:0,large:0},autoPotionEnabled:false,autoPotionPct:35,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false,fairyDraft:"",fairyBond:0,fairyMood:0,fairyLastIntent:""}}
-function load(){try{state=JSON.parse(localStorage.getItem(key()))||fresh()}catch(e){state=fresh()}if(!state.chat)state.chat=[];if(!state.fairyChat)state.fairyChat=[];if(typeof state.fairyUnlocked!=="boolean")state.fairyUnlocked=false;if(typeof state.fairyDraft!=="string")state.fairyDraft="";if(typeof state.fairyBond!=="number")state.fairyBond=0;if(typeof state.fairyLastIntent!=="string")state.fairyLastIntent="";if(typeof state.fairyMood!=="number")state.fairyMood=0;if(typeof state.level!=="number")state.level=1;if(typeof state.exp!=="number")state.exp=0;if(typeof state.regen!=="number")state.regen=2;if(!state.potions)state.potions={small:0,medium:0,large:0};if(typeof state.autoPotionEnabled!=="boolean")state.autoPotionEnabled=false;if(typeof state.autoPotionPct!=="number")state.autoPotionPct=35;(state.inv||[]).forEach(function(it){if(typeof it.washCount!=="number")it.washCount=0});fairy=state.fairyUnlocked;activeChannel="world";save()}
+function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,regen:2,stone:800,wash:5,iron:8,inv:[],eq:{mainhand:null,offhand:null,chest:null,head:null,pants:null,shoes:null,ring1:null,ring2:null,necklace:null,belt:null},gems:[],runes:[],skills:[],characterCreated:false,classKey:"",race:"",alignment:"",str:0,vit:0,agi:0,int:0,mana:0,mastery:0,steps:0,boss:0,level:1,exp:0,potions:{small:0,medium:0,large:0},autoPotionEnabled:false,autoPotionPct:35,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false,fairyDraft:"",fairyBond:0,fairyMood:0,fairyLastIntent:""}}
+function load(){try{state=JSON.parse(localStorage.getItem(key()))||fresh()}catch(e){state=fresh()}if(!state.chat)state.chat=[];if(!state.fairyChat)state.fairyChat=[];if(typeof state.fairyUnlocked!=="boolean")state.fairyUnlocked=false;if(typeof state.fairyDraft!=="string")state.fairyDraft="";if(typeof state.fairyBond!=="number")state.fairyBond=0;if(typeof state.fairyLastIntent!=="string")state.fairyLastIntent="";if(typeof state.fairyMood!=="number")state.fairyMood=0;if(typeof state.level!=="number")state.level=1;if(typeof state.exp!=="number")state.exp=0;if(typeof state.regen!=="number")state.regen=2;if(!state.potions)state.potions={small:0,medium:0,large:0};if(typeof state.autoPotionEnabled!=="boolean")state.autoPotionEnabled=false;if(typeof state.autoPotionPct!=="number")state.autoPotionPct=35;if(typeof state.characterCreated!=="boolean")state.characterCreated=false;if(!state.eq||state.eq.weapon!==undefined||state.eq.armor!==undefined||state.eq.ring!==undefined){var old=state.eq||{};state.eq={mainhand:old.weapon||null,offhand:null,chest:old.armor||null,head:null,pants:null,shoes:null,ring1:old.ring||null,ring2:null,necklace:null,belt:null}}(state.inv||[]).forEach(function(it){if(typeof it.washCount!=="number")it.washCount=0;if(it.type==="weapon")it.type="mainhand";else if(it.type==="armor")it.type="chest"});if(state.characterCreated&&state.classKey&&CLASS_DATA[state.classKey]){var d=CLASS_DATA[state.classKey];state.race=d.race;if(!state.skills||!state.skills.length)state.skills=d.skills.slice();if(!state.str&&!state.vit&&!state.agi&&!state.int){state.str=d.attrs.str;state.vit=d.attrs.vit;state.agi=d.attrs.agi;state.int=d.attrs.int}}fairy=state.fairyUnlocked;activeChannel="world";save()}
 function save(){localStorage.setItem(key(),JSON.stringify(state))}
 function invFull(){return state.inv.length>=60}
 function addItem(it){if(invFull()){log("物品欄已滿（60/60）。","danger");return false}state.inv.push(it);return true}
 function quality(force){if(force)return QS.filter(function(q){return q[0]===force})[0];var n=Math.random()*100,s=0;for(var i=0;i<QS.length;i++){s+=QS[i][2];if(n<s)return QS[i]}return QS[0]}
-function mkItem(force,type){type=type||["weapon","armor","ring"][rnd(0,2)];var q=quality(force), mult=rnd(100,150), names={weapon:["青竹劍","流雲劍","寒溪劍"],armor:["青麻道袍","竹紋法衣","雲紗衣"],ring:["青玉戒","聚靈環","松紋戒"]}, affNames=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害","生命恢復"], aff=[],n=Math.max(1,QS.findIndex(function(x){return x[0]===q[0]})+1);for(var i=0;i<Math.min(n,5);i++)aff.push(affNames[rnd(0,6)]+" +"+rnd(2,12));return {id:Date.now()+"_"+Math.random(),type:type,name:names[type][rnd(0,2)],q:q[0],qn:q[1],mult:mult,enh:0,aff:aff,set:(["purple","orange","platinum"].indexOf(q[0])>=0&&chance(20))?"青竹靈套":null,washCount:0}}
-function stats(){
-  var a=state.atk,d=state.def,h=state.maxHp,r=state.regen||2;
-  Object.keys(state.eq).forEach(function(k){
-    var it=state.inv.find(function(x){return x.id===state.eq[k]});if(!it)return;
-    var sc=(it.mult/100)*(1+it.enh*.1);
-    if(it.type==="weapon")a+=Math.round(12*sc);
-    if(it.type==="armor"){d+=Math.round(8*sc);h+=Math.round(35*sc)}
-    if(it.type==="ring")a+=Math.round(4*sc);
-    (it.aff||[]).forEach(function(x){var m=x.match(/^生命恢復\s*\+(\d+)/);if(m)r+=parseInt(m[1],10)});
-  });
-  return {atk:a,def:d,hp:h,spd:state.spd,crit:state.crit,regen:r};
-}
+function mkItem(force,type){type=type||["mainhand","offhand","chest","head","pants","shoes","ring","necklace","belt"][rnd(0,8)];var q=quality(force),mult=rnd(100,150),names={mainhand:["青竹劍","流雲劍","寒溪劍","破霧長劍"],offhand:["聚靈玉","玄紋法冊","星砂法球","護心靈印"],chest:["青麻道袍","竹紋法衣","玄鐵戰衣"],head:["青羽冠","玄紋兜帽","鎮魂盔"],pants:["踏雲長褲","玄甲護腿","青紋下裳"],shoes:["追風靴","竹影履","玄鐵戰靴"],ring:["青玉戒","聚靈環","松紋戒"],necklace:["流光墜","青玉項鍊","鎖靈鏈"],belt:["玄紋腰帶","聚氣帶","赤銅束帶"]},affNames=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害","生命恢復","法力"],aff=[],n=Math.max(1,QS.findIndex(function(x){return x[0]===q[0]})+1);for(var i=0;i<Math.min(n,5);i++)aff.push(affNames[rnd(0,7)]+" +"+rnd(2,12));return{id:Date.now()+"_"+Math.random(),type:type,name:names[type][rnd(0,names[type].length-1)],q:q[0],qn:q[1],mult:mult,enh:0,aff:aff,set:(["purple","orange","platinum"].indexOf(q[0])>=0&&chance(20))?"青竹靈套":null,washCount:0}}
+function itemEquipped(it){return Object.keys(state.eq).some(function(k){return state.eq[k]===it.id})}
+function itemCategory(type){if(["chest","head","pants","shoes"].indexOf(type)>=0)return"armor";if(["ring","necklace","belt"].indexOf(type)>=0)return"accessory";if(type==="mainhand")return"weapon";if(type==="offhand")return"offhand";return"other"}
+function racialGearBonus(it){var cat=itemCategory(it.type);if(state.race==="human"&&cat==="weapon")return 1.15;if(state.race==="demon"&&cat==="armor")return 1.15;if(state.race==="elf"&&cat==="accessory")return 1.15;if(state.race==="god"&&cat==="offhand")return 1.15;return 1}
+function racialMultiplier(a,b){if(!a||!b||a==="neutral"||b==="neutral")return 1;if((a==="human"&&b==="demon")||(a==="demon"&&b==="elf")||(a==="elf"&&b==="human"))return 1.15;if((b==="human"&&a==="demon")||(b==="demon"&&a==="elf")||(b==="elf"&&a==="human"))return .90;return 1}
+function stats(){var str=state.str||0,vit=state.vit||0,agi=state.agi||0,intel=state.int||0,a=state.atk+str*1.7+vit*.3+agi*.55+intel*.4,d=state.def+vit*.8,h=state.maxHp+str*2+vit*8,spd=state.spd+agi*.015,crit=state.crit+agi*.15,r=state.regen||2,manaMax=60+intel*10,reflect=0,dodge=0,skillBonus=state.race==="god"?.15:0,armorScore=0,accessoryScore=0,mainScore=0,offScore=0;Object.keys(state.eq).forEach(function(k){var it=state.inv.find(function(x){return x.id===state.eq[k]});if(!it)return;var sc=(it.mult/100)*(1+it.enh*.1)*racialGearBonus(it),cat=itemCategory(it.type);if(it.type==="mainhand"){a+=12*sc;mainScore=it.mult}if(it.type==="offhand"){d+=4*sc;a+=3*sc;offScore=it.mult}if(cat==="armor"){d+=6*sc;h+=22*sc;armorScore+=it.mult}if(cat==="accessory"){a+=3.5*sc;accessoryScore+=it.mult}(it.aff||[]).forEach(function(x){var m;if((m=x.match(/^生命恢復\s*\+(\d+)/)))r+=+m[1];if((m=x.match(/^法力\s*\+(\d+)/)))manaMax+=+m[1];if((m=x.match(/^攻擊\s*\+(\d+)/)))a+=+m[1];if((m=x.match(/^防禦\s*\+(\d+)/)))d+=+m[1];if((m=x.match(/^生命\s*\+(\d+)/)))h+=+m[1];if((m=x.match(/^暴擊率\s*\+(\d+)/)))crit+=+m[1];if((m=x.match(/^攻擊速度\s*\+(\d+)/)))spd+=+m[1]*.01})});if(state.race==="human"&&mainScore)spd+=mainScore*.0012;if(state.race==="demon")reflect=Math.min(25,armorScore/50);if(state.race==="elf")crit+=accessoryScore/70;if(state.race==="god"&&offScore)manaMax+=offScore*.5;if(state.race==="elf"&&state.hp>0&&state.hp<=h*.3)dodge+=20;if(state.race==="demon"&&state.hp>0&&state.hp<=h*.3)a+=h*.20;return{atk:Math.round(a),def:Math.round(d),hp:Math.round(h),spd:spd,crit:Math.round(crit*10)/10,regen:r,mana:Math.round(manaMax),reflect:Math.round(reflect*10)/10,dodge:dodge,skillBonus:skillBonus}}
 function updateVitals(){
   if(!state)return;var s=stats();
   $("#hpText").textContent=Math.max(0,Math.ceil(state.hp))+" / "+s.hp;
   $("#hpBar").style.width=Math.max(0,Math.min(100,state.hp/s.hp*100))+"%";
-  $("#regenText").textContent="+"+s.regen+" / 秒";
-  $("#regenBadge").textContent="回血 +"+s.regen+"/s";
+  $("#regenText").textContent="+"+s.regen+" / 秒";$("#regenBadge").textContent="回血 +"+s.regen+"/s";if(typeof state.mana!=="number")state.mana=s.mana;state.mana=Math.min(s.mana,state.mana);$("#manaText").textContent=Math.round(state.mana)+" / "+s.mana;$("#manaBar").style.width=Math.max(0,Math.min(100,state.mana/s.mana*100))+"%";$("#reflectText").textContent=s.reflect+"%";$("#dodgeText").textContent=s.dodge+"%";
 }
 function startRegen(){
   if(regenTimer)clearInterval(regenTimer);
@@ -204,13 +212,12 @@ function startRegen(){
     if(!state||state.hp<=0)return;
     var s=stats();
     if(state.hp<s.hp){
-      state.hp=Math.min(s.hp,state.hp+s.regen);
-      updateVitals();save();
+      state.hp=Math.min(s.hp,state.hp+s.regen);state.mana=Math.min(s.mana,(state.mana||0)+Math.max(1,Math.round((state.int||0)*.12)));updateVitals();save();
     }
   },1000);
 }
 function log(t,cls){var d=document.createElement("div");d.textContent=new Date().toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})+"  "+t;if(cls)d.className=cls;$("#eventLog").prepend(d)}
-function login(){var u=$("#user").value.trim(),p=$("#pass").value,acc=ACC[u];if(!acc||acc.hash!==hpass(p)){$("#loginMsg").textContent="名號或密令不正確。";return}account=acc.id;load();$("#login").classList.add("hidden");$("#game").classList.remove("hidden");$("#name").textContent=u;$("#role").textContent=acc.role==="admin"?"管理員":"修士";$("#adminQuick").style.display=acc.role==="admin"?"":"none";render();startRegen();log("你在桃源村石橋旁醒來，遠處竹林被晨霧吞吐。");if(state.loc==="forest")scheduleEncounter(1200)}
+function login(){var u=$("#user").value.trim(),p=$("#pass").value,acc=ACC[u];if(!acc||acc.hash!==hpass(p)){$("#loginMsg").textContent="名號或密令不正確。";return}account=acc.id;load();$("#login").classList.add("hidden");$("#game").classList.remove("hidden");$("#name").textContent=u;$("#role").textContent=acc.role==="admin"?"管理員":"修士";$("#adminQuick").style.display=acc.role==="admin"?"":"none";render();startRegen();log("你在桃源村石橋旁醒來，遠處竹林被晨霧吞吐。");if(!state.characterCreated){$("#creatorChoice").classList.toggle("hidden",account!=="admin");$("#createModal").classList.remove("hidden")}else if(state.loc==="forest")scheduleEncounter(1200)}
 function expNeed(lv){if(lv>=50)return 0;return Math.floor(70+Math.pow(lv,1.55)*34)}
 function monsterExp(m){
   var base=Math.round(m.max*.10+m.atk*1.35+m.def*2.2);
@@ -234,13 +241,13 @@ function gainExp(n){
 }
 function healAtVillage(){
   if(state.loc!=="village"||battle)return;
-  state.hp=stats().hp;save();render();log("桃源靈泉洗去疲憊，氣血已完全恢復。","drop");
+  state.hp=stats().hp;state.mana=stats().mana;save();render();log("桃源靈泉洗去疲憊，氣血與法力已完全恢復。","drop");
 }
 function render(){
   var s=stats();
   $("#stone").textContent=state.stone;$("#wash").textContent=state.wash;$("#iron").textContent=state.iron;
   updateVitals();
-  $("#atkText").textContent=s.atk;$("#defText").textContent=s.def;$("#spdText").textContent=s.spd.toFixed(2);$("#critText").textContent=s.crit+"%";
+  $("#atkText").textContent=s.atk;$("#defText").textContent=s.def;$("#spdText").textContent=s.spd.toFixed(2);$("#critText").textContent=s.crit+"%";var cd=CLASS_DATA[state.classKey];$("#classText").textContent=cd?cd.name:"未選擇";$("#raceText").textContent=cd?(cd.raceName+(state.race==="god"&&state.alignment?"·"+(state.alignment==="light"?"光":"暗"):"")):"未選擇";$("#strText").textContent=state.str||0;$("#vitText").textContent=state.vit||0;$("#agiText").textContent=state.agi||0;$("#intText").textContent=state.int||0;$("#passiveText").textContent=cd?cd.passive:"尚未選擇職業。";
   $("#locBadge").textContent=state.loc==="village"?"桃源村":"青竹林";
   $("#locBadge").title=state.loc==="village"?"點擊桃源村回滿氣血":"目前位於青竹林";
   $("#levelBadge").textContent="Lv."+state.level;var need=expNeed(state.level);
@@ -255,57 +262,9 @@ function render(){
   renderSkills();renderItems();renderChat();renderGems();renderSynthesis();renderShop();
   $("#mastery").textContent="鍛造熟練度 Lv."+(Math.floor(state.mastery/5)+1)+"（累計 "+state.mastery+" 次）";
 }
-function renderSkills(){var box=$("#skills");box.innerHTML="";state.skills.forEach(function(x,i){var r=document.createElement("div");r.className="stat";r.innerHTML="<span>"+(i+1)+". "+SK[x][0]+"</span><span class='muted small'>CD "+(SK[x][1]/1000)+"s</span>";box.appendChild(r)})}
-function renderItems(){
-  $("#invCount").textContent=state.inv.length+" / 60";
-  var slots=$("#slots");slots.innerHTML="";
-  [["weapon","武器"],["armor","道袍"],["ring","戒指"]].forEach(function(p){
-    var it=state.inv.find(function(x){return x.id===state.eq[p[0]]});
-    var d=document.createElement("div");d.className="slot "+(it?it.q:"");
-    d.innerHTML=it?"<b>"+p[1]+"</b><br><span class='small'>"+it.name+" +"+it.enh+"</span><br><button data-view='"+it.id+"'>查看</button> <button data-unequip='"+p[0]+"'>卸下</button>":"<b>"+p[1]+"</b><br><span class='muted small'>未裝備</span>";
-    slots.appendChild(d);
-  });
-  var inv=$("#inventory");inv.innerHTML="";
-  for(var i=0;i<60;i++){
-    var it=state.inv[i],cell=document.createElement(it?"button":"div");
-    if(!it){cell.className="inv-slot empty";cell.textContent=(i+1);inv.appendChild(cell);continue}
-    var equipped=state.eq[it.type]===it.id,icon=it.type==="weapon"?"劍":it.type==="armor"?"衣":"戒";
-    cell.type="button";cell.className="inv-slot item-cell "+it.q+(equipped?" equipped":"");cell.dataset.view=it.id;
-    cell.title="【"+it.qn+"】"+it.name;
-    cell.innerHTML="<span class='slot-icon'>"+icon+"</span><span class='slot-name'>"+it.name+"</span>";
-    inv.appendChild(cell);
-  }
-  $$("[data-view]").forEach(function(b){b.onclick=function(){detail(b.dataset.view)}});
-  $$("[data-unequip]").forEach(function(b){b.onclick=function(){
-    var type=b.dataset.unequip,it=state.inv.find(function(x){return x.id===state.eq[type]});
-    if(it)log("你卸下了【"+it.name+"】。");state.eq[type]=null;save();render();
-    if(selected&&it&&selected===it.id)detail(it.id);
-  }});
-}
-function detail(id){
-  selected=id;
-  var it=state.inv.find(function(x){return x.id===id});
-  if(!it)return;
-  if(typeof it.washCount!=="number")it.washCount=0;
-  var equipped=state.eq[it.type]===it.id;
-  var washText=account==="admin"?"∞":"壽命 "+it.washCount+"/50";
-  var adminBtn=account==="admin"?" <button id='affixBtn'>指定詞條</button>":"";
-  var giftBtn=state.fairyUnlocked?" <button id='giftBtn'>贈送小精靈</button>":"";
-  $("#detailCard").classList.remove("hidden");$("#detail").innerHTML="<b>【"+it.qn+"】"+it.name+"</b><p>基礎倍率："+it.mult+"%</p><p>強化：+"+it.enh+"</p><p>狀態："+(equipped?"已裝備":"未裝備")+"</p><p>洗鍊："+washText+"</p><p>"+it.aff.join("<br>")+"</p>"+(it.set?"<p class='drop'>套裝："+it.set+"</p>":"")+"<button id='equipBtn'>"+(equipped?"卸下":"裝備")+"</button> <button id='enhBtn'>強化</button> <button id='washBtn'>洗詞條</button>"+adminBtn+" <button id='salvageBtn'>分解</button>"+giftBtn;
-  $("#equipBtn").onclick=function(){
-    if(state.eq[it.type]===it.id){
-      state.eq[it.type]=null;log("你卸下了【"+it.name+"】。");
-    }else{
-      state.eq[it.type]=it.id;log("你裝備了【"+it.name+"】。");
-    }
-    save();render();detail(id);
-  };
-  $("#enhBtn").onclick=function(){enhance(it)};
-  $("#washBtn").onclick=function(){reroll(it)};
-  $("#salvageBtn").onclick=function(){salvageItem(it)};
-  if($("#giftBtn"))$("#giftBtn").onclick=function(){giftItem(it)};
-  if($("#affixBtn"))$("#affixBtn").onclick=function(){editAffixes(it)};$("#detailClose").onclick=function(){$("#detailCard").classList.add("hidden");selected=null};if(window.innerWidth<=800)setTimeout(function(){$("#detailCard").scrollIntoView({behavior:"smooth",block:"nearest"})},30);
-}
+function renderSkills(){var box=$("#skills");box.innerHTML="";(state.skills||[]).forEach(function(x,i){var s=SK[x];if(!s)return;var r=document.createElement("div");r.className="stat";r.innerHTML="<span>"+(i+1)+". "+s.name+"</span><span class='muted small'>CD "+(s.cd/1000)+"s · 法力 "+s.mana+"</span>";box.appendChild(r);var p=document.createElement("div");p.className="muted small";p.textContent=s.desc;box.appendChild(p)})}
+function renderItems(){$("#invCount").textContent=state.inv.length+" / 60";var slots=$("#slots");slots.innerHTML="";Object.keys(SLOT_LABEL).forEach(function(k){var it=state.inv.find(function(x){return x.id===state.eq[k]}),d=document.createElement("div");d.className="slot "+(it?it.q:"");d.innerHTML=it?"<b>"+SLOT_LABEL[k]+"</b><br><span class='small'>"+it.name+" +"+it.enh+"</span><br><button data-view='"+it.id+"'>查看</button> <button data-unequip='"+k+"'>卸下</button>":"<b>"+SLOT_LABEL[k]+"</b><br><span class='muted small'>未裝備</span>";slots.appendChild(d)});var inv=$("#inventory");inv.innerHTML="";for(var i=0;i<60;i++){var it=state.inv[i],cell=document.createElement(it?"button":"div");if(!it){cell.className="inv-slot empty";cell.textContent=i+1;inv.appendChild(cell);continue}var equipped=itemEquipped(it),icon=it.type==="mainhand"?"劍":it.type==="offhand"?"副":itemCategory(it.type)==="armor"?"甲":itemCategory(it.type)==="accessory"?"飾":"物";cell.type="button";cell.className="inv-slot item-cell "+it.q+(equipped?" equipped":"");cell.dataset.view=it.id;cell.title="【"+it.qn+"】"+it.name;cell.innerHTML="<span class='slot-icon'>"+icon+"</span><span class='slot-name'>"+it.name+"</span>";inv.appendChild(cell)}$$("[data-view]").forEach(function(b){b.onclick=function(){detail(b.dataset.view)}});$$("[data-unequip]").forEach(function(b){b.onclick=function(){var k=b.dataset.unequip,it=state.inv.find(function(x){return x.id===state.eq[k]});if(it)log("你卸下了【"+it.name+"】。");state.eq[k]=null;save();render();if(selected&&it&&selected===it.id)detail(it.id)}})}
+function detail(id){selected=id;var it=state.inv.find(function(x){return x.id===id});if(!it)return;if(typeof it.washCount!=="number")it.washCount=0;var equipped=itemEquipped(it),washText=account==="admin"?"∞":"壽命 "+it.washCount+"/50",adminBtn=account==="admin"?" <button id='affixBtn'>指定詞條</button>":"",giftBtn=state.fairyUnlocked?" <button id='giftBtn'>贈送小精靈</button>":"",equipHtml=it.type==="ring"?"<button data-equip-slot='ring1'>裝備戒指1</button> <button data-equip-slot='ring2'>裝備戒指2</button>":"<button data-equip-slot='"+it.type+"'>"+(state.eq[it.type]===it.id?"卸下":"裝備")+"</button>";$("#detailCard").classList.remove("hidden");$("#detail").innerHTML="<b>【"+it.qn+"】"+it.name+"</b><p>部位："+(it.type==="ring"?"戒指":SLOT_LABEL[it.type])+"</p><p>基礎倍率："+it.mult+"%</p><p>強化：+"+it.enh+"</p><p>狀態："+(equipped?"已裝備":"未裝備")+"</p><p>洗鍊："+washText+"</p><p>"+it.aff.join("<br>")+"</p>"+(it.set?"<p class='drop'>套裝："+it.set+"</p>":"")+equipHtml+" <button id='enhBtn'>強化</button> <button id='washBtn'>洗詞條</button>"+adminBtn+" <button id='salvageBtn'>分解</button>"+giftBtn;$$("[data-equip-slot]").forEach(function(b){b.onclick=function(){var k=b.dataset.equipSlot;if(state.eq[k]===it.id){state.eq[k]=null;log("你卸下了【"+it.name+"】。")}else{Object.keys(state.eq).forEach(function(x){if(state.eq[x]===it.id)state.eq[x]=null});state.eq[k]=it.id;log("你將【"+it.name+"】裝備至"+SLOT_LABEL[k]+"。")}save();render();detail(id)}});$("#enhBtn").onclick=function(){enhance(it)};$("#washBtn").onclick=function(){reroll(it)};$("#salvageBtn").onclick=function(){salvageItem(it)};if($("#giftBtn"))$("#giftBtn").onclick=function(){giftItem(it)};if($("#affixBtn"))$("#affixBtn").onclick=function(){editAffixes(it)};$("#detailClose").onclick=function(){$("#detailCard").classList.add("hidden");selected=null};if(window.innerWidth<=800)setTimeout(function(){$("#detailCard").scrollIntoView({behavior:"smooth",block:"nearest"})},30)}
 function enhance(it){
   if(it.enh>=10)return log("此裝備已達 +10。");
   var cost=80+(it.enh+1)*70;
@@ -410,7 +369,7 @@ function synthCandidates(q){
 function renderSynthesis(){
   if(!$("#synthInfo"))return;
   var q=$("#synthQuality").value,arr=synthCandidates(q),nq=nextQuality(q);
-  $("#synthInfo").innerHTML="可用素材：<b>"+arr.length+"</b> 件<br>合成結果：<b>【"+qualityName(nq)+"】"+($("#synthType").value==="weapon"?"武器":$("#synthType").value==="armor"?"道袍":"戒指")+"</b><br><span class='muted small'>會自動消耗該品質最前面的 3 件未裝備裝備。</span>";
+  $("#synthInfo").innerHTML="可用素材：<b>"+arr.length+"</b> 件<br>合成結果：<b>【"+qualityName(nq)+"】"+(SLOT_LABEL[$("#synthType").value]||($("#synthType").value==="ring"?"戒指":$("#synthType").value))+"</b><br><span class='muted small'>會自動消耗該品質最前面的 3 件未裝備裝備。</span>";
   $("#synthBtn").disabled=arr.length<3||!nq;
 }
 function synthesize(){
@@ -463,6 +422,11 @@ function maybeAutoPotion(){
   if(!chosen){for(var j=keys.length-1;j>=0;j--){var k2=keys[j];if((state.potions[k2]||0)>0){chosen=k2;break}}}
   if(chosen&&usePotion(chosen,true))lastPotionAt=now;
 }
+var pendingClass="",pendingAlign="";
+function classPreview(key){var d=CLASS_DATA[key];return d?"<h3>"+d.name+" · "+d.raceName+"</h3><p>"+d.passive+"</p><p class='muted small'>主動技能："+d.skills.map(function(k){return SK[k].name}).join("、")+"</p>":""}
+function chooseClass(key){if(key==="creator"&&account!=="admin")return;pendingClass=key;$$("[data-class-choice]").forEach(function(b){b.classList.toggle("selected",b.dataset.classChoice===key)});$("#alignmentBox").classList.toggle("hidden",key!=="creator");if(key!=="creator")pendingAlign="";$("#createPreview").innerHTML=classPreview(key);$("#createConfirm").disabled=key==="creator"&&!pendingAlign}
+function createCharacter(){if(!pendingClass||pendingClass==="creator"&&!pendingAlign)return;var d=CLASS_DATA[pendingClass];state.characterCreated=true;state.classKey=pendingClass;state.race=d.race;state.alignment=pendingClass==="creator"?pendingAlign:"";state.str=d.attrs.str;state.vit=d.attrs.vit;state.agi=d.attrs.agi;state.int=d.attrs.int;state.skills=d.skills.slice();state.mana=stats().mana;state.hp=stats().hp;save();$("#createModal").classList.add("hidden");render();log("你選擇成為【"+d.name+"】，修行之路正式開始。","drop")}
+function gamble(stake){if(invFull())return log("物品欄已滿，荷官把籌碼推回給你。","danger");if(state.stone<stake)return log("靈石不足，澳門性感荷官笑而不語。","danger");state.stone-=stake;var r=Math.random()*100,q;if(stake===100)q=r<65?"white":r<90?"green":r<99?"blue":"purple";else if(stake===300)q=r<50?"white":r<80?"green":r<96?"blue":"purple";else q=r<35?"white":r<70?"green":r<92?"blue":"purple";var type=["mainhand","offhand","chest","head","pants","shoes","ring","necklace","belt"][rnd(0,8)],it=mkItem(q,type);addItem(it);$("#dealerLine").textContent=fairyPick(["「牌面不說謊，人會。」","「這把算你運氣不錯。」","「再來？我可沒叫你追。」","「修仙靠悟性，賭裝靠膽量。」"]);$("#casinoResult").innerHTML="你押了 "+stake+" 靈石，得到 <b>【"+it.qn+"】"+it.name+"</b>（"+(SLOT_LABEL[type]||"戒指")+"）。";save();render()}
 function renderGems(){var gc={},rc={};state.gems.forEach(function(x){gc[x]=(gc[x]||0)+1});state.runes.forEach(function(x){rc[x]=(rc[x]||0)+1});$("#gemsList").innerHTML=Object.keys(gc).map(function(k){return "<div>"+k+" × "+gc[k]+"</div>"}).join("")||"<span class='muted'>尚無寶石</span>";$("#runesList").innerHTML=Object.keys(rc).map(function(k){return "<div>"+k+" × "+rc[k]+"</div>"}).join("")||"<span class='muted'>尚無符文</span>"}
 function stopEncounterLoop(){if(encounterTimer){clearTimeout(encounterTimer);encounterTimer=null}}
 function chooseEncounter(){
@@ -488,32 +452,19 @@ function enterForest(){
 }
 function returnVillage(){
   if(battle)return;
-  stopEncounterLoop();state.loc="village";state.hp=stats().hp;save();render();
+  stopEncounterLoop();state.loc="village";state.hp=stats().hp;state.mana=stats().mana;save();render();
   log("你返回桃源村，桃源靈泉為你洗去傷勢，氣血已完全恢復。","drop");
 }
 function startBattle(k){
   if(battle)return;stopEncounterLoop();
-  var m=MON[k];battle={k:k,name:m[0],hp:m[1],max:m[1],atk:m[2],def:m[3],rank:m[4],last:0};
+  var m=MON[k];battle={k:k,name:m[0],hp:m[1],max:m[1],atk:m[2],def:m[3],rank:m[4],race:m[5]||"neutral",last:0,skillCd:{},lowTriggered:false,shield:0,bonusDodge:0,bonusReflect:0};
   $("#enemyBox").classList.remove("hidden");$("#enemyName").textContent=m[0];$("#enemyRank").textContent=m[4];$("#enemyBar").style.width="100%";
   $("#battleLog").innerHTML="<div>遭遇【"+m[0]+"】，自動戰鬥開始。</div>";$("#sceneState").textContent="戰鬥中";
   render();tick();timer=setInterval(tick,1100);
 }
-function tick(){
-  if(!battle)return;
-  var s=stats(),dmg=Math.max(1,Math.round(s.atk*(chance(30)?1.55:1)-battle.def*.55+rnd(-2,4)));
-  battle.hp-=dmg;$("#battleLog").innerHTML+="<div>你御劍攻擊，造成 "+dmg+" 傷害。</div>";
-  if(battle.hp<=0){win();return}
-  var ed=Math.max(1,Math.round(battle.atk-s.def*.45+rnd(-2,3)));state.hp-=ed;
-  $("#battleLog").innerHTML+="<div>"+battle.name+" 攻來，你受到 "+ed+" 傷害。</div>";
-  if(state.hp>0)maybeAutoPotion();
-  if(state.hp<=0){
-    clearInterval(timer);timer=null;battle=null;stopEncounterLoop();state.loc="village";state.hp=stats().hp;
-    log("你眼前一黑，被採藥人拖回桃源村。靈泉替你恢復了氣血。","danger");
-    $("#enemyBox").classList.add("hidden");save();render();return;
-  }
-  $("#enemyBar").style.width=Math.max(0,battle.hp/battle.max*100)+"%";$("#battleLog").scrollTop=$("#battleLog").scrollHeight;
-  updateVitals();save();
-}
+function triggerLowHp(){if(!battle||battle.lowTriggered)return;var s=stats();if(state.hp>s.hp*.30)return;battle.lowTriggered=true;if(state.race==="human"){battle.shield=Math.round(s.hp*.20);log("人族天賦【不屈劍心】觸發，獲得 "+battle.shield+" 生命護盾。","drop")}if(state.race==="demon")log("魔族天賦【血怒】觸發，低血量攻擊大幅提升。","drop");if(state.race==="elf"){battle.bonusDodge=20;log("精靈天賦【風影】觸發，閃避提升 20%。","drop")}if(state.race==="god"){state.hp=Math.min(s.hp,state.hp+s.hp*.20);state.mana=Math.min(s.mana,state.mana+s.mana*.20);log("神族天賦【創世回響】觸發，生命與法力回復 20%。","drop")}}
+function useAutoSkill(s){var now=Date.now(),chosen=null;for(var i=(state.skills||[]).length-1;i>=0;i--){var k=state.skills[i],sk=SK[k];if(!sk)continue;var last=battle.skillCd[k]||0;if(now-last>=sk.cd&&(state.mana||0)>=sk.mana){chosen=k;break}}if(!chosen)return null;var sk=SK[chosen];battle.skillCd[chosen]=now;state.mana-=sk.mana;var pow=sk.pow*(1+s.skillBonus),note="";if(chosen==="swordguard"){battle.shield+=Math.round(s.hp*.10);note="，劍罡形成護盾"}if(chosen==="bloodbite"){state.hp=Math.min(s.hp,state.hp+Math.round(s.hp*.05));note="，吸取生命"}if(chosen==="bloodarmor"){battle.bonusReflect=8;note="，反傷提升"}if(chosen==="bloodburst")pow*=1+(1-state.hp/s.hp)*.55;if(chosen==="shadowstep"){battle.bonusDodge=15;note="，影步提升閃避"}if(chosen==="soulmark"&&chance(Math.min(55,s.crit)))pow*=1.45;if(chosen==="flux"){state.mana=Math.min(s.mana,state.mana+Math.round(s.mana*.18));note="，法力回湧"}return{name:sk.name,pow:pow,note:note}}
+function tick(){if(!battle)return;var s=stats();triggerLowHp();s=stats();var act=useAutoSkill(s),mult=act?act.pow:(chance(Math.min(60,s.crit))?1.55:1);mult*=racialMultiplier(state.race,battle.race);var dmg=Math.max(1,Math.round(s.atk*mult-battle.def*.55+rnd(-2,4)));battle.hp-=dmg;$("#battleLog").innerHTML+="<div>"+(act?"【"+act.name+"】":"你發動普通攻擊")+"，造成 "+dmg+" 傷害"+(act?act.note:"")+"。</div>";if(battle.hp<=0){win();return}var dodge=Math.min(75,s.dodge+(battle.bonusDodge||0));if(chance(dodge)){$("#battleLog").innerHTML+="<div>你身影一晃，閃過了攻擊。</div>";battle.bonusDodge=Math.max(0,(battle.bonusDodge||0)-5);updateVitals();save();return}var ed=Math.max(1,Math.round(battle.atk-s.def*.45+rnd(-2,3)));if(battle.shield>0){var absorb=Math.min(battle.shield,ed);battle.shield-=absorb;ed-=absorb;$("#battleLog").innerHTML+="<div>護盾吸收 "+absorb+" 傷害。</div>"}if(ed>0)state.hp-=ed;$("#battleLog").innerHTML+="<div>"+battle.name+" 攻來，你受到 "+Math.max(0,ed)+" 傷害。</div>";var ref=Math.min(45,s.reflect+(battle.bonusReflect||0));if(ed>0&&ref>0){var rd=Math.max(1,Math.round(ed*ref/100));battle.hp-=rd;$("#battleLog").innerHTML+="<div>反傷回敬 "+rd+" 傷害。</div>"}if(state.hp>0){triggerLowHp();maybeAutoPotion()}if(state.hp<=0){clearInterval(timer);timer=null;battle=null;stopEncounterLoop();state.loc="village";state.hp=stats().hp;state.mana=stats().mana;log("你眼前一黑，被採藥人拖回桃源村。靈泉替你恢復了氣血。","danger");$("#enemyBox").classList.add("hidden");save();render();return}$("#enemyBar").style.width=Math.max(0,battle.hp/battle.max*100)+"%";$("#battleLog").scrollTop=$("#battleLog").scrollHeight;updateVitals();save()}
 function win(){
   clearInterval(timer);timer=null;var old=battle;$("#battleLog").innerHTML+="<div>【"+old.name+"】倒下了。</div>";battle=null;
   gainExp(monsterExp(old));state.stone+=rnd(15,45)*(old.rank==="區域小BOSS"?4:old.rank==="菁英"?2:1);
@@ -896,7 +847,7 @@ function fairyCreate(t){
 function openModal(name){if(name==="shop"&&state.loc!=="village"){log("桃源雜貨店只在桃源村營業。","danger");return}$(".modal-layer").forEach(function(x){x.classList.add("hidden")});if(name==="synth")renderSynthesis();if(name==="shop")renderShop();$("#"+name+"Modal").classList.remove("hidden")}
 function close(){ $$(".modal-layer").forEach(function(x){x.classList.add("hidden")}) }
 function admin(a){if(account!=="admin")return;if(a==="rich")state.stone+=10000;if(a==="mats"){state.wash+=50;state.iron+=50}if(a==="plat"){if(!addItem(mkItem("platinum")))return}if(a==="gem")state.gems.push("五階天雷石");if(a==="rune")state.runes.push("青玄御劍符");if(a==="heal")state.hp=stats().hp;if(a==="elite"){close();startBattle("elite")}if(a==="boss"){close();startBattle("boss")}save();render()}
-$("#loginBtn").onclick=login;$("#locBadge").onclick=healAtVillage;$("#user").onkeydown=function(e){if(e.key==="Enter")$("#pass").focus()};$("#pass").onkeydown=function(e){if(e.key==="Enter")login()};$("#forestBtn").onclick=enterForest;$("#villageBtn").onclick=returnVillage;$$("[data-open]").forEach(function(b){b.onclick=function(){openModal(b.dataset.open)}});$$("[data-close]").forEach(function(b){b.onclick=close});$$(".modal-layer").forEach(function(m){m.onmousedown=function(e){if(e.target===m)close()}});document.onkeydown=function(e){if(e.key==="Escape")close()};$("#forgeBtn").onclick=forge;$("#synthBtn").onclick=synthesize;$("#synthQuality").onchange=renderSynthesis;$("#synthType").onchange=renderSynthesis;$("#autoPotionEnabled").onchange=function(){state.autoPotionEnabled=this.checked;save();render()};$("#autoPotionPct").oninput=function(){state.autoPotionPct=parseInt(this.value,10);$("#autoPotionPctText").textContent=state.autoPotionPct+"%";$("#autoPotionBadge").textContent=state.autoPotionEnabled?"自動藥 "+state.autoPotionPct+"%":"自動藥 關";save()};document.querySelectorAll(".chat-tab").forEach(function(b){b.onclick=function(){switchChannel(b.dataset.channel)}});$("#chatSend").onclick=sendChat;$("#chatInput").onkeydown=function(e){if(e.key==="Enter")sendChat()};$$("[data-admin]").forEach(function(b){b.onclick=function(){admin(b.dataset.admin)}})
+$("#loginBtn").onclick=login;$("[data-class-choice]").forEach(function(b){b.onclick=function(){chooseClass(b.dataset.classChoice)}});$("[data-align]").forEach(function(b){b.onclick=function(){pendingAlign=b.dataset.align;$("[data-align]").forEach(function(x){x.classList.toggle("selected",x.dataset.align===pendingAlign)});$("#createConfirm").disabled=!pendingClass||pendingClass==="creator"&&!pendingAlign}});$("#createConfirm").onclick=createCharacter;$("[data-gamble]").forEach(function(b){b.onclick=function(){gamble(parseInt(b.dataset.gamble,10))}});$("#locBadge").onclick=healAtVillage;$("#user").onkeydown=function(e){if(e.key==="Enter")$("#pass").focus()};$("#pass").onkeydown=function(e){if(e.key==="Enter")login()};$("#forestBtn").onclick=enterForest;$("#villageBtn").onclick=returnVillage;$$("[data-open]").forEach(function(b){b.onclick=function(){openModal(b.dataset.open)}});$$("[data-close]").forEach(function(b){b.onclick=close});$$(".modal-layer").forEach(function(m){m.onmousedown=function(e){if(e.target===m)close()}});document.onkeydown=function(e){if(e.key==="Escape")close()};$("#forgeBtn").onclick=forge;$("#synthBtn").onclick=synthesize;$("#synthQuality").onchange=renderSynthesis;$("#synthType").onchange=renderSynthesis;$("#autoPotionEnabled").onchange=function(){state.autoPotionEnabled=this.checked;save();render()};$("#autoPotionPct").oninput=function(){state.autoPotionPct=parseInt(this.value,10);$("#autoPotionPctText").textContent=state.autoPotionPct+"%";$("#autoPotionBadge").textContent=state.autoPotionEnabled?"自動藥 "+state.autoPotionPct+"%":"自動藥 關";save()};document.querySelectorAll(".chat-tab").forEach(function(b){b.onclick=function(){switchChannel(b.dataset.channel)}});$("#chatSend").onclick=sendChat;$("#chatInput").onkeydown=function(e){if(e.key==="Enter")sendChat()};$$("[data-admin]").forEach(function(b){b.onclick=function(){admin(b.dataset.admin)}})
 })();
 </script>
 </body></html>
