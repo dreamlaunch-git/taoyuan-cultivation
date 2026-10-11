@@ -99,6 +99,9 @@ body{overflow:hidden}
 </style><style id="affection-v7">
 .affection-line{display:flex;align-items:center;gap:8px;margin:.25rem 0}.affection-line>span:first-child{font-size:.78rem;color:#f0d58d;white-space:nowrap}.affection-bar{display:inline-block;width:130px;height:8px;border-radius:99px;overflow:hidden;border:1px solid rgba(255,255,255,.16);background:rgba(0,0,0,.28)}.affection-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8c6b77,#dd9fb7)}.npc-copy{min-width:0;flex:1}.relations-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.relation-card{padding:12px;border:1px solid rgba(255,255,255,.14);border-radius:12px;background:rgba(4,9,5,.48)}.relation-head{display:flex;align-items:center;gap:9px}.relation-icon{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(#677052,#30372a);color:#f1dfa4;font-weight:800}.relation-main{flex:1;min-width:0}.relation-main b{display:block}.relation-tier{font-size:.74rem;color:#f0d58d}.relation-card .affection-bar{width:100%;margin:.55rem 0}.relation-perk{font-size:.75rem;line-height:1.45;color:var(--muted)}.fairy-affection-note{font-size:.68rem;color:#dffcff;margin-left:4px}
 @media(max-width:800px){.relations-grid{grid-template-columns:1fr}.affection-bar{width:96px}.relations-modal{max-height:88dvh;overflow:auto}}
+</style><style id="bag-v8">
+.bag-tools,.batch-tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:7px 0}.bag-tools button,.batch-tools button,.batch-tools select{padding:.36rem .55rem;font-size:.78rem}.batch-tools{padding:7px;border:1px solid rgba(255,255,255,.12);border-radius:9px;background:rgba(3,8,4,.42)}.batch-tools select{background:#071007;color:var(--ink);border:1px solid var(--line);border-radius:8px}.inv-slot.batch-selectable:after{content:"";position:absolute;inset:3px;border:1px dashed rgba(255,255,255,.24);border-radius:6px;pointer-events:none}.inv-slot.batch-selected{outline:2px solid #e1c56f;box-shadow:0 0 16px rgba(225,197,111,.42);transform:translateY(-1px)}.inv-slot.batch-selected:before{content:"✓";position:absolute;left:3px;top:2px;z-index:2;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:#e1c56f;color:#172015;font-size:.72rem;font-weight:900}.inv-slot.batch-locked{opacity:.42}.batch-danger{border-color:#a85d57!important;background:linear-gradient(#75403b,#422624)!important}
+@media(max-width:800px){.bag-tools,.batch-tools{gap:4px}.bag-tools button,.batch-tools button,.batch-tools select{font-size:.72rem;padding:.32rem .45rem}.batch-tools select{max-width:115px}}
 </style></head>
 <body>
 <section id="login">
@@ -140,7 +143,23 @@ body{overflow:hidden}
 <section id="npcModal" class="modal-layer hidden"><div class="modal narrow glass npc-modal"><button class="close" data-close>×</button><div class="npc-dialogue"><div id="npcPortrait" class="npc-portrait">村</div><div class="npc-copy"><h2 id="npcName">桃源村居民</h2><div class="affection-line"><span id="npcAffectionText">初識 0/100</span><span class="affection-bar"><i id="npcAffectionBar"></i></span></div><p id="npcPerk" class="muted small"></p><p id="npcDialogue" class="npc-words"></p></div></div><div id="npcActions" class="npc-actions"></div></div></section>
 <section id="statusModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>角色狀態</h2><div class="grid2"><div class="card"><div class="stat">職業 <b id="classText"></b></div><div class="stat">種族 <b id="raceText"></b></div><div class="stat">力量 <b id="strText"></b></div><div class="stat">體質 <b id="vitText"></b></div><div class="stat">敏捷 <b id="agiText"></b></div><div class="stat">智力 <b id="intText"></b></div><div class="stat">生命 <span id="hpText"></span></div><div class="bar"><i id="hpBar"></i></div><div class="stat">攻擊 <b id="atkText"></b></div><div class="stat">防禦 <b id="defText"></b></div><div class="stat">攻速 <b id="spdText"></b></div><div class="stat">暴擊 <b id="critText"></b></div><div class="stat">基礎回血 <b id="regenText"></b></div><div class="stat">法力 <b id="manaText"></b></div><div class="bar mana"><i id="manaBar"></i></div><div class="stat">反傷 <b id="reflectText"></b></div><div class="stat">閃避 <b id="dodgeText"></b></div></div><div class="card"><h3>技能配置</h3><div id="passiveText" class="card passive-card"></div><div id="skills"></div><p class="muted small">戰鬥中不可更換。</p></div></div></div></section>
 
-<section id="itemsModal" class="modal-layer hidden"><div class="modal glass items-v3"><button class="close" data-close>×</button><h2>裝備與物品欄 <span id="invCount" class="badge">0 / 60</span></h2><div class="items-layout"><div><div id="slots" class="slots"></div><div class="bag-head"><b>物品欄</b><span class="muted small">點選物品後展開屬性</span></div><div id="inventory" class="inv60"></div></div><div id="detailCard" class="card detail-card hidden"><div class="detail-head"><h3>物品屬性</h3><button id="detailClose" class="detail-close" type="button">收起</button></div><div id="detail" class="muted"></div></div></div></div></section>
+<section id="itemsModal" class="modal-layer hidden"><div class="modal glass items-v3"><button class="close" data-close>×</button><h2>裝備與物品欄 <span id="invCount" class="badge">0 / 60</span></h2><div class="items-layout"><div><div id="slots" class="slots"></div><div class="bag-head"><b>物品欄</b><span class="muted small">點選物品後展開屬性</span></div>
+<div class="bag-tools">
+  <button id="sortBagBtn" type="button">整理包包</button>
+  <button id="batchModeBtn" type="button">批量操作</button>
+  <span id="batchCount" class="badge hidden">已選 0 件</span>
+</div>
+<div id="batchTools" class="batch-tools hidden">
+  <select id="batchQuality">
+    <option value="all">全部品質</option><option value="white">白</option><option value="green">綠</option><option value="blue">藍</option><option value="purple">紫</option><option value="orange">橘</option><option value="platinum">白金</option>
+  </select>
+  <button id="selectQualityBtn" type="button">選取此品質</button>
+  <button id="selectAllBtn" type="button">全選未裝備</button>
+  <button id="clearBatchBtn" type="button">清除選取</button>
+  <button id="batchSalvageBtn" type="button">批量分解</button>
+  <button id="batchGiftBtn" type="button">批量贈送小精靈</button>
+</div>
+<div id="inventory" class="inv60"></div></div><div id="detailCard" class="card detail-card hidden"><div class="detail-head"><h3>物品屬性</h3><button id="detailClose" class="detail-close" type="button">收起</button></div><div id="detail" class="muted"></div></div></div></div></section>
 
 <section id="forgeModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>桃源鐵匠鋪</h2><p class="muted">300 靈石 + 3 玄鐵。品質、倍率、詞條皆隨機。</p><select id="forgeType"><option value="mainhand">主手</option><option value="offhand">副手</option><option value="chest">衣服</option><option value="head">頭部</option><option value="pants">褲子</option><option value="shoes">鞋子</option><option value="ring">戒指</option><option value="necklace">項鍊</option><option value="belt">腰帶</option></select> <button id="forgeBtn" class="primary">打造</button><div id="mastery" style="margin-top:10px"></div></div></section>
 
@@ -217,7 +236,7 @@ ranger:{name:"千里追",race:"elf",raceName:"精靈",attrs:{str:8,vit:9,agi:17,
 creator:{name:"創造者",race:"god",raceName:"神族",attrs:{str:8,vit:8,agi:8,int:18},skills:["creation","flux","edict"],passive:"創世權能：魔法效果 +15%；智力較高；低於 30% 生命時回復最大生命與最大法力各 20%；副手素質轉化法力。"}
 };
 var SLOT_LABEL={mainhand:"主手",offhand:"副手",chest:"衣服",head:"頭部",pants:"褲子",shoes:"鞋子",ring1:"戒指1",ring2:"戒指2",necklace:"項鍊",belt:"腰帶"};
-var EN=[100,100,95,90,80,70,60,45,30,18,8], POTION={small:{name:"小還丹",heal:80,price:35},medium:{name:"聚氣丹",heal:180,price:80},large:{name:"回春丹",heal:360,price:150}}, account=null,state=null,battle=null,timer=null,selected=null,fairy=false,activeChannel="world",moveLocked=false,encounterTimer=null,regenTimer=null,lastPotionAt=0;
+var EN=[100,100,95,90,80,70,60,45,30,18,8], POTION={small:{name:"小還丹",heal:80,price:35},medium:{name:"聚氣丹",heal:180,price:80},large:{name:"回春丹",heal:360,price:150}}, account=null,state=null,battle=null,timer=null,selected=null,fairy=false,activeChannel="world",moveLocked=false,encounterTimer=null,regenTimer=null,lastPotionAt=0,batchMode=false,batchSelected={};
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a} function chance(p){return Math.random()*100<p} function hpass(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h)^s.charCodeAt(i);return(h>>>0).toString(36)}
 function key(){return "taoyuan_"+account}
 function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,regen:2,stone:800,wash:5,iron:8,inv:[],eq:{mainhand:null,offhand:null,chest:null,head:null,pants:null,shoes:null,ring1:null,ring2:null,necklace:null,belt:null},gems:[],runes:[],skills:[],characterCreated:false,classKey:"",race:"",alignment:"",str:0,vit:0,agi:0,int:0,mana:0,mastery:0,steps:0,boss:0,npcTalk:{},affection:{fairy:0,elder:0,smith:0,healer:0,dealer:0,guide:0},affectionDaily:{},level:1,exp:0,potions:{small:0,medium:0,large:0},autoPotionEnabled:false,autoPotionPct:35,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false,fairyDraft:"",fairyBond:0,fairyMood:0,fairyLastIntent:""}}
@@ -326,7 +345,67 @@ function render(){
   $("#mastery").textContent="鍛造熟練度 Lv."+(Math.floor(state.mastery/5)+1)+"（累計 "+state.mastery+" 次）";
 }
 function renderSkills(){var box=$("#skills");box.innerHTML="";(state.skills||[]).forEach(function(x,i){var s=SK[x];if(!s)return;var r=document.createElement("div");r.className="stat";r.innerHTML="<span>"+(i+1)+". "+s.name+"</span><span class='muted small'>CD "+(s.cd/1000)+"s · 法力 "+s.mana+"</span>";box.appendChild(r);var p=document.createElement("div");p.className="muted small";p.textContent=s.desc;box.appendChild(p)})}
-function renderItems(){$("#invCount").textContent=state.inv.length+" / 60";var slots=$("#slots");slots.innerHTML="";Object.keys(SLOT_LABEL).forEach(function(k){var it=state.inv.find(function(x){return x.id===state.eq[k]}),d=document.createElement("div");d.className="slot "+(it?it.q:"");d.innerHTML=it?"<b>"+SLOT_LABEL[k]+"</b><br><span class='small'>"+it.name+" +"+it.enh+"</span><br><button data-view='"+it.id+"'>查看</button> <button data-unequip='"+k+"'>卸下</button>":"<b>"+SLOT_LABEL[k]+"</b><br><span class='muted small'>未裝備</span>";slots.appendChild(d)});var inv=$("#inventory");inv.innerHTML="";for(var i=0;i<60;i++){var it=state.inv[i],cell=document.createElement(it?"button":"div");if(!it){cell.className="inv-slot empty";cell.textContent=i+1;inv.appendChild(cell);continue}var equipped=itemEquipped(it),icon=it.type==="mainhand"?"劍":it.type==="offhand"?"副":itemCategory(it.type)==="armor"?"甲":itemCategory(it.type)==="accessory"?"飾":"物";cell.type="button";cell.className="inv-slot item-cell "+it.q+(equipped?" equipped":"");cell.dataset.view=it.id;cell.title="【"+it.qn+"】"+it.name;cell.innerHTML="<span class='slot-icon'>"+icon+"</span><span class='slot-name'>"+it.name+"</span>";inv.appendChild(cell)}$$("[data-view]").forEach(function(b){b.onclick=function(){detail(b.dataset.view)}});$$("[data-unequip]").forEach(function(b){b.onclick=function(){var k=b.dataset.unequip,it=state.inv.find(function(x){return x.id===state.eq[k]});if(it)log("你卸下了【"+it.name+"】。");state.eq[k]=null;save();render();if(selected&&it&&selected===it.id)detail(it.id)}})}
+function qualityIndex(q){return Math.max(0,QS.findIndex(function(x){return x[0]===q}))}
+function typeOrder(t){var a=["mainhand","offhand","chest","head","pants","shoes","ring","necklace","belt"];var i=a.indexOf(t);return i<0?99:i}
+function sortBag(){
+  state.inv.sort(function(a,b){var eq=(itemEquipped(b)?1:0)-(itemEquipped(a)?1:0);if(eq)return eq;var q=qualityIndex(b.q)-qualityIndex(a.q);if(q)return q;var t=typeOrder(a.type)-typeOrder(b.type);if(t)return t;var e=(b.enh||0)-(a.enh||0);if(e)return e;return String(a.name).localeCompare(String(b.name),"zh-Hant")});
+  save();renderItems();log("物品欄已整理：已裝備優先，接著依品質與部位排列。")
+}
+function selectedBatchItems(){return state.inv.filter(function(it){return batchSelected[it.id]&&!itemEquipped(it)})}
+function clearBatchSelection(){batchSelected={};updateBatchControls();renderItems()}
+function updateBatchControls(){
+  var n=selectedBatchItems().length;
+  $("#batchTools").classList.toggle("hidden",!batchMode);$("#batchCount").classList.toggle("hidden",!batchMode);$("#batchCount").textContent="已選 "+n+" 件";
+  $("#batchModeBtn").textContent=batchMode?"結束批量":"批量操作";
+  $("#batchGiftBtn").disabled=!state.fairyUnlocked||n===0;$("#batchSalvageBtn").disabled=n===0;
+  if(!state.fairyUnlocked)$("#batchGiftBtn").textContent="小精靈尚未解鎖";else $("#batchGiftBtn").textContent="批量贈送小精靈"
+}
+function toggleBatchMode(){batchMode=!batchMode;if(!batchMode)batchSelected={};$("#detailCard").classList.add("hidden");selected=null;renderItems()}
+function selectBatchByQuality(){
+  var q=$("#batchQuality").value;state.inv.forEach(function(it){if(!itemEquipped(it)&&(q==="all"||it.q===q))batchSelected[it.id]=true});updateBatchControls();renderItems()
+}
+function selectAllUnequipped(){state.inv.forEach(function(it){if(!itemEquipped(it))batchSelected[it.id]=true});updateBatchControls();renderItems()}
+function salvageValue(it){var qi=qualityIndex(it.q);return{stone:35+qi*35+(it.enh||0)*18,iron:1+qi+Math.floor((it.enh||0)/2)}}
+function batchSalvage(){
+  var arr=selectedBatchItems();if(!arr.length)return;
+  if(!confirm("確定要分解已選的 "+arr.length+" 件裝備嗎？已裝備物品不會被分解。"))return;
+  var ids={},stones=0,iron=0;arr.forEach(function(it){ids[it.id]=1;var v=salvageValue(it);stones+=v.stone;iron+=v.iron});
+  state.inv=state.inv.filter(function(it){return !ids[it.id]});state.stone+=stones;state.iron+=iron;batchSelected={};selected=null;$("#detailCard").classList.add("hidden");
+  log("批量分解 "+arr.length+" 件裝備，回收 "+stones+" 靈石、"+iron+" 玄鐵。","drop");save();render()
+}
+function rollFairyGiftReward(it,tally){
+  var qi=qualityIndex(it.q),fg=Math.min(4,1+Math.floor(qi/2));dailyAffection("fairy","fairyGift",fg,10,"收到你送的裝備");
+  var rewardChance=18+qi*8+affectionRewardBonus("fairy");if(!chance(rewardChance))return;
+  var r=Math.random()*100;
+  if(r<12){state.runes.push("星願刻印");tally.runes++}
+  else if(r<32){state.gems.push("精靈虹晶");tally.gems++}
+  else if(r<58){var w=1+Math.floor(qi/2);state.wash+=w;tally.wash+=w}
+  else{var s=rnd(70,150)+qi*45;state.stone+=s;tally.stone+=s}
+}
+function batchGift(){
+  if(!state.fairyUnlocked)return;var arr=selectedBatchItems();if(!arr.length)return;
+  if(!confirm("確定要把已選的 "+arr.length+" 件裝備全部送給小精靈嗎？"))return;
+  var ids={},t={runes:0,gems:0,wash:0,stone:0};arr.forEach(function(it){ids[it.id]=1;rollFairyGiftReward(it,t)});
+  state.inv=state.inv.filter(function(it){return !ids[it.id]});batchSelected={};selected=null;$("#detailCard").classList.add("hidden");
+  var rewards=[];if(t.runes)rewards.push("星願刻印×"+t.runes);if(t.gems)rewards.push("精靈虹晶×"+t.gems);if(t.wash)rewards.push("洗髓石×"+t.wash);if(t.stone)rewards.push("靈石×"+t.stone);
+  var msg=fairyPick(["小精靈被一堆裝備埋到只剩頭頂：「等、等一下，你是搬家嗎？」","小精靈盯著堆成小山的裝備：「你這不是送禮，是進貨吧？」","小精靈抱著整堆裝備晃了兩下：「好重……但我收！」"])+" 你一次送了 "+arr.length+" 件。"+(rewards.length?" 她的回禮："+rewards.join("、")+"。":" 她今天只把這份人情牢牢記住了。");
+  state.fairyChat.push(["系統小精靈",msg]);if(state.fairyChat.length>80)state.fairyChat=state.fairyChat.slice(-80);
+  log("你一次把 "+arr.length+" 件裝備送給小精靈。","drop");save();render()
+}
+function renderItems(){
+  $("#invCount").textContent=state.inv.length+" / 60";var slots=$("#slots");slots.innerHTML="";
+  Object.keys(SLOT_LABEL).forEach(function(k){var it=state.inv.find(function(x){return x.id===state.eq[k]}),d=document.createElement("div");d.className="slot "+(it?it.q:"");d.innerHTML=it?"<b>"+SLOT_LABEL[k]+"</b><br><span class='small'>"+it.name+" +"+it.enh+"</span><br><button data-view='"+it.id+"'>查看</button> <button data-unequip='"+k+"'>卸下</button>":"<b>"+SLOT_LABEL[k]+"</b><br><span class='muted small'>未裝備</span>";slots.appendChild(d)});
+  var inv=$("#inventory");inv.innerHTML="";
+  for(var i=0;i<60;i++){
+    var it=state.inv[i],cell=document.createElement(it?"button":"div");
+    if(!it){cell.className="inv-slot empty";cell.textContent=i+1;inv.appendChild(cell);continue}
+    var equipped=itemEquipped(it),icon=it.type==="mainhand"?"劍":it.type==="offhand"?"副":itemCategory(it.type)==="armor"?"甲":itemCategory(it.type)==="accessory"?"飾":"物";
+    cell.type="button";cell.className="inv-slot item-cell "+it.q+(equipped?" equipped":"")+(batchMode?(equipped?" batch-locked":" batch-selectable"):"")+(batchSelected[it.id]?" batch-selected":"");cell.dataset.view=it.id;cell.title="【"+it.qn+"】"+it.name;cell.innerHTML="<span class='slot-icon'>"+icon+"</span><span class='slot-name'>"+it.name+"</span>";inv.appendChild(cell)
+  }
+  $$("[data-view]").forEach(function(b){b.onclick=function(){var it=state.inv.find(function(x){return x.id===b.dataset.view});if(batchMode){if(!it||itemEquipped(it))return;if(batchSelected[it.id])delete batchSelected[it.id];else batchSelected[it.id]=true;updateBatchControls();renderItems();return}detail(b.dataset.view)}});
+  $$("[data-unequip]").forEach(function(b){b.onclick=function(){var k=b.dataset.unequip,it=state.inv.find(function(x){return x.id===state.eq[k]});if(it)log("你卸下了【"+it.name+"】。");state.eq[k]=null;save();render();if(selected&&it&&selected===it.id)detail(it.id)}});
+  updateBatchControls()
+}
 function detail(id){selected=id;var it=state.inv.find(function(x){return x.id===id});if(!it)return;if(typeof it.washCount!=="number")it.washCount=0;var equipped=itemEquipped(it),washText=account==="admin"?"∞":"壽命 "+it.washCount+"/50",adminBtn=account==="admin"?" <button id='affixBtn'>指定詞條</button>":"",giftBtn=state.fairyUnlocked?" <button id='giftBtn'>贈送小精靈</button>":"",equipHtml=it.type==="ring"?"<button data-equip-slot='ring1'>裝備戒指1</button> <button data-equip-slot='ring2'>裝備戒指2</button>":"<button data-equip-slot='"+it.type+"'>"+(state.eq[it.type]===it.id?"卸下":"裝備")+"</button>";$("#detailCard").classList.remove("hidden");$("#detail").innerHTML="<b>【"+it.qn+"】"+it.name+"</b><p>部位："+(it.type==="ring"?"戒指":SLOT_LABEL[it.type])+"</p><p>基礎倍率："+it.mult+"%</p><p>強化：+"+it.enh+"</p><p>狀態："+(equipped?"已裝備":"未裝備")+"</p><p>洗鍊："+washText+"</p><p>"+it.aff.join("<br>")+"</p>"+(it.set?"<p class='drop'>套裝："+it.set+"</p>":"")+equipHtml+" <button id='enhBtn'>強化</button> <button id='washBtn'>洗詞條</button>"+adminBtn+" <button id='salvageBtn'>分解</button>"+giftBtn;$$("[data-equip-slot]").forEach(function(b){b.onclick=function(){var k=b.dataset.equipSlot;if(state.eq[k]===it.id){state.eq[k]=null;log("你卸下了【"+it.name+"】。")}else{Object.keys(state.eq).forEach(function(x){if(state.eq[x]===it.id)state.eq[x]=null});state.eq[k]=it.id;log("你將【"+it.name+"】裝備至"+SLOT_LABEL[k]+"。")}save();render();detail(id)}});$("#enhBtn").onclick=function(){enhance(it)};$("#washBtn").onclick=function(){reroll(it)};$("#salvageBtn").onclick=function(){salvageItem(it)};if($("#giftBtn"))$("#giftBtn").onclick=function(){giftItem(it)};if($("#affixBtn"))$("#affixBtn").onclick=function(){editAffixes(it)};$("#detailClose").onclick=function(){$("#detailCard").classList.add("hidden");selected=null};if(window.innerWidth<=800)setTimeout(function(){$("#detailCard").scrollIntoView({behavior:"smooth",block:"nearest"})},30)}
 function enhance(it){
   if(it.enh>=10)return log("此裝備已達 +10。");
@@ -382,13 +461,8 @@ function unequipItem(it){
   Object.keys(state.eq).forEach(function(k){if(state.eq[k]===it.id)state.eq[k]=null});
 }
 function salvageItem(it){
-  var qi=Math.max(0,QS.findIndex(function(q){return q[0]===it.q}));
-  var stones=35+qi*35+it.enh*18,iron=1+qi+Math.floor(it.enh/2);
-  unequipItem(it);
-  state.inv=state.inv.filter(function(x){return x.id!==it.id});
-  state.stone+=stones;state.iron+=iron;selected=null;
-  log("你分解了【"+it.name+"】，回收 "+stones+" 靈石、"+iron+" 玄鐵。","drop");
-  save();render();$("#detail").innerHTML="<span class='muted'>裝備已分解。</span>";
+  var v=salvageValue(it);unequipItem(it);state.inv=state.inv.filter(function(x){return x.id!==it.id});state.stone+=v.stone;state.iron+=v.iron;selected=null;
+  log("你分解了【"+it.name+"】，回收 "+v.stone+" 靈石、"+v.iron+" 玄鐵。","drop");save();render();$("#detail").innerHTML="<span class='muted'>裝備已分解。</span>"
 }
 function giftItem(it){
   if(!state.fairyUnlocked)return;
@@ -939,7 +1013,7 @@ function fairyCreate(t){
 function openModal(name){if((name==="shop"||name==="casino")&&state.loc!=="village"){log("這個 NPC 只在桃源村。","danger");return}$$(".modal-layer").forEach(function(x){x.classList.add("hidden")});if(name==="synth")renderSynthesis();if(name==="shop")renderShop();if(name==="worldmap")renderWorldMap();if(name==="relations")renderRelations();$("#"+name+"Modal").classList.remove("hidden")}
 function close(){ $$(".modal-layer").forEach(function(x){x.classList.add("hidden")}) }
 function admin(a){if(account!=="admin")return;if(a==="rich")state.stone+=10000;if(a==="mats"){state.wash+=50;state.iron+=50}if(a==="plat"){if(!addItem(mkItem("platinum")))return}if(a==="gem")state.gems.push("五階天雷石");if(a==="rune")state.runes.push("青玄御劍符");if(a==="heal")state.hp=stats().hp;if(a==="elite"){var z=currentZone();close();startBattle(z.eliteKey)}if(a==="boss"){var z2=currentZone();close();startBattle(z2.bossKey)}save();render()}
-$("#loginBtn").onclick=login;$$("[data-npc]").forEach(function(b){b.onclick=function(){talkNpc(b.dataset.npc)}});$$("[data-class-choice]").forEach(function(b){b.onclick=function(){chooseClass(b.dataset.classChoice)}});$$("[data-align]").forEach(function(b){b.onclick=function(){pendingAlign=b.dataset.align;$$("[data-align]").forEach(function(x){x.classList.toggle("selected",x.dataset.align===pendingAlign)});$("#createConfirm").disabled=!pendingClass||pendingClass==="creator"&&!pendingAlign}});$("#createConfirm").onclick=createCharacter;$$("[data-gamble]").forEach(function(b){b.onclick=function(){gamble(parseInt(b.dataset.gamble,10))}});$("#locBadge").onclick=healAtVillage;$("#user").onkeydown=function(e){if(e.key==="Enter")$("#pass").focus()};$("#pass").onkeydown=function(e){if(e.key==="Enter")login()};$("#forestBtn").onclick=enterForest;$("#villageBtn").onclick=returnVillage;$$("[data-open]").forEach(function(b){b.onclick=function(){openModal(b.dataset.open)}});$$("[data-close]").forEach(function(b){b.onclick=close});$$(".modal-layer").forEach(function(m){m.onmousedown=function(e){if(e.target===m)close()}});document.onkeydown=function(e){if(e.key==="Escape")close()};$("#forgeBtn").onclick=forge;$("#synthBtn").onclick=synthesize;$("#synthQuality").onchange=renderSynthesis;$("#synthType").onchange=renderSynthesis;$("#autoPotionEnabled").onchange=function(){state.autoPotionEnabled=this.checked;save();render()};$("#autoPotionPct").oninput=function(){state.autoPotionPct=parseInt(this.value,10);$("#autoPotionPctText").textContent=state.autoPotionPct+"%";$("#autoPotionBadge").textContent=state.autoPotionEnabled?"自動藥 "+state.autoPotionPct+"%":"自動藥 關";save()};document.querySelectorAll(".chat-tab").forEach(function(b){b.onclick=function(){switchChannel(b.dataset.channel)}});$("#chatSend").onclick=sendChat;$("#chatInput").onkeydown=function(e){if(e.key==="Enter")sendChat()};$$("[data-admin]").forEach(function(b){b.onclick=function(){admin(b.dataset.admin)}})
+$("#loginBtn").onclick=login;$$("[data-npc]").forEach(function(b){b.onclick=function(){talkNpc(b.dataset.npc)}});$$("[data-class-choice]").forEach(function(b){b.onclick=function(){chooseClass(b.dataset.classChoice)}});$$("[data-align]").forEach(function(b){b.onclick=function(){pendingAlign=b.dataset.align;$$("[data-align]").forEach(function(x){x.classList.toggle("selected",x.dataset.align===pendingAlign)});$("#createConfirm").disabled=!pendingClass||pendingClass==="creator"&&!pendingAlign}});$("#createConfirm").onclick=createCharacter;$$("[data-gamble]").forEach(function(b){b.onclick=function(){gamble(parseInt(b.dataset.gamble,10))}});$("#locBadge").onclick=healAtVillage;$("#user").onkeydown=function(e){if(e.key==="Enter")$("#pass").focus()};$("#pass").onkeydown=function(e){if(e.key==="Enter")login()};$("#forestBtn").onclick=enterForest;$("#villageBtn").onclick=returnVillage;$$("[data-open]").forEach(function(b){b.onclick=function(){openModal(b.dataset.open)}});$$("[data-close]").forEach(function(b){b.onclick=close});$$(".modal-layer").forEach(function(m){m.onmousedown=function(e){if(e.target===m)close()}});document.onkeydown=function(e){if(e.key==="Escape")close()};$("#sortBagBtn").onclick=sortBag;$("#batchModeBtn").onclick=toggleBatchMode;$("#selectQualityBtn").onclick=selectBatchByQuality;$("#selectAllBtn").onclick=selectAllUnequipped;$("#clearBatchBtn").onclick=clearBatchSelection;$("#batchSalvageBtn").onclick=batchSalvage;$("#batchGiftBtn").onclick=batchGift;$("#forgeBtn").onclick=forge;$("#synthBtn").onclick=synthesize;$("#synthQuality").onchange=renderSynthesis;$("#synthType").onchange=renderSynthesis;$("#autoPotionEnabled").onchange=function(){state.autoPotionEnabled=this.checked;save();render()};$("#autoPotionPct").oninput=function(){state.autoPotionPct=parseInt(this.value,10);$("#autoPotionPctText").textContent=state.autoPotionPct+"%";$("#autoPotionBadge").textContent=state.autoPotionEnabled?"自動藥 "+state.autoPotionPct+"%":"自動藥 關";save()};document.querySelectorAll(".chat-tab").forEach(function(b){b.onclick=function(){switchChannel(b.dataset.channel)}});$("#chatSend").onclick=sendChat;$("#chatInput").onkeydown=function(e){if(e.key==="Enter")sendChat()};$$("[data-admin]").forEach(function(b){b.onclick=function(){admin(b.dataset.admin)}})
 })();
 </script>
 </body></html>
