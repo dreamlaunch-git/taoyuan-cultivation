@@ -85,6 +85,10 @@ body{overflow:hidden}
   .items-layout{grid-template-columns:1fr}.items-v3{width:96vw;max-height:88dvh}.inv60{grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}.inv-slot{border-radius:7px}.inv-slot .slot-icon{font-size:.95rem}.inv-slot .slot-name{font-size:.5rem}.detail-card{position:relative}.bag-head{margin-top:8px}.items-v3 .slots{grid-template-columns:repeat(3,1fr)}
 }
 </style>
+
+<style id="systems-v4">
+.synth-card label,.auto-potion-card label{display:block;margin:.7rem 0}.synth-card select{width:100%;margin-top:.3rem;padding:.55rem;border-radius:9px;border:1px solid var(--line);background:#071007;color:var(--ink)}.synth-info{margin:.8rem 0;padding:.65rem;border-radius:9px;background:rgba(3,8,4,.48);border:1px solid rgba(255,255,255,.12);line-height:1.45}.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.shop-item{padding:11px;border:1px solid rgba(255,255,255,.14);border-radius:11px;background:rgba(3,8,4,.5)}.shop-item h3{margin:.05rem 0 .35rem}.shop-item p{margin:.2rem 0}.shop-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.shop-actions button{padding:.35rem .55rem}.switch-row{display:flex!important;align-items:center;justify-content:space-between;gap:12px}.switch-row input{width:20px;height:20px}.range-row input{width:100%;margin-top:.5rem}.auto-potion-card h3{margin-top:0}@media(max-width:800px){.shop-grid{grid-template-columns:1fr}.synth-card select{font-size:16px}.auto-potion-card input[type=range]{min-height:34px}}
+</style>
 </head>
 <body>
 <section id="login">
@@ -101,11 +105,11 @@ body{overflow:hidden}
 <main id="game" class="hidden">
 <div class="bg"></div><div class="shade"></div>
 <header class="top glass"><div class="identity"><b id="name">散修</b><span id="role" class="badge"></span><button id="locBadge" class="badge loc-btn" type="button">桃源村</button><span id="levelBadge" class="badge">Lv.1</span><span class="xp-mini"><span id="xpFill"></span></span></div><div class="res"><span>靈石 <b id="stone">0</b></span><span>洗髓石 <b id="wash">0</b></span><span>玄鐵 <b id="iron">0</b></span></div></header>
-<nav class="actions glass"><button data-open="status">狀態</button><button data-open="items">裝備/物品</button><button data-open="forge">打造</button><button data-open="gems">寶石/符文</button><button data-open="admin" id="adminQuick">管理</button></nav>
+<nav class="actions glass"><button data-open="status">狀態</button><button data-open="items">裝備/物品</button><button data-open="forge">打造</button><button data-open="synth">合成</button><button data-open="shop">雜貨店</button><button data-open="gems">寶石/符文</button><button data-open="admin" id="adminQuick">管理</button></nav>
 <section class="scene-hud glass">
   <div class="scene-head">
     <div class="scene-copy"><small class="muted">目前場景</small><h2 id="zoneTitle">桃源村</h2><p id="zoneDesc" class="muted">山泉穿村而過，遠處竹林霧氣緩緩流動。</p></div>
-    <div class="scene-meta"><span id="sceneState" class="scene-pill">安全區</span><span id="regenBadge" class="scene-pill">回血 +2/s</span></div>
+    <div class="scene-meta"><span id="sceneState" class="scene-pill">安全區</span><span id="regenBadge" class="scene-pill">回血 +2/s</span><span id="autoPotionBadge" class="scene-pill">自動藥 關</span></div>
   </div>
   <div id="enemyBox" class="hidden battle-panel"><div class="battle-title"><b id="enemyName"></b><span id="enemyRank" class="badge"></span></div><div class="bar enemy"><i id="enemyBar"></i></div><div id="battleLog" class="log battlelog"></div></div>
   <div id="eventLog" class="log scene-log"></div>
@@ -118,6 +122,39 @@ body{overflow:hidden}
 <section id="itemsModal" class="modal-layer hidden"><div class="modal glass items-v3"><button class="close" data-close>×</button><h2>裝備與物品欄 <span id="invCount" class="badge">0 / 60</span></h2><div class="items-layout"><div><div id="slots" class="slots"></div><div class="bag-head"><b>物品欄</b><span class="muted small">點選物品後展開屬性</span></div><div id="inventory" class="inv60"></div></div><div id="detailCard" class="card detail-card hidden"><div class="detail-head"><h3>物品屬性</h3><button id="detailClose" class="detail-close" type="button">收起</button></div><div id="detail" class="muted"></div></div></div></div></section>
 
 <section id="forgeModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>桃源鐵匠鋪</h2><p class="muted">300 靈石 + 3 玄鐵。品質、倍率、詞條皆隨機。</p><select id="forgeType"><option value="weapon">劍</option><option value="armor">道袍</option><option value="ring">戒指</option></select> <button id="forgeBtn" class="primary">打造</button><div id="mastery" style="margin-top:10px"></div></div></section>
+
+
+<section id="synthModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>裝備合成</h2>
+  <div class="card synth-card">
+    <p class="muted">消耗 3 件同品質、未裝備的裝備，合成 1 件下一階品質裝備。素材部位不限。</p>
+    <label>素材品質
+      <select id="synthQuality">
+        <option value="white">白 → 綠</option>
+        <option value="green">綠 → 藍</option>
+        <option value="blue">藍 → 紫</option>
+        <option value="purple">紫 → 橘</option>
+        <option value="orange">橘 → 白金</option>
+      </select>
+    </label>
+    <label>成品部位
+      <select id="synthType"><option value="weapon">武器</option><option value="armor">道袍</option><option value="ring">戒指</option></select>
+    </label>
+    <div id="synthInfo" class="synth-info"></div>
+    <button id="synthBtn" class="primary">合成裝備</button>
+  </div>
+</div></section>
+
+<section id="shopModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>桃源雜貨店</h2>
+  <div id="potionShop" class="shop-grid"></div>
+  <div class="card auto-potion-card">
+    <h3>自動喝藥</h3>
+    <label class="switch-row"><span>啟用自動喝藥</span><input id="autoPotionEnabled" type="checkbox"></label>
+    <label class="range-row">生命低於 <b id="autoPotionPctText">35%</b> 時使用
+      <input id="autoPotionPct" type="range" min="10" max="90" step="5" value="35">
+    </label>
+    <p class="muted small">戰鬥中觸發，3 秒冷卻。會優先使用最不浪費的藥品。</p>
+  </div>
+</div></section>
 
 <section id="gemsModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>寶石與符文</h2><div class="grid2"><div class="card"><h3>寶石</h3><div id="gemsList"></div></div><div class="card"><h3>符文</h3><div id="runesList"></div></div></div></div></section>
 
@@ -132,16 +169,16 @@ var ACC={"青禾":{id:"test01",role:"player",hash:"jzdw71"},"雲岫":{id:"test02
 var QS=[["white","白",54],["green","綠",25],["blue","藍",13],["purple","紫",5.5],["orange","橘",2],["platinum","白金",.5]];
 var MON={wolf:["野狼",95,12,3,"普通"],rat:["竹鼠妖",70,9,2,"普通"],snake:["毒蛇",82,11,2,"普通"],bandit:["山賊",120,14,5,"普通"],elite:["赤目狼王",360,28,10,"菁英"],boss:["百年竹妖",980,44,18,"區域小BOSS"]};
 var SK={sword:["御劍訣",3000,1.55],pierce:["破甲劍氣",7000,1.25],heal:["回春術",12000,0],thunder:["雷引術",11000,2.25]};
-var EN=[100,100,95,90,80,70,60,45,30,18,8], account=null,state=null,battle=null,timer=null,selected=null,fairy=false,activeChannel="world",moveLocked=false,encounterTimer=null,regenTimer=null;
+var EN=[100,100,95,90,80,70,60,45,30,18,8], POTION={small:{name:"小還丹",heal:80,price:35},medium:{name:"聚氣丹",heal:180,price:80},large:{name:"回春丹",heal:360,price:150}}, account=null,state=null,battle=null,timer=null,selected=null,fairy=false,activeChannel="world",moveLocked=false,encounterTimer=null,regenTimer=null,lastPotionAt=0;
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a} function chance(p){return Math.random()*100<p} function hpass(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h)^s.charCodeAt(i);return(h>>>0).toString(36)}
 function key(){return "taoyuan_"+account}
-function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,regen:2,stone:800,wash:5,iron:8,inv:[],eq:{weapon:null,armor:null,ring:null},gems:[],runes:[],skills:["sword","pierce","heal","thunder"],mastery:0,steps:0,boss:0,level:1,exp:0,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false,fairyDraft:"",fairyBond:0,fairyMood:0,fairyLastIntent:""}}
-function load(){try{state=JSON.parse(localStorage.getItem(key()))||fresh()}catch(e){state=fresh()}if(!state.chat)state.chat=[];if(!state.fairyChat)state.fairyChat=[];if(typeof state.fairyUnlocked!=="boolean")state.fairyUnlocked=false;if(typeof state.fairyDraft!=="string")state.fairyDraft="";if(typeof state.fairyBond!=="number")state.fairyBond=0;if(typeof state.fairyLastIntent!=="string")state.fairyLastIntent="";if(typeof state.fairyMood!=="number")state.fairyMood=0;if(typeof state.level!=="number")state.level=1;if(typeof state.exp!=="number")state.exp=0;if(typeof state.regen!=="number")state.regen=2;(state.inv||[]).forEach(function(it){if(typeof it.washCount!=="number")it.washCount=0});fairy=state.fairyUnlocked;activeChannel="world";save()}
+function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,regen:2,stone:800,wash:5,iron:8,inv:[],eq:{weapon:null,armor:null,ring:null},gems:[],runes:[],skills:["sword","pierce","heal","thunder"],mastery:0,steps:0,boss:0,level:1,exp:0,potions:{small:0,medium:0,large:0},autoPotionEnabled:false,autoPotionPct:35,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false,fairyDraft:"",fairyBond:0,fairyMood:0,fairyLastIntent:""}}
+function load(){try{state=JSON.parse(localStorage.getItem(key()))||fresh()}catch(e){state=fresh()}if(!state.chat)state.chat=[];if(!state.fairyChat)state.fairyChat=[];if(typeof state.fairyUnlocked!=="boolean")state.fairyUnlocked=false;if(typeof state.fairyDraft!=="string")state.fairyDraft="";if(typeof state.fairyBond!=="number")state.fairyBond=0;if(typeof state.fairyLastIntent!=="string")state.fairyLastIntent="";if(typeof state.fairyMood!=="number")state.fairyMood=0;if(typeof state.level!=="number")state.level=1;if(typeof state.exp!=="number")state.exp=0;if(typeof state.regen!=="number")state.regen=2;if(!state.potions)state.potions={small:0,medium:0,large:0};if(typeof state.autoPotionEnabled!=="boolean")state.autoPotionEnabled=false;if(typeof state.autoPotionPct!=="number")state.autoPotionPct=35;(state.inv||[]).forEach(function(it){if(typeof it.washCount!=="number")it.washCount=0});fairy=state.fairyUnlocked;activeChannel="world";save()}
 function save(){localStorage.setItem(key(),JSON.stringify(state))}
 function invFull(){return state.inv.length>=60}
 function addItem(it){if(invFull()){log("物品欄已滿（60/60）。","danger");return false}state.inv.push(it);return true}
 function quality(force){if(force)return QS.filter(function(q){return q[0]===force})[0];var n=Math.random()*100,s=0;for(var i=0;i<QS.length;i++){s+=QS[i][2];if(n<s)return QS[i]}return QS[0]}
-function mkItem(force,type){type=type||["weapon","armor","ring"][rnd(0,2)];var q=quality(force), mult=rnd(100,150), names={weapon:["青竹劍","流雲劍","寒溪劍"],armor:["青麻道袍","竹紋法衣","雲紗衣"],ring:["青玉戒","聚靈環","松紋戒"]}, affNames=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害","生命恢復"], aff=[],n=Math.max(1,QS.findIndex(function(x){return x[0]===q[0]})+1);for(var i=0;i<Math.min(n,5);i++)aff.push(affNames[rnd(0,5)]+" +"+rnd(2,12));return {id:Date.now()+"_"+Math.random(),type:type,name:names[type][rnd(0,2)],q:q[0],qn:q[1],mult:mult,enh:0,aff:aff,set:(["purple","orange","platinum"].indexOf(q[0])>=0&&chance(20))?"青竹靈套":null,washCount:0}}
+function mkItem(force,type){type=type||["weapon","armor","ring"][rnd(0,2)];var q=quality(force), mult=rnd(100,150), names={weapon:["青竹劍","流雲劍","寒溪劍"],armor:["青麻道袍","竹紋法衣","雲紗衣"],ring:["青玉戒","聚靈環","松紋戒"]}, affNames=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害","生命恢復"], aff=[],n=Math.max(1,QS.findIndex(function(x){return x[0]===q[0]})+1);for(var i=0;i<Math.min(n,5);i++)aff.push(affNames[rnd(0,6)]+" +"+rnd(2,12));return {id:Date.now()+"_"+Math.random(),type:type,name:names[type][rnd(0,2)],q:q[0],qn:q[1],mult:mult,enh:0,aff:aff,set:(["purple","orange","platinum"].indexOf(q[0])>=0&&chance(20))?"青竹靈套":null,washCount:0}}
 function stats(){
   var a=state.atk,d=state.def,h=state.maxHp,r=state.regen||2;
   Object.keys(state.eq).forEach(function(k){
@@ -211,11 +248,11 @@ function render(){
   $("#xpFill").parentElement.title=state.level>=50?"已達最高等級 50":"經驗 "+state.exp+" / "+need;
   $("#zoneTitle").textContent=state.loc==="village"?"桃源村":"青竹林";
   $("#zoneDesc").textContent=state.loc==="village"?"安全區。桃源靈泉會恢復氣血，青竹林入口就在村北。":"危險區。進入後會自動搜尋妖物並持續戰鬥。";
-  $("#sceneState").textContent=state.loc==="village"?"安全區":battle?"戰鬥中":"自動尋敵";
+  $("#sceneState").textContent=state.loc==="village"?"安全區":battle?"戰鬥中":"自動尋敵";$("#autoPotionBadge").textContent=state.autoPotionEnabled?"自動藥 "+state.autoPotionPct+"%":"自動藥 關";
   $("#forestBtn").classList.toggle("hidden",state.loc!=="village");
   $("#villageBtn").classList.toggle("hidden",state.loc==="village");
   $("#villageBtn").disabled=!!battle;
-  renderSkills();renderItems();renderChat();renderGems();
+  renderSkills();renderItems();renderChat();renderGems();renderSynthesis();renderShop();
   $("#mastery").textContent="鍛造熟練度 Lv."+(Math.floor(state.mastery/5)+1)+"（累計 "+state.mastery+" 次）";
 }
 function renderSkills(){var box=$("#skills");box.innerHTML="";state.skills.forEach(function(x,i){var r=document.createElement("div");r.className="stat";r.innerHTML="<span>"+(i+1)+". "+SK[x][0]+"</span><span class='muted small'>CD "+(SK[x][1]/1000)+"s</span>";box.appendChild(r)})}
@@ -362,6 +399,70 @@ function giftItem(it){
   save();render();$("#detail").innerHTML="<span class='muted'>裝備已送給小精靈。</span>";
 }
 function forge(){if(invFull())return log("物品欄已滿，無法打造。","danger");if(state.stone<300||state.iron<3)return log("打造材料不足。","danger");state.stone-=300;state.iron-=3;state.mastery++;var it=mkItem(null,$("#forgeType").value);addItem(it);log("鐵匠敲落最後一錘，打造出【"+it.name+"】"+it.qn+"品質 "+it.mult+"%。","drop");save();render()}
+function nextQuality(q){
+  var seq=["white","green","blue","purple","orange","platinum"],i=seq.indexOf(q);
+  return i>=0&&i<seq.length-1?seq[i+1]:null;
+}
+function qualityName(q){var x=QS.find(function(a){return a[0]===q});return x?x[1]:q}
+function synthCandidates(q){
+  return state.inv.filter(function(it){return it.q===q&&state.eq[it.type]!==it.id});
+}
+function renderSynthesis(){
+  if(!$("#synthInfo"))return;
+  var q=$("#synthQuality").value,arr=synthCandidates(q),nq=nextQuality(q);
+  $("#synthInfo").innerHTML="可用素材：<b>"+arr.length+"</b> 件<br>合成結果：<b>【"+qualityName(nq)+"】"+($("#synthType").value==="weapon"?"武器":$("#synthType").value==="armor"?"道袍":"戒指")+"</b><br><span class='muted small'>會自動消耗該品質最前面的 3 件未裝備裝備。</span>";
+  $("#synthBtn").disabled=arr.length<3||!nq;
+}
+function synthesize(){
+  var q=$("#synthQuality").value,nq=nextQuality(q),type=$("#synthType").value,arr=synthCandidates(q);
+  if(!nq)return log("白金品質已是目前最高階。","danger");
+  if(arr.length<3)return log("同品質未裝備素材不足 3 件。","danger");
+  var ids=arr.slice(0,3).map(function(it){return it.id});
+  state.inv=state.inv.filter(function(it){return ids.indexOf(it.id)<0});
+  var out=mkItem(nq,type);
+  addItem(out);
+  selected=null;$("#detailCard").classList.add("hidden");
+  log("三件【"+qualityName(q)+"】裝備靈光交融，合成出【"+out.qn+"】"+out.name+"。","drop");
+  save();render();
+}
+function renderShop(){
+  if(!$("#potionShop"))return;
+  var html="";
+  Object.keys(POTION).forEach(function(k){
+    var p=POTION[k],count=state.potions[k]||0;
+    html+="<div class='shop-item'><h3>"+p.name+"</h3><p>恢復 "+p.heal+" 生命</p><p class='drop'>"+p.price+" 靈石</p><p>持有：<b>"+count+"</b></p><div class='shop-actions'><button data-buy-potion='"+k+"' data-qty='1'>買 1</button><button data-buy-potion='"+k+"' data-qty='5'>買 5</button><button data-use-potion='"+k+"'>使用</button></div></div>";
+  });
+  $("#potionShop").innerHTML=html;
+  $("#autoPotionEnabled").checked=state.autoPotionEnabled;
+  $("#autoPotionPct").value=state.autoPotionPct;
+  $("#autoPotionPctText").textContent=state.autoPotionPct+"%";
+  $$("[data-buy-potion]").forEach(function(b){b.onclick=function(){buyPotion(b.dataset.buyPotion,parseInt(b.dataset.qty,10))}});
+  $$("[data-use-potion]").forEach(function(b){b.onclick=function(){usePotion(b.dataset.usePotion,false)}});
+}
+function buyPotion(k,qty){
+  var p=POTION[k],cost=p.price*qty;if(!p)return;
+  if(state.stone<cost)return log("靈石不足，買不起這些藥。","danger");
+  state.stone-=cost;state.potions[k]=(state.potions[k]||0)+qty;
+  log("你在雜貨店買了 "+qty+" 顆【"+p.name+"】。","drop");
+  save();render();
+}
+function usePotion(k,isAuto){
+  var p=POTION[k];if(!p||(state.potions[k]||0)<=0)return false;
+  var s=stats();if(state.hp>=s.hp&&!isAuto){log("目前氣血已滿，不需要服藥。");return false}
+  state.potions[k]--;var before=state.hp;state.hp=Math.min(s.hp,state.hp+p.heal);
+  var healed=Math.max(0,Math.round(state.hp-before));
+  log((isAuto?"自動服用":"服用")+"【"+p.name+"】，恢復 "+healed+" 生命。","drop");
+  updateVitals();save();renderShop();return true;
+}
+function maybeAutoPotion(){
+  if(!battle||!state.autoPotionEnabled||state.hp<=0)return;
+  var now=Date.now();if(now-lastPotionAt<3000)return;
+  var s=stats(),pct=state.hp/s.hp*100;if(pct>state.autoPotionPct)return;
+  var missing=s.hp-state.hp,keys=["small","medium","large"],chosen=null;
+  for(var i=0;i<keys.length;i++){var k=keys[i];if((state.potions[k]||0)>0&&POTION[k].heal>=missing){chosen=k;break}}
+  if(!chosen){for(var j=keys.length-1;j>=0;j--){var k2=keys[j];if((state.potions[k2]||0)>0){chosen=k2;break}}}
+  if(chosen&&usePotion(chosen,true))lastPotionAt=now;
+}
 function renderGems(){var gc={},rc={};state.gems.forEach(function(x){gc[x]=(gc[x]||0)+1});state.runes.forEach(function(x){rc[x]=(rc[x]||0)+1});$("#gemsList").innerHTML=Object.keys(gc).map(function(k){return "<div>"+k+" × "+gc[k]+"</div>"}).join("")||"<span class='muted'>尚無寶石</span>";$("#runesList").innerHTML=Object.keys(rc).map(function(k){return "<div>"+k+" × "+rc[k]+"</div>"}).join("")||"<span class='muted'>尚無符文</span>"}
 function stopEncounterLoop(){if(encounterTimer){clearTimeout(encounterTimer);encounterTimer=null}}
 function chooseEncounter(){
@@ -404,6 +505,7 @@ function tick(){
   if(battle.hp<=0){win();return}
   var ed=Math.max(1,Math.round(battle.atk-s.def*.45+rnd(-2,3)));state.hp-=ed;
   $("#battleLog").innerHTML+="<div>"+battle.name+" 攻來，你受到 "+ed+" 傷害。</div>";
+  if(state.hp>0)maybeAutoPotion();
   if(state.hp<=0){
     clearInterval(timer);timer=null;battle=null;stopEncounterLoop();state.loc="village";state.hp=stats().hp;
     log("你眼前一黑，被採藥人拖回桃源村。靈泉替你恢復了氣血。","danger");
@@ -791,10 +893,10 @@ function fairyCreate(t){
     "好，我先不當系統，當你旁邊那個嘴很多的朋友。"
   ]));
 }
-function openModal(name){$$(".modal-layer").forEach(function(x){x.classList.add("hidden")});$("#"+name+"Modal").classList.remove("hidden")}
+function openModal(name){if(name==="shop"&&state.loc!=="village"){log("桃源雜貨店只在桃源村營業。","danger");return}$(".modal-layer").forEach(function(x){x.classList.add("hidden")});if(name==="synth")renderSynthesis();if(name==="shop")renderShop();$("#"+name+"Modal").classList.remove("hidden")}
 function close(){ $$(".modal-layer").forEach(function(x){x.classList.add("hidden")}) }
 function admin(a){if(account!=="admin")return;if(a==="rich")state.stone+=10000;if(a==="mats"){state.wash+=50;state.iron+=50}if(a==="plat"){if(!addItem(mkItem("platinum")))return}if(a==="gem")state.gems.push("五階天雷石");if(a==="rune")state.runes.push("青玄御劍符");if(a==="heal")state.hp=stats().hp;if(a==="elite"){close();startBattle("elite")}if(a==="boss"){close();startBattle("boss")}save();render()}
-$("#loginBtn").onclick=login;$("#locBadge").onclick=healAtVillage;$("#user").onkeydown=function(e){if(e.key==="Enter")$("#pass").focus()};$("#pass").onkeydown=function(e){if(e.key==="Enter")login()};$("#forestBtn").onclick=enterForest;$("#villageBtn").onclick=returnVillage;$$("[data-open]").forEach(function(b){b.onclick=function(){openModal(b.dataset.open)}});$$("[data-close]").forEach(function(b){b.onclick=close});$$(".modal-layer").forEach(function(m){m.onmousedown=function(e){if(e.target===m)close()}});document.onkeydown=function(e){if(e.key==="Escape")close()};$("#forgeBtn").onclick=forge;document.querySelectorAll(".chat-tab").forEach(function(b){b.onclick=function(){switchChannel(b.dataset.channel)}});$("#chatSend").onclick=sendChat;$("#chatInput").onkeydown=function(e){if(e.key==="Enter")sendChat()};$$("[data-admin]").forEach(function(b){b.onclick=function(){admin(b.dataset.admin)}})
+$("#loginBtn").onclick=login;$("#locBadge").onclick=healAtVillage;$("#user").onkeydown=function(e){if(e.key==="Enter")$("#pass").focus()};$("#pass").onkeydown=function(e){if(e.key==="Enter")login()};$("#forestBtn").onclick=enterForest;$("#villageBtn").onclick=returnVillage;$$("[data-open]").forEach(function(b){b.onclick=function(){openModal(b.dataset.open)}});$$("[data-close]").forEach(function(b){b.onclick=close});$$(".modal-layer").forEach(function(m){m.onmousedown=function(e){if(e.target===m)close()}});document.onkeydown=function(e){if(e.key==="Escape")close()};$("#forgeBtn").onclick=forge;$("#synthBtn").onclick=synthesize;$("#synthQuality").onchange=renderSynthesis;$("#synthType").onchange=renderSynthesis;$("#autoPotionEnabled").onchange=function(){state.autoPotionEnabled=this.checked;save();render()};$("#autoPotionPct").oninput=function(){state.autoPotionPct=parseInt(this.value,10);$("#autoPotionPctText").textContent=state.autoPotionPct+"%";$("#autoPotionBadge").textContent=state.autoPotionEnabled?"自動藥 "+state.autoPotionPct+"%":"自動藥 關";save()};document.querySelectorAll(".chat-tab").forEach(function(b){b.onclick=function(){switchChannel(b.dataset.channel)}});$("#chatSend").onclick=sendChat;$("#chatInput").onkeydown=function(e){if(e.key==="Enter")sendChat()};$$("[data-admin]").forEach(function(b){b.onclick=function(){admin(b.dataset.admin)}})
 })();
 </script>
 </body></html>
