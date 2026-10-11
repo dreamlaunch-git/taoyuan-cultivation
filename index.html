@@ -107,7 +107,86 @@ body{overflow:hidden}
 </style><style id="friends-v10">
 .friends-modal{width:min(760px,96vw)}.friends-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.friends-head h2{margin-bottom:.15rem}.friends-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px}.friend-card{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid rgba(255,255,255,.13);border-radius:12px;background:rgba(4,9,5,.48)}.friend-avatar{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:linear-gradient(#6a7455,#30372a);color:#f1dfa4;border:1px solid rgba(255,255,255,.14)}.friend-main{min-width:0;flex:1}.friend-name{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.friend-name b{font-size:.98rem}.friend-meta{font-size:.72rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.presence{display:inline-flex;align-items:center;gap:5px;font-size:.72rem}.presence:before{content:"";width:8px;height:8px;border-radius:50%;background:#666;box-shadow:0 0 0 2px rgba(255,255,255,.05)}.presence.online{color:#a9e7a0}.presence.online:before{background:#79d56c;box-shadow:0 0 8px rgba(121,213,108,.75)}.presence.offline{color:#a7a7a7}.presence.unknown{color:#c0b38c}.presence.unknown:before{background:#a08d5c}.friend-role{font-size:.62rem;padding:.08rem .32rem;border:1px solid rgba(255,255,255,.15);border-radius:999px;color:#d9cfaa}.friends-note{margin-top:10px;line-height:1.45}
 @media(max-width:800px){.friends-list{grid-template-columns:1fr}.friends-head{align-items:center}.friend-card{padding:9px}.friends-note{font-size:.66rem}}
-</style></head>
+</style><style id="village-npc-visibility-v1">
+/* 桃源村場景底圖可見性修正 */
+#game{isolation:isolate;background:#0b120c}
+#game>.bg{
+  position:fixed!important;
+  inset:0!important;
+  z-index:0!important;
+  background-image:url("assets/images/taoyuan-village-map.webp?v=3");
+  background-position:center 45%!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  filter:brightness(.96) saturate(1.08)!important;
+  transform:none!important;
+  opacity:1!important;
+}
+#game>.shade{
+  position:fixed!important;
+  inset:0!important;
+  z-index:1!important;
+  pointer-events:none!important;
+  background:linear-gradient(180deg,rgba(3,9,4,.05),rgba(3,9,4,.16))!important;
+}
+#game .top,#game .actions,#game .zone,#game .scene-hud,#game .chat{position:fixed;z-index:12}
+#game .actions{z-index:13}
+#game .scene-hud{z-index:12}
+#game .chat{z-index:15}
+#game .modal-layer{z-index:60}
+#game .npc-map-points{z-index:18}
+
+/* NPC 地圖標記：人物圖示在上，名稱白底牌在下 */
+#game .npc-pin{
+  overflow:visible;
+  display:flex!important;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  backdrop-filter:none!important;
+  box-shadow:none!important;
+  color:#1b2118;
+}
+#game .npc-pin span{
+  width:32px!important;
+  height:32px!important;
+  border:2px solid rgba(255,250,224,.95)!important;
+  background:linear-gradient(#e9cf7f,#b9903e)!important;
+  color:#182016!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.58),0 0 0 2px rgba(91,66,24,.35);
+}
+#game .npc-pin b{
+  display:block!important;
+  max-width:130px;
+  padding:3px 7px;
+  border:1px solid rgba(164,125,53,.72);
+  border-radius:7px;
+  background:rgba(255,252,240,.95);
+  color:#20251d;
+  font-size:.72rem!important;
+  font-weight:800;
+  line-height:1.2;
+  text-align:center;
+  white-space:nowrap;
+  text-shadow:none;
+  box-shadow:0 4px 12px rgba(0,0,0,.42);
+}
+#game .npc-pin:hover b,#game .npc-pin:focus-visible b{
+  background:#fffdf4;
+  border-color:#d5aa54;
+}
+@media(max-width:800px){
+  #game>.bg{background-position:center 42%!important}
+  #game .npc-pin{gap:2px}
+  #game .npc-pin span{width:28px!important;height:28px!important;font-size:.72rem!important}
+  #game .npc-pin b{display:block!important;max-width:92px;padding:2px 5px;font-size:.58rem!important}
+}
+</style>
+</head>
 <body>
 <section id="login">
   <div class="login-card glass">
