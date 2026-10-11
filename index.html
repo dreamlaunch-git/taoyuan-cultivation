@@ -282,18 +282,18 @@ function enhance(it){
 }
 function reroll(it){
   if(typeof it.washCount!=="number")it.washCount=0;
-  var pool=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害","生命恢復"];
+  var pool=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害","生命恢復","法力"];
   if(account!=="admin"){
     if(it.washCount>=50)return log("此裝備已達 50 次洗鍊上限。","danger");
     if(state.wash<1)return log("洗髓石不足。","danger");
     state.wash--;it.washCount++;
   }
-  it.aff=it.aff.map(function(){return pool[rnd(0,5)]+" +"+rnd(2,12)});
+  it.aff=it.aff.map(function(){return pool[rnd(0,7)]+" +"+rnd(2,12)});
   log("【"+it.name+"】詞條已重新洗鍊。"+(account==="admin"?" 管理員無次數限制。":"（"+it.washCount+"/50）"));
   save();render();detail(it.id);
 }
 function parseAdminAffixes(t){
-  var defs={"攻擊":12,"防禦":12,"生命":18,"暴擊率":12,"攻擊速度":12,"技能傷害":12,"生命恢復":6,"元素共鳴":12};
+  var defs={"攻擊":12,"防禦":12,"生命":18,"暴擊率":12,"攻擊速度":12,"技能傷害":12,"生命恢復":6,"法力":18,"元素共鳴":12};
   var names=Object.keys(defs),out=[];
   names.forEach(function(n){
     var re=new RegExp(n+"\\s*[+＋]?\\s*(\\d{1,3})?");
@@ -363,9 +363,7 @@ function nextQuality(q){
   return i>=0&&i<seq.length-1?seq[i+1]:null;
 }
 function qualityName(q){var x=QS.find(function(a){return a[0]===q});return x?x[1]:q}
-function synthCandidates(q){
-  return state.inv.filter(function(it){return it.q===q&&state.eq[it.type]!==it.id});
-}
+function synthCandidates(q){return state.inv.filter(function(it){return it.q===q&&!itemEquipped(it)})}
 function renderSynthesis(){
   if(!$("#synthInfo"))return;
   var q=$("#synthQuality").value,arr=synthCandidates(q),nq=nextQuality(q);
@@ -462,8 +460,8 @@ function startBattle(k){
   $("#battleLog").innerHTML="<div>遭遇【"+m[0]+"】，自動戰鬥開始。</div>";$("#sceneState").textContent="戰鬥中";
   render();tick();timer=setInterval(tick,1100);
 }
-function triggerLowHp(){if(!battle||battle.lowTriggered)return;var s=stats();if(state.hp>s.hp*.30)return;battle.lowTriggered=true;if(state.race==="human"){battle.shield=Math.round(s.hp*.20);log("人族天賦【不屈劍心】觸發，獲得 "+battle.shield+" 生命護盾。","drop")}if(state.race==="demon")log("魔族天賦【血怒】觸發，低血量攻擊大幅提升。","drop");if(state.race==="elf"){battle.bonusDodge=20;log("精靈天賦【風影】觸發，閃避提升 20%。","drop")}if(state.race==="god"){state.hp=Math.min(s.hp,state.hp+s.hp*.20);state.mana=Math.min(s.mana,state.mana+s.mana*.20);log("神族天賦【創世回響】觸發，生命與法力回復 20%。","drop")}}
-function useAutoSkill(s){var now=Date.now(),chosen=null;for(var i=(state.skills||[]).length-1;i>=0;i--){var k=state.skills[i],sk=SK[k];if(!sk)continue;var last=battle.skillCd[k]||0;if(now-last>=sk.cd&&(state.mana||0)>=sk.mana){chosen=k;break}}if(!chosen)return null;var sk=SK[chosen];battle.skillCd[chosen]=now;state.mana-=sk.mana;var pow=sk.pow*(1+s.skillBonus),note="";if(chosen==="swordguard"){battle.shield+=Math.round(s.hp*.10);note="，劍罡形成護盾"}if(chosen==="bloodbite"){state.hp=Math.min(s.hp,state.hp+Math.round(s.hp*.05));note="，吸取生命"}if(chosen==="bloodarmor"){battle.bonusReflect=8;note="，反傷提升"}if(chosen==="bloodburst")pow*=1+(1-state.hp/s.hp)*.55;if(chosen==="shadowstep"){battle.bonusDodge=15;note="，影步提升閃避"}if(chosen==="soulmark"&&chance(Math.min(55,s.crit)))pow*=1.45;if(chosen==="flux"){state.mana=Math.min(s.mana,state.mana+Math.round(s.mana*.18));note="，法力回湧"}return{name:sk.name,pow:pow,note:note}}
+function triggerLowHp(){if(!battle||battle.lowTriggered)return;var s=stats();if(state.hp>s.hp*.30)return;battle.lowTriggered=true;if(state.race==="human"){battle.shield=Math.round(s.hp*.20);log("人族天賦【不屈劍心】觸發，獲得 "+battle.shield+" 生命護盾。","drop")}if(state.race==="demon")log("魔族天賦【血怒】觸發，低血量攻擊大幅提升。","drop");if(state.race==="elf"){log("精靈天賦【風影】觸發，低血量閃避提升 20%。","drop")}if(state.race==="god"){state.hp=Math.min(s.hp,state.hp+s.hp*.20);state.mana=Math.min(s.mana,state.mana+s.mana*.20);log("神族天賦【創世回響】觸發，生命與法力回復 20%。","drop")}}
+function useAutoSkill(s){var now=Date.now(),chosen=null;for(var i=(state.skills||[]).length-1;i>=0;i--){var k=state.skills[i],sk=SK[k];if(!sk)continue;var last=battle.skillCd[k]||0;if(now-last>=sk.cd&&(state.mana||0)>=sk.mana){chosen=k;break}}if(!chosen)return null;var sk=SK[chosen];battle.skillCd[chosen]=now;state.mana-=sk.mana;var pow=sk.pow*(1+s.skillBonus),note="";if(chosen==="swordguard"){battle.shield+=Math.round(s.hp*.10);note="，劍罡形成護盾"}if(chosen==="bloodbite"){state.hp=Math.min(s.hp,state.hp+Math.round(s.hp*.05));note="，吸取生命"}if(chosen==="bloodarmor"){battle.bonusReflect=8;note="，反傷提升"}if(chosen==="bloodburst")pow*=1+(1-state.hp/s.hp)*.55;if(chosen==="shadowstep"){battle.bonusDodge=15;note="，影步提升閃避"}if(chosen==="soulmark"&&chance(Math.min(55,s.crit)))pow*=1.45;if(chosen==="flux"){state.mana=Math.min(s.mana,state.mana+Math.round(s.mana*.18));note="，法力回湧"}if(state.race==="god"&&chosen==="creation")note+="，"+(state.alignment==="dark"?"暗蝕":"聖光")+"迸發";return{name:sk.name,pow:pow,note:note}}
 function tick(){if(!battle)return;var s=stats();triggerLowHp();s=stats();var act=useAutoSkill(s),mult=act?act.pow:(chance(Math.min(60,s.crit))?1.55:1);mult*=racialMultiplier(state.race,battle.race);var dmg=Math.max(1,Math.round(s.atk*mult-battle.def*.55+rnd(-2,4)));battle.hp-=dmg;$("#battleLog").innerHTML+="<div>"+(act?"【"+act.name+"】":"你發動普通攻擊")+"，造成 "+dmg+" 傷害"+(act?act.note:"")+"。</div>";if(battle.hp<=0){win();return}var dodge=Math.min(75,s.dodge+(battle.bonusDodge||0));if(chance(dodge)){$("#battleLog").innerHTML+="<div>你身影一晃，閃過了攻擊。</div>";battle.bonusDodge=Math.max(0,(battle.bonusDodge||0)-5);updateVitals();save();return}var ed=Math.max(1,Math.round(battle.atk-s.def*.45+rnd(-2,3)));if(battle.shield>0){var absorb=Math.min(battle.shield,ed);battle.shield-=absorb;ed-=absorb;$("#battleLog").innerHTML+="<div>護盾吸收 "+absorb+" 傷害。</div>"}if(ed>0)state.hp-=ed;$("#battleLog").innerHTML+="<div>"+battle.name+" 攻來，你受到 "+Math.max(0,ed)+" 傷害。</div>";var ref=Math.min(45,s.reflect+(battle.bonusReflect||0));if(ed>0&&ref>0){var rd=Math.max(1,Math.round(ed*ref/100));battle.hp-=rd;$("#battleLog").innerHTML+="<div>反傷回敬 "+rd+" 傷害。</div>"}if(state.hp>0){triggerLowHp();maybeAutoPotion()}if(state.hp<=0){clearInterval(timer);timer=null;battle=null;stopEncounterLoop();state.loc="village";state.hp=stats().hp;state.mana=stats().mana;log("你眼前一黑，被採藥人拖回桃源村。靈泉替你恢復了氣血。","danger");$("#enemyBox").classList.add("hidden");save();render();return}$("#enemyBar").style.width=Math.max(0,battle.hp/battle.max*100)+"%";$("#battleLog").scrollTop=$("#battleLog").scrollHeight;updateVitals();save()}
 function win(){
   clearInterval(timer);timer=null;var old=battle;$("#battleLog").innerHTML+="<div>【"+old.name+"】倒下了。</div>";battle=null;
@@ -540,7 +538,7 @@ function fairyRequestedName(t,type){
     if(n)return n;
   }
   var prefix=(t.match(/([【［\[][^【】［］\[\]]{1,14}[】］\]])/)||[])[1]||"";
-  var endings=type==="weapon"?"劍|刀|槍|弓|刃|杖|扇|戟|斧|錘":type==="armor"?"袍|衣|甲|鎧|衫|裙|冠": "戒|環|項鍊|手鐲|墜|佩";
+  var endings=type==="mainhand"?"劍|刀|槍|弓|刃|杖|扇|戟|斧|錘":itemCategory(type)==="armor"?"袍|衣|甲|鎧|衫|裙|冠|盔|褲|靴|履":type==="offhand"?"冊|球|印|鏡|盾|法器":"戒|環|項鍊|手鐲|墜|佩|腰帶";
   var re=new RegExp("([\\u4e00-\\u9fffA-Za-z0-9·]{2,14}(?:"+endings+"))","g"),m,last="";
   while((m=re.exec(t)))last=m[1];
   if(last){
@@ -553,7 +551,7 @@ function fairyDisplayName(requested,type){
   if(!requested)return "";
   if(account==="admin")return requested;
   if(chance(55))return requested;
-  var tail=type==="weapon"?"·靈契":type==="armor"?"·護靈":"·寄靈";
+  var tail=type==="mainhand"?"·靈契":itemCategory(type)==="armor"?"·護靈":type==="offhand"?"·法契":"·寄靈";
   return requested+tail;
 }
 function fairyAffixes(t){
@@ -780,12 +778,12 @@ function fairyCreate(t){
     render();save();return;
   }
 
-  var type=/劍|刀|槍|弓|刃|杖|扇|戟|斧|錘|武器|法器/.test(full)?"weapon":/衣|袍|甲|鎧|衫|裙|冠|護甲/.test(full)?"armor":/戒|環|項鍊|飾品|手鐲|墜|佩/.test(full)?"ring":null;
+  var type=/劍|刀|槍|弓|刃|杖|扇|戟|斧|錘|武器|法器/.test(full)?"mainhand":/副手|法冊|法球|靈印/.test(full)?"offhand":/頭|帽|冠|盔/.test(full)?"head":/褲|腿/.test(full)?"pants":/鞋|靴|履/.test(full)?"shoes":/衣|袍|甲|鎧|衫|護甲/.test(full)?"chest":/項鍊|項鏈|墜/.test(full)?"necklace":/腰帶|束帶/.test(full)?"belt":/戒|環|手鐲|飾品/.test(full)?"ring":null;
   if(type){
     var wishQ=fairyQuality(full),grantQ=null,wishGranted=false;
     if(account==="admin"){grantQ=wishQ;wishGranted=!!wishQ}
     else if(wishQ&&chance(10)){grantQ=wishQ;wishGranted=true}
-    var it=mkItem(grantQ,type),el3=fairyElementName(full),baseName=type==="weapon"?"靈刃":type==="armor"?"法衣":"靈戒";
+    var it=mkItem(grantQ,type),el3=fairyElementName(full),baseName=type==="mainhand"?"靈刃":type==="offhand"?"法器":itemCategory(type)==="armor"?"護具":itemCategory(type)==="accessory"?"靈飾":"奇物";
     var requestedName=fairyRequestedName(full,type);
     it.name=fairyDisplayName(requestedName,type)||(el3+baseName);
     if(account==="admin"){
