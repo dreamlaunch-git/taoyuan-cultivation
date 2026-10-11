@@ -102,6 +102,8 @@ body{overflow:hidden}
 </style><style id="bag-v8">
 .bag-tools,.batch-tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:7px 0}.bag-tools button,.batch-tools button,.batch-tools select{padding:.36rem .55rem;font-size:.78rem}.batch-tools{padding:7px;border:1px solid rgba(255,255,255,.12);border-radius:9px;background:rgba(3,8,4,.42)}.batch-tools select{background:#071007;color:var(--ink);border:1px solid var(--line);border-radius:8px}.inv-slot.batch-selectable:after{content:"";position:absolute;inset:3px;border:1px dashed rgba(255,255,255,.24);border-radius:6px;pointer-events:none}.inv-slot.batch-selected{outline:2px solid #e1c56f;box-shadow:0 0 16px rgba(225,197,111,.42);transform:translateY(-1px)}.inv-slot.batch-selected:before{content:"✓";position:absolute;left:3px;top:2px;z-index:2;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:#e1c56f;color:#172015;font-size:.72rem;font-weight:900}.inv-slot.batch-locked{opacity:.42}.batch-danger{border-color:#a85d57!important;background:linear-gradient(#75403b,#422624)!important}
 @media(max-width:800px){.bag-tools,.batch-tools{gap:4px}.bag-tools button,.batch-tools button,.batch-tools select{font-size:.72rem;padding:.32rem .45rem}.batch-tools select{max-width:115px}}
+</style><style id="hidden-quest-v9">
+.hidden-quest{margin-top:9px;padding:9px 10px;border:1px solid rgba(222,186,104,.34);border-radius:9px;background:linear-gradient(135deg,rgba(72,56,24,.32),rgba(16,18,12,.4));font-size:.75rem;line-height:1.5}.hidden-quest b{color:#f0d58d}.hidden-quest .quest-progress{display:flex;align-items:center;gap:7px;margin-top:5px}.quest-mini-bar{flex:1;height:6px;border-radius:99px;overflow:hidden;background:#0007;border:1px solid rgba(255,255,255,.12)}.quest-mini-bar i{display:block;height:100%;background:linear-gradient(90deg,#947447,#e1c66e)}.quest-done{opacity:.65;border-color:rgba(160,190,145,.25)}.quest-done b{color:#b8d6a8}.npc-quest-hint{margin:.4rem 0;padding:.42rem .55rem;border-left:3px solid #d8bd72;background:rgba(53,41,18,.28);font-size:.74rem;color:#eedba0}
 </style></head>
 <body>
 <section id="login">
@@ -239,8 +241,8 @@ var SLOT_LABEL={mainhand:"主手",offhand:"副手",chest:"衣服",head:"頭部",
 var EN=[100,100,95,90,80,70,60,45,30,18,8], POTION={small:{name:"小還丹",heal:80,price:35},medium:{name:"聚氣丹",heal:180,price:80},large:{name:"回春丹",heal:360,price:150}}, account=null,state=null,battle=null,timer=null,selected=null,fairy=false,activeChannel="world",moveLocked=false,encounterTimer=null,regenTimer=null,lastPotionAt=0,batchMode=false,batchSelected={};
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a} function chance(p){return Math.random()*100<p} function hpass(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h)^s.charCodeAt(i);return(h>>>0).toString(36)}
 function key(){return "taoyuan_"+account}
-function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,regen:2,stone:800,wash:5,iron:8,inv:[],eq:{mainhand:null,offhand:null,chest:null,head:null,pants:null,shoes:null,ring1:null,ring2:null,necklace:null,belt:null},gems:[],runes:[],skills:[],characterCreated:false,classKey:"",race:"",alignment:"",str:0,vit:0,agi:0,int:0,mana:0,mastery:0,steps:0,boss:0,npcTalk:{},affection:{fairy:0,elder:0,smith:0,healer:0,dealer:0,guide:0},affectionDaily:{},level:1,exp:0,potions:{small:0,medium:0,large:0},autoPotionEnabled:false,autoPotionPct:35,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false,fairyDraft:"",fairyBond:0,fairyMood:0,fairyLastIntent:""}}
-function load(){try{state=JSON.parse(localStorage.getItem(key()))||fresh()}catch(e){state=fresh()}if(!state.chat)state.chat=[];if(!state.fairyChat)state.fairyChat=[];if(typeof state.fairyUnlocked!=="boolean")state.fairyUnlocked=false;if(typeof state.fairyDraft!=="string")state.fairyDraft="";if(typeof state.fairyBond!=="number")state.fairyBond=0;if(typeof state.fairyLastIntent!=="string")state.fairyLastIntent="";if(typeof state.fairyMood!=="number")state.fairyMood=0;if(typeof state.level!=="number")state.level=1;if(typeof state.exp!=="number")state.exp=0;if(typeof state.regen!=="number")state.regen=2;if(!state.potions)state.potions={small:0,medium:0,large:0};if(typeof state.autoPotionEnabled!=="boolean")state.autoPotionEnabled=false;if(typeof state.autoPotionPct!=="number")state.autoPotionPct=35;if(typeof state.characterCreated!=="boolean")state.characterCreated=false;if(!state.npcTalk)state.npcTalk={};if(!state.affection)state.affection={fairy:Math.min(100,(state.fairyBond||0)*4),elder:0,smith:0,healer:0,dealer:0,guide:0};["fairy","elder","smith","healer","dealer","guide"].forEach(function(k){if(typeof state.affection[k]!=="number")state.affection[k]=0});if(!state.affectionDaily)state.affectionDaily={};if(state.loc==="forest")state.loc="forest";else if(state.loc!=="village"&&!ZONES[state.loc])state.loc="village";if(!state.eq||state.eq.weapon!==undefined||state.eq.armor!==undefined||state.eq.ring!==undefined){var old=state.eq||{};state.eq={mainhand:old.weapon||null,offhand:null,chest:old.armor||null,head:null,pants:null,shoes:null,ring1:old.ring||null,ring2:null,necklace:null,belt:null}}(state.inv||[]).forEach(function(it){if(typeof it.washCount!=="number")it.washCount=0;if(it.type==="weapon")it.type="mainhand";else if(it.type==="armor")it.type="chest"});if(state.characterCreated&&state.classKey&&CLASS_DATA[state.classKey]){var d=CLASS_DATA[state.classKey];state.race=d.race;if(!state.skills||!state.skills.length)state.skills=d.skills.slice();if(!state.str&&!state.vit&&!state.agi&&!state.int){state.str=d.attrs.str;state.vit=d.attrs.vit;state.agi=d.attrs.agi;state.int=d.attrs.int}}fairy=state.fairyUnlocked;activeChannel="world";save()}
+function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,regen:2,stone:800,wash:5,iron:8,inv:[],eq:{mainhand:null,offhand:null,chest:null,head:null,pants:null,shoes:null,ring1:null,ring2:null,necklace:null,belt:null},gems:[],runes:[],skills:[],characterCreated:false,classKey:"",race:"",alignment:"",str:0,vit:0,agi:0,int:0,mana:0,mastery:0,steps:0,boss:0,npcTalk:{},affection:{fairy:0,elder:0,smith:0,healer:0,dealer:0,guide:0},affectionDaily:{},hiddenQuests:{},level:1,exp:0,potions:{small:0,medium:0,large:0},autoPotionEnabled:false,autoPotionPct:35,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false,fairyDraft:"",fairyBond:0,fairyMood:0,fairyLastIntent:""}}
+function load(){try{state=JSON.parse(localStorage.getItem(key()))||fresh()}catch(e){state=fresh()}if(!state.chat)state.chat=[];if(!state.fairyChat)state.fairyChat=[];if(typeof state.fairyUnlocked!=="boolean")state.fairyUnlocked=false;if(typeof state.fairyDraft!=="string")state.fairyDraft="";if(typeof state.fairyBond!=="number")state.fairyBond=0;if(typeof state.fairyLastIntent!=="string")state.fairyLastIntent="";if(typeof state.fairyMood!=="number")state.fairyMood=0;if(typeof state.level!=="number")state.level=1;if(typeof state.exp!=="number")state.exp=0;if(typeof state.regen!=="number")state.regen=2;if(!state.potions)state.potions={small:0,medium:0,large:0};if(typeof state.autoPotionEnabled!=="boolean")state.autoPotionEnabled=false;if(typeof state.autoPotionPct!=="number")state.autoPotionPct=35;if(typeof state.characterCreated!=="boolean")state.characterCreated=false;if(!state.npcTalk)state.npcTalk={};if(!state.affection)state.affection={fairy:Math.min(100,(state.fairyBond||0)*4),elder:0,smith:0,healer:0,dealer:0,guide:0};["fairy","elder","smith","healer","dealer","guide"].forEach(function(k){if(typeof state.affection[k]!=="number")state.affection[k]=0});if(!state.affectionDaily)state.affectionDaily={};if(!state.hiddenQuests)state.hiddenQuests={};if(state.loc==="forest")state.loc="forest";else if(state.loc!=="village"&&!ZONES[state.loc])state.loc="village";if(!state.eq||state.eq.weapon!==undefined||state.eq.armor!==undefined||state.eq.ring!==undefined){var old=state.eq||{};state.eq={mainhand:old.weapon||null,offhand:null,chest:old.armor||null,head:null,pants:null,shoes:null,ring1:old.ring||null,ring2:null,necklace:null,belt:null}}(state.inv||[]).forEach(function(it){if(typeof it.washCount!=="number")it.washCount=0;if(it.type==="weapon")it.type="mainhand";else if(it.type==="armor")it.type="chest"});if(state.characterCreated&&state.classKey&&CLASS_DATA[state.classKey]){var d=CLASS_DATA[state.classKey];state.race=d.race;if(!state.skills||!state.skills.length)state.skills=d.skills.slice();if(!state.str&&!state.vit&&!state.agi&&!state.int){state.str=d.attrs.str;state.vit=d.attrs.vit;state.agi=d.attrs.agi;state.int=d.attrs.int}}fairy=state.fairyUnlocked;activeChannel="world";syncHiddenQuests(false);save()}
 function save(){localStorage.setItem(key(),JSON.stringify(state))}
 function invFull(){return state.inv.length>=60}
 function addItem(it){if(invFull()){log("物品欄已滿（60/60）。","danger");return false}state.inv.push(it);return true}
@@ -248,6 +250,92 @@ function quality(force){if(force)return QS.filter(function(q){return q[0]===forc
 function mkItem(force,type){type=type||["mainhand","offhand","chest","head","pants","shoes","ring","necklace","belt"][rnd(0,8)];var q=quality(force),mult=rnd(100,150),names={mainhand:["青竹劍","流雲劍","寒溪劍","破霧長劍"],offhand:["聚靈玉","玄紋法冊","星砂法球","護心靈印"],chest:["青麻道袍","竹紋法衣","玄鐵戰衣"],head:["青羽冠","玄紋兜帽","鎮魂盔"],pants:["踏雲長褲","玄甲護腿","青紋下裳"],shoes:["追風靴","竹影履","玄鐵戰靴"],ring:["青玉戒","聚靈環","松紋戒"],necklace:["流光墜","青玉項鍊","鎖靈鏈"],belt:["玄紋腰帶","聚氣帶","赤銅束帶"]},affNames=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害","生命恢復","法力"],aff=[],n=Math.max(1,QS.findIndex(function(x){return x[0]===q[0]})+1);for(var i=0;i<Math.min(n,5);i++)aff.push(affNames[rnd(0,7)]+" +"+rnd(2,12));return{id:Date.now()+"_"+Math.random(),type:type,name:names[type][rnd(0,names[type].length-1)],q:q[0],qn:q[1],mult:mult,enh:0,aff:aff,set:(["purple","orange","platinum"].indexOf(q[0])>=0&&chance(20))?"青竹靈套":null,washCount:0}}
 var AFF_NAMES={fairy:"系統小精靈",elder:"村長 柳伯",smith:"鐵匠 韓鐵",healer:"藥師 蘇禾",dealer:"澳門性感荷官",guide:"驛使 阿嵐"};
 var AFF_ICONS={fairy:"靈",elder:"村",smith:"鐵",healer:"藥",dealer:"賭",guide:"驛"};
+var HIDDEN_QUESTS={
+elder:[
+{at:10,name:"橋邊的第一課",type:"combat",goal:3,desc:"柳伯要你先在外頭擊敗 3 隻妖物，證明自己不是只會喊口號。",reward:{stone:120}},
+{at:25,name:"桃源村外的腳印",type:"combat",goal:5,desc:"最近村外腳印變多了。替柳伯再清理 5 隻妖物。",reward:{stone:220,iron:2}},
+{at:45,name:"村長沒說完的話",type:"combat",goal:8,desc:"柳伯只說了一句「去外面看看」，要你擊敗 8 隻敵人後再回想他的意思。",reward:{stone:360,wash:1}},
+{at:65,name:"守村人的份量",type:"combat",goal:12,desc:"你已經被柳伯當成能守住一方的人。擊敗 12 隻妖物。",reward:{stone:520,iron:4}},
+{at:85,name:"故鄉不是弱點",type:"combat",goal:18,desc:"柳伯想知道你走得再遠，是否還記得為何拔劍。擊敗 18 隻敵人。",reward:{stone:800,wash:2}},
+{at:100,name:"桃源仍有你的燈",type:"combat",goal:25,desc:"最後一次替桃源村巡路。完成 25 次戰鬥，讓柳伯真正放心。",reward:{stone:1200,iron:6,wash:3}}
+],
+smith:[
+{at:10,name:"風箱別停",type:"craft",goal:1,desc:"韓鐵讓你親手參與一次打造或合成。",reward:{iron:3}},
+{at:25,name:"看火色",type:"craft",goal:2,desc:"再完成 2 次打造或合成，學會看懂爐火。",reward:{stone:160,iron:3}},
+{at:45,name:"鐵匠的耳朵",type:"craft",goal:3,desc:"韓鐵說好鐵落錘的聲音不一樣。完成 3 次打造或合成。",reward:{iron:5,wash:1}},
+{at:65,name:"不借別人的錘",type:"craft",goal:4,desc:"完成 4 次打造或合成，韓鐵開始把你當半個同行。",reward:{stone:360,iron:6}},
+{at:85,name:"爐火不熄",type:"craft",goal:6,desc:"連續替鐵匠鋪添活。完成 6 次打造或合成。",reward:{iron:9,wash:2}},
+{at:100,name:"留一把傳世的",type:"craft",goal:8,desc:"韓鐵要你一起完成最後 8 次鍛造，說要替這段交情留個聲音。",reward:{stone:700,iron:12,wash:3}}
+],
+healer:[
+{at:10,name:"別拿命省藥",type:"medicine",goal:1,desc:"蘇禾要你買藥或服藥 1 次，先學會照顧自己。",reward:{potion:"small",qty:2}},
+{at:25,name:"藥香記憶",type:"medicine",goal:2,desc:"買藥或服藥共 2 次。",reward:{potion:"medium",qty:2}},
+{at:45,name:"脈象會告狀",type:"medicine",goal:4,desc:"買藥或服藥共 4 次，別再把重傷當日常。",reward:{potion:"large",qty:1,wash:1}},
+{at:65,name:"她留的藥包",type:"medicine",goal:6,desc:"買藥或服藥共 6 次，蘇禾開始替你預留藥材。",reward:{potion:"large",qty:2}},
+{at:85,name:"平安回來",type:"medicine",goal:8,desc:"買藥或服藥共 8 次。這一次她沒講醫理，只叫你平安。",reward:{potion:"large",qty:3,wash:1}},
+{at:100,name:"不寫在藥方上的話",type:"medicine",goal:12,desc:"再完成 12 次用藥相關行動，蘇禾有句話想親口說。",reward:{potion:"large",qty:5,wash:2}}
+],
+dealer:[
+{at:10,name:"第一張暗牌",type:"gamble",goal:1,desc:"荷官要你在她桌上完成 1 次下注。",reward:{stone:80}},
+{at:25,name:"輸贏以外",type:"gamble",goal:2,desc:"再下注 2 次。她似乎不是只在看你的手氣。",reward:{stone:180}},
+{at:45,name:"熟客的位置",type:"gamble",goal:3,desc:"完成 3 次下注。那張椅子開始像是固定替你留著。",reward:{stone:280}},
+{at:65,name:"牌桌不說謊",type:"gamble",goal:5,desc:"完成 5 次下注。機率仍然公平，但她的話變多了。",reward:{stone:450,wash:1}},
+{at:85,name:"收牌之後",type:"gamble",goal:8,desc:"完成 8 次下注。她說真正想講的，要等牌桌散場。",reward:{stone:700,wash:2}},
+{at:100,name:"最後一局不算輸贏",type:"gamble",goal:12,desc:"完成 12 次下注。最後一局的獎勵，不在牌面上。",reward:{item:"purple"}}
+],
+guide:[
+{at:10,name:"第一段路",type:"travel",goal:1,desc:"阿嵐要你前往任意危險區域 1 次。",reward:{stone:100}},
+{at:25,name:"地圖上的折痕",type:"travel",goal:2,desc:"完成 2 次區域旅行。",reward:{stone:180,iron:1}},
+{at:45,name:"風從哪裡來",type:"travel",goal:3,desc:"完成 3 次區域旅行，替阿嵐記下沿途變化。",reward:{stone:300,wash:1}},
+{at:65,name:"沒有畫出的岔路",type:"travel",goal:4,desc:"完成 4 次區域旅行。她開始告訴你公圖以外的路。",reward:{stone:430,iron:3}},
+{at:85,name:"遠方也算故鄉",type:"travel",goal:5,desc:"完成 5 次區域旅行。",reward:{stone:650,wash:2}},
+{at:100,name:"地圖邊緣之外",type:"travel",goal:6,desc:"完成 6 次區域旅行，阿嵐會把最後一條路交給你。",reward:{rune:"天涯路印"}}
+],
+fairy:[
+{at:10,name:"頻道另一端",type:"fairy",goal:2,desc:"再和小精靈互動 2 次。她嘴上說沒差，其實在等你。",reward:{stone:100}},
+{at:25,name:"你真的會回來",type:"fairy",goal:3,desc:"聊天或送裝備給小精靈共 3 次。",reward:{gem:"微光心晶"}},
+{at:45,name:"不能只叫我系統",type:"fairy",goal:4,desc:"再互動 4 次。她開始把你的話當成聊天，而不是指令。",reward:{wash:2}},
+{at:65,name:"藏在袖子裡的東西",type:"fairy",goal:5,desc:"聊天或送禮共 5 次。她似乎準備了某個秘密。",reward:{rune:"星願刻印"}},
+{at:85,name:"如果頻道消失",type:"fairy",goal:7,desc:"再互動 7 次。這次她問的是一個不太像系統會問的問題。",reward:{gem:"精靈虹晶",wash:2}},
+{at:100,name:"不是功能，是朋友",type:"fairy",goal:10,desc:"完成最後 10 次互動。她想親口承認一件早就很明顯的事。",reward:{rune:"羈絆之印",gem:"星願心晶"}}
+]};
+function hiddenQuestKey(id,at){return id+"_"+at}
+function questListFor(id){return HIDDEN_QUESTS[id]||[]}
+function questState(id,q){return state.hiddenQuests[hiddenQuestKey(id,q.at)]}
+function activeHiddenQuests(id){return questListFor(id).filter(function(q){var s=questState(id,q);return s&&s.status==="active"})}
+function syncHiddenQuests(announce){
+  Object.keys(HIDDEN_QUESTS).forEach(function(id){
+    if(id==="fairy"&&!state.fairyUnlocked)return;
+    var v=affectionValue(id);questListFor(id).forEach(function(q){var k=hiddenQuestKey(id,q.at);if(v>=q.at&&!state.hiddenQuests[k]){state.hiddenQuests[k]={status:"active",progress:0};if(announce)announceHiddenQuest(id,q)}})
+  });save()
+}
+function announceHiddenQuest(id,q){
+  var msg="【隱藏任務】"+q.name+" 已觸發。";
+  log((AFF_NAMES[id]||id)+" 的 "+msg,"drop");
+  if(id==="fairy"&&state.fairyUnlocked){state.fairyChat.push(["系統小精靈",fairyPick(["……等等，我有件事想交給你。","既然我們都熟到這裡了，有個小任務你跑不掉了。","我本來不想說的，但現在好像可以交給你。"])+" "+msg+" "+q.desc]);if(state.fairyChat.length>80)state.fairyChat=state.fairyChat.slice(-80)}
+}
+function hiddenQuestRewardText(q){
+  var r=q.reward||{},a=[];if(r.stone)a.push("靈石 "+r.stone);if(r.iron)a.push("玄鐵 "+r.iron);if(r.wash)a.push("洗髓石 "+r.wash);if(r.potion)a.push(POTION[r.potion].name+"×"+(r.qty||1));if(r.gem)a.push(r.gem);if(r.rune)a.push(r.rune);if(r.item)a.push("紫色裝備");return a.join("、")
+}
+function completeHiddenQuest(id,q){
+  var s=questState(id,q);if(!s||s.status!=="active")return;s.status="done";var r=q.reward||{};
+  if(r.stone)state.stone+=r.stone;if(r.iron)state.iron+=r.iron;if(r.wash)state.wash+=r.wash;
+  if(r.potion)state.potions[r.potion]=(state.potions[r.potion]||0)+(r.qty||1);if(r.gem)state.gems.push(r.gem);if(r.rune)state.runes.push(r.rune);
+  if(r.item){var it=mkItem(r.item);if(!addItem(it))state.stone+=500}
+  log("隱藏任務完成【"+q.name+"】"+(hiddenQuestRewardText(q)?"，獲得 "+hiddenQuestRewardText(q):"")+"。","drop");
+  if(id==="fairy"&&state.fairyUnlocked){state.fairyChat.push(["系統小精靈",fairyPick(["你真的做完了。行，這次我不嘴硬。","完成啦？……我就知道你會回來。","好，算你厲害。這份回禮拿好。"])+" 【"+q.name+"】完成。"]);if(state.fairyChat.length>80)state.fairyChat=state.fairyChat.slice(-80)}
+  save()
+}
+function progressHiddenQuest(id,type,amount){
+  if(!state.hiddenQuests)return;var touched=false;
+  activeHiddenQuests(id).forEach(function(q){if(q.type!==type)return;var s=questState(id,q);s.progress=Math.min(q.goal,(s.progress||0)+(amount||1));touched=true;if(s.progress>=q.goal)completeHiddenQuest(id,q)});
+  if(touched){save();renderRelations()}
+}
+function hiddenQuestHtml(id){
+  var qs=questListFor(id).filter(function(q){return questState(id,q)});if(!qs.length)return"";
+  return qs.map(function(q){var s=questState(id,q),done=s.status==="done",pct=Math.min(100,Math.round((s.progress||0)/q.goal*100));return "<div class='hidden-quest "+(done?"quest-done":"")+"'><b>"+(done?"✓ ":"◆ ")+q.name+"</b><div>"+q.desc+"</div><div class='quest-progress'><span>"+(done?"已完成":(s.progress||0)+"/"+q.goal)+"</span><span class='quest-mini-bar'><i style='width:"+(done?100:pct)+"%'></i></span></div><div class='muted small'>獎勵："+hiddenQuestRewardText(q)+"</div></div>"}).join("")
+}
+
 function affectionValue(id){return Math.max(0,Math.min(100,(state.affection&&state.affection[id])||0))}
 function affectionTier(v){if(v>=100)return"羈絆";if(v>=85)return"知己";if(v>=65)return"信賴";if(v>=45)return"親近";if(v>=25)return"熟悉";if(v>=10)return"熟面";return"初識"}
 function localDayKey(){var d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
@@ -258,7 +346,7 @@ function dailyBucket(id){
 function changeAffection(id,delta,reason){
   if(!state.affection)state.affection={};var before=affectionValue(id),oldTier=affectionTier(before),after=Math.max(0,Math.min(100,before+delta));state.affection[id]=after;
   if(delta!==0&&after!==before){var sign=after>before?"+":"";log((AFF_NAMES[id]||id)+" 好感 "+sign+(after-before)+(reason?" · "+reason:""),after>before?"drop":"danger")}
-  if(affectionTier(after)!==oldTier)log((AFF_NAMES[id]||id)+" 的關係提升為【"+affectionTier(after)+"】。","drop");
+  if(affectionTier(after)!==oldTier)log((AFF_NAMES[id]||id)+" 的關係提升為【"+affectionTier(after)+"】。","drop");syncHiddenQuests(true);
   save();return after-before
 }
 function dailyAffection(id,kind,amount,cap,reason){
@@ -276,8 +364,8 @@ function relationPerk(id){
 }
 function affectionRewardBonus(id){var v=affectionValue(id);return v>=65?10:v>=25?5:0}
 function renderRelations(){
-  if(!$("#relationsGrid"))return;var ids=["fairy","elder","smith","healer","dealer","guide"],box=$("#relationsGrid");box.innerHTML="";
-  ids.forEach(function(id){if(id==="fairy"&&!state.fairyUnlocked)return;var v=affectionValue(id),d=document.createElement("div");d.className="relation-card";d.innerHTML="<div class='relation-head'><div class='relation-icon'>"+AFF_ICONS[id]+"</div><div class='relation-main'><b>"+AFF_NAMES[id]+"</b><span class='relation-tier'>"+affectionTier(v)+" · "+v+"/100</span></div></div><span class='affection-bar'><i style='width:"+v+"%'></i></span><div class='relation-perk'>"+relationPerk(id)+"</div>";box.appendChild(d)})
+  if(!$("#relationsGrid"))return;syncHiddenQuests(false);var ids=["fairy","elder","smith","healer","dealer","guide"],box=$("#relationsGrid");box.innerHTML="";
+  ids.forEach(function(id){if(id==="fairy"&&!state.fairyUnlocked)return;var v=affectionValue(id),d=document.createElement("div");d.className="relation-card";d.innerHTML="<div class='relation-head'><div class='relation-icon'>"+AFF_ICONS[id]+"</div><div class='relation-main'><b>"+AFF_NAMES[id]+"</b><span class='relation-tier'>"+affectionTier(v)+" · "+v+"/100</span></div></div><span class='affection-bar'><i style='width:"+v+"%'></i></span><div class='relation-perk'>"+relationPerk(id)+"</div>"+hiddenQuestHtml(id);box.appendChild(d)})
 }
 function itemEquipped(it){return Object.keys(state.eq).some(function(k){return state.eq[k]===it.id})}
 function itemCategory(type){if(["chest","head","pants","shoes"].indexOf(type)>=0)return"armor";if(["ring","necklace","belt"].indexOf(type)>=0)return"accessory";if(type==="mainhand")return"weapon";if(type==="offhand")return"offhand";return"other"}
@@ -385,7 +473,7 @@ function rollFairyGiftReward(it,tally){
 function batchGift(){
   if(!state.fairyUnlocked)return;var arr=selectedBatchItems();if(!arr.length)return;
   if(!confirm("確定要把已選的 "+arr.length+" 件裝備全部送給小精靈嗎？"))return;
-  var ids={},t={runes:0,gems:0,wash:0,stone:0};arr.forEach(function(it){ids[it.id]=1;rollFairyGiftReward(it,t)});
+  var ids={},t={runes:0,gems:0,wash:0,stone:0};progressHiddenQuest("fairy","fairy",Math.min(3,arr.length));arr.forEach(function(it){ids[it.id]=1;rollFairyGiftReward(it,t)});
   state.inv=state.inv.filter(function(it){return !ids[it.id]});batchSelected={};selected=null;$("#detailCard").classList.add("hidden");
   var rewards=[];if(t.runes)rewards.push("星願刻印×"+t.runes);if(t.gems)rewards.push("精靈虹晶×"+t.gems);if(t.wash)rewards.push("洗髓石×"+t.wash);if(t.stone)rewards.push("靈石×"+t.stone);
   var msg=fairyPick(["小精靈被一堆裝備埋到只剩頭頂：「等、等一下，你是搬家嗎？」","小精靈盯著堆成小山的裝備：「你這不是送禮，是進貨吧？」","小精靈抱著整堆裝備晃了兩下：「好重……但我收！」"])+" 你一次送了 "+arr.length+" 件。"+(rewards.length?" 她的回禮："+rewards.join("、")+"。":" 她今天只把這份人情牢牢記住了。");
@@ -469,7 +557,7 @@ function giftItem(it){
   var qi=Math.max(0,QS.findIndex(function(q){return q[0]===it.q}));
   unequipItem(it);
   state.inv=state.inv.filter(function(x){return x.id!==it.id});
-  selected=null;var fg=Math.min(4,1+Math.floor(qi/2));dailyAffection("fairy","fairyGift",fg,10,"收到你送的裝備");
+  selected=null;progressHiddenQuest("fairy","fairy",1);var fg=Math.min(4,1+Math.floor(qi/2));dailyAffection("fairy","fairyGift",fg,10,"收到你送的裝備");
   var rewardChance=18+qi*8+affectionRewardBonus("fairy"),roll=Math.random()*100,msg=fairyPick(["小精靈抱著【"+it.name+"】轉了一圈：「這個我收下啦。」","小精靈接過【"+it.name+"】，對著光看了半天：「嗯，這個有點意思。」","小精靈把【"+it.name+"】往袖子裡一塞：「成交。欸，不對，你是送我。」"]);
   if(roll<rewardChance){
     var r=Math.random()*100;
@@ -494,7 +582,7 @@ function giftItem(it){
   log("你把【"+it.name+"】贈送給了小精靈。");
   save();render();$("#detail").innerHTML="<span class='muted'>裝備已送給小精靈。</span>";
 }
-function forge(){if(invFull())return log("物品欄已滿，無法打造。","danger");var sv=affectionValue("smith"),forgeCost=Math.round(300*(sv>=65?.90:sv>=25?.95:1));if(state.stone<forgeCost||state.iron<3)return log("打造材料不足。","danger");state.stone-=forgeCost;dailyAffection("smith","help",1,3,"常來照顧鐵匠鋪生意");state.iron-=3;state.mastery++;var it=mkItem(null,$("#forgeType").value);addItem(it);log("鐵匠敲落最後一錘，打造出【"+it.name+"】"+it.qn+"品質 "+it.mult+"%。","drop");save();render()}
+function forge(){if(invFull())return log("物品欄已滿，無法打造。","danger");var sv=affectionValue("smith"),forgeCost=Math.round(300*(sv>=65?.90:sv>=25?.95:1));if(state.stone<forgeCost||state.iron<3)return log("打造材料不足。","danger");state.stone-=forgeCost;dailyAffection("smith","help",1,3,"常來照顧鐵匠鋪生意");state.iron-=3;state.mastery++;progressHiddenQuest("smith","craft",1);var it=mkItem(null,$("#forgeType").value);addItem(it);log("鐵匠敲落最後一錘，打造出【"+it.name+"】"+it.qn+"品質 "+it.mult+"%。","drop");save();render()}
 function nextQuality(q){
   var seq=["white","green","blue","purple","orange","platinum"],i=seq.indexOf(q);
   return i>=0&&i<seq.length-1?seq[i+1]:null;
@@ -516,7 +604,7 @@ function synthesize(){
   var out=mkItem(nq,type);
   addItem(out);
   selected=null;$("#detailCard").classList.add("hidden");
-  log("三件【"+qualityName(q)+"】裝備靈光交融，合成出【"+out.qn+"】"+out.name+"。","drop");
+  progressHiddenQuest("smith","craft",1);log("三件【"+qualityName(q)+"】裝備靈光交融，合成出【"+out.qn+"】"+out.name+"。","drop");
   save();render();
 }
 function renderShop(){
@@ -536,14 +624,14 @@ function renderShop(){
 function buyPotion(k,qty){
   var p=POTION[k];if(!p)return;var hv=affectionValue("healer"),discount=hv>=65?.90:hv>=25?.95:1,cost=Math.round(p.price*qty*discount);
   if(state.stone<cost)return log("靈石不足，買不起這些藥。","danger");
-  state.stone-=cost;state.potions[k]=(state.potions[k]||0)+qty;dailyAffection("healer","help",1,3,"常來照顧藥鋪生意");
+  state.stone-=cost;state.potions[k]=(state.potions[k]||0)+qty;progressHiddenQuest("healer","medicine",1);dailyAffection("healer","help",1,3,"常來照顧藥鋪生意");
   log("你在雜貨店買了 "+qty+" 顆【"+p.name+"】。","drop");
   save();render();
 }
 function usePotion(k,isAuto){
   var p=POTION[k];if(!p||(state.potions[k]||0)<=0)return false;
   var s=stats();if(state.hp>=s.hp&&!isAuto){log("目前氣血已滿，不需要服藥。");return false}
-  state.potions[k]--;var before=state.hp;state.hp=Math.min(s.hp,state.hp+p.heal);
+  state.potions[k]--;progressHiddenQuest("healer","medicine",1);var before=state.hp;state.hp=Math.min(s.hp,state.hp+p.heal);
   var healed=Math.max(0,Math.round(state.hp-before));
   log((isAuto?"自動服用":"服用")+"【"+p.name+"】，恢復 "+healed+" 生命。","drop");
   updateVitals();save();renderShop();return true;
@@ -561,7 +649,7 @@ var pendingClass="",pendingAlign="";
 function classPreview(key){var d=CLASS_DATA[key];return d?"<h3>"+d.name+" · "+d.raceName+"</h3><p>"+d.passive+"</p><p class='muted small'>主動技能："+d.skills.map(function(k){return SK[k].name}).join("、")+"</p>":""}
 function chooseClass(key){if(key==="creator"&&account!=="admin")return;pendingClass=key;$$("[data-class-choice]").forEach(function(b){b.classList.toggle("selected",b.dataset.classChoice===key)});$("#alignmentBox").classList.toggle("hidden",key!=="creator");if(key!=="creator")pendingAlign="";$("#createPreview").innerHTML=classPreview(key);$("#createConfirm").disabled=key==="creator"&&!pendingAlign}
 function createCharacter(){if(!pendingClass||pendingClass==="creator"&&!pendingAlign)return;var d=CLASS_DATA[pendingClass];state.characterCreated=true;state.classKey=pendingClass;state.race=d.race;state.alignment=pendingClass==="creator"?pendingAlign:"";state.str=d.attrs.str;state.vit=d.attrs.vit;state.agi=d.attrs.agi;state.int=d.attrs.int;state.skills=d.skills.slice();state.mana=stats().mana;state.hp=stats().hp;save();$("#createModal").classList.add("hidden");render();log("你選擇成為【"+d.name+"】，修行之路正式開始。","drop")}
-function gamble(stake){if(invFull())return log("物品欄已滿，荷官把籌碼推回給你。","danger");if(state.stone<stake)return log("靈石不足，澳門性感荷官笑而不語。","danger");state.stone-=stake;var r=Math.random()*100,q;if(stake===100)q=r<65?"white":r<90?"green":r<99?"blue":"purple";else if(stake===300)q=r<50?"white":r<80?"green":r<96?"blue":"purple";else q=r<35?"white":r<70?"green":r<92?"blue":"purple";var type=["mainhand","offhand","chest","head","pants","shoes","ring","necklace","belt"][rnd(0,8)],it=mkItem(q,type);addItem(it);$("#dealerLine").textContent=fairyPick(["「牌面不說謊，人會。」","「這把算你運氣不錯。」","「再來？我可沒叫你追。」","「修仙靠悟性，賭裝靠膽量。」"]);$("#casinoResult").innerHTML="你押了 "+stake+" 靈石，得到 <b>【"+it.qn+"】"+it.name+"</b>（"+(SLOT_LABEL[type]||"戒指")+"）。";save();render()}
+function gamble(stake){if(invFull())return log("物品欄已滿，荷官把籌碼推回給你。","danger");if(state.stone<stake)return log("靈石不足，澳門性感荷官笑而不語。","danger");state.stone-=stake;progressHiddenQuest("dealer","gamble",1);var r=Math.random()*100,q;if(stake===100)q=r<65?"white":r<90?"green":r<99?"blue":"purple";else if(stake===300)q=r<50?"white":r<80?"green":r<96?"blue":"purple";else q=r<35?"white":r<70?"green":r<92?"blue":"purple";var type=["mainhand","offhand","chest","head","pants","shoes","ring","necklace","belt"][rnd(0,8)],it=mkItem(q,type);addItem(it);$("#dealerLine").textContent=fairyPick(["「牌面不說謊，人會。」","「這把算你運氣不錯。」","「再來？我可沒叫你追。」","「修仙靠悟性，賭裝靠膽量。」"]);$("#casinoResult").innerHTML="你押了 "+stake+" 靈石，得到 <b>【"+it.qn+"】"+it.name+"</b>（"+(SLOT_LABEL[type]||"戒指")+"）。";save();render()}
 var NPCS={
 elder:{name:"村長 柳伯",icon:"村",closeLines:["「你這孩子，我看著你從青竹林一路走出去。別只顧著變強，也記得回來吃口熱飯。」","「外頭的人喊你高手，我還是比較習慣叫你小傢伙。」"],bondLines:["「桃源村永遠給你留著位置。不是客房，是自己人的位置。」"],lines:["「桃源村看著小，但外面的路可長得很。每十級左右，你就該換個地方磨刀。」","「修行最怕貪快。打不動就回村，靈泉又不收你錢。」","「到了新的境界，記得去找阿嵐。她比村裡誰都熟路。」"],actions:[["查看世界地圖","worldmap"]]},
 smith:{name:"鐵匠 韓鐵",icon:"鐵",closeLines:["「你這把武器我一眼就認得。你身上的傢伙，十有八九都讓我操過心。」","「別客氣，爐子還熱著。你來了我就多打一壺鐵。」"],bondLines:["「要是哪天你真成了傳說，記得告訴別人，你第一把像樣的傢伙是我打的。」"],lines:["「刀劍不說謊。你給我玄鐵和靈石，我給你一件至少能砍東西的傢伙。」","「三件同品質能合上一階。捨不得？那就繼續背著佔格子。」","「強化這事，成了叫技術，炸了叫修行。」"],actions:[["進入鐵匠鋪","forge"],["裝備合成","synth"]]},
@@ -592,7 +680,7 @@ function talkNpc(id){
   if(state.loc!=="village")return;var n=NPCS[id];if(!n)return;state.npcTalk[id]=(state.npcTalk[id]||0)+1;dailyAffection(id,"talk",1,2,"日常交談");
   var v=affectionValue(id),pool=v>=85&&n.bondLines?n.bondLines:v>=45&&n.closeLines?n.closeLines:n.lines;
   $("#npcPortrait").textContent=n.icon;$("#npcName").textContent=n.name;$("#npcDialogue").textContent=pool[(state.npcTalk[id]-1)%pool.length];renderNpcAffection(id);
-  var box=$("#npcActions");box.innerHTML="";
+  var aq=activeHiddenQuests(id);if(aq.length)$("#npcDialogue").insertAdjacentHTML("afterend","<div class='npc-quest-hint'>◆ 隱藏任務："+aq[0].name+" · "+(questState(id,aq[0]).progress||0)+"/"+aq[0].goal+"</div>");var box=$("#npcActions");box.innerHTML="";
   var social=document.createElement("button");social.textContent="陪他聊聊／幫個忙";social.onclick=function(){npcHelp(id)};box.appendChild(social);
   n.actions.forEach(function(a){var b=document.createElement("button");b.textContent=a[0];b.onclick=function(){openModal(a[1])};box.appendChild(b)});
   save();$$(".modal-layer").forEach(function(x){x.classList.add("hidden")});$("#npcModal").classList.remove("hidden")
@@ -614,7 +702,7 @@ function scheduleEncounter(delay){
 }
 function enterZone(key){
   var z=ZONES[key];if(!z||battle)return;if(state.level<z.min){log("等級不足，需要 Lv."+z.min+" 才能進入【"+z.name+"】。","danger");return}
-  state.loc=key;state.boss=0;save();close();render();log("你抵達【"+z.name+"】。"+z.desc);scheduleEncounter(900)
+  state.loc=key;state.boss=0;progressHiddenQuest("guide","travel",1);save();close();render();log("你抵達【"+z.name+"】。"+z.desc);scheduleEncounter(900)
 }
 function enterForest(){openModal("worldmap")}
 function returnVillage(){
@@ -632,7 +720,7 @@ function useAutoSkill(s){var now=Date.now(),chosen=null;for(var i=(state.skills|
 function tick(){if(!battle)return;var s=stats();triggerLowHp();s=stats();var act=useAutoSkill(s),mult=act?act.pow:(chance(Math.min(60,s.crit))?1.55:1);mult*=racialMultiplier(state.race,battle.race);var dmg=Math.max(1,Math.round(s.atk*mult-battle.def*.55+rnd(-2,4)));battle.hp-=dmg;$("#battleLog").innerHTML+="<div>"+(act?"【"+act.name+"】":"你發動普通攻擊")+"，造成 "+dmg+" 傷害"+(act?act.note:"")+"。</div>";if(battle.hp<=0){win();return}var dodge=Math.min(75,s.dodge+(battle.bonusDodge||0));if(chance(dodge)){$("#battleLog").innerHTML+="<div>你身影一晃，閃過了攻擊。</div>";battle.bonusDodge=Math.max(0,(battle.bonusDodge||0)-5);updateVitals();save();return}var ed=Math.max(1,Math.round(battle.atk-s.def*.45+rnd(-2,3)));if(battle.shield>0){var absorb=Math.min(battle.shield,ed);battle.shield-=absorb;ed-=absorb;$("#battleLog").innerHTML+="<div>護盾吸收 "+absorb+" 傷害。</div>"}if(ed>0)state.hp-=ed;$("#battleLog").innerHTML+="<div>"+battle.name+" 攻來，你受到 "+Math.max(0,ed)+" 傷害。</div>";var ref=Math.min(45,s.reflect+(battle.bonusReflect||0));if(ed>0&&ref>0){var rd=Math.max(1,Math.round(ed*ref/100));battle.hp-=rd;$("#battleLog").innerHTML+="<div>反傷回敬 "+rd+" 傷害。</div>"}if(state.hp>0){triggerLowHp();maybeAutoPotion()}if(state.hp<=0){clearInterval(timer);timer=null;battle=null;stopEncounterLoop();state.loc="village";state.hp=stats().hp;state.mana=stats().mana;log("你眼前一黑，被採藥人拖回桃源村。靈泉替你恢復了氣血。","danger");$("#enemyBox").classList.add("hidden");save();render();return}$("#enemyBar").style.width=Math.max(0,battle.hp/battle.max*100)+"%";$("#battleLog").scrollTop=$("#battleLog").scrollHeight;updateVitals();save()}
 function win(){
   clearInterval(timer);timer=null;var old=battle;$("#battleLog").innerHTML+="<div>【"+old.name+"】倒下了。</div>";battle=null;
-  gainExp(monsterExp(old));state.stone+=rnd(15,45)*(old.rank==="區域小BOSS"?4:old.rank==="菁英"?2:1);
+  progressHiddenQuest("elder","combat",1);gainExp(monsterExp(old));state.stone+=rnd(15,45)*(old.rank==="區域小BOSS"?4:old.rank==="菁英"?2:1);
   var ep=old.rank==="區域小BOSS"?100:old.rank==="菁英"?42:12;
   if(chance(ep)){
     var it=mkItem(old.rank==="區域小BOSS"&&chance(25)?"purple":null);
@@ -642,7 +730,7 @@ function win(){
   if(chance(old.rank==="區域小BOSS"?48:old.rank==="菁英"?20:7)){state.gems.push(["赤炎石","玄龜石","血玉石","天雷石"][rnd(0,3)]);log("掉落寶石。","drop")}
   if(chance(old.rank==="區域小BOSS"?25:old.rank==="菁英"?9:2)){state.runes.push(["青玄御劍符","九霄雷紋","狂戰血紋"][rnd(0,2)]);log("掉落符文。","drop")}
   save();render();
-  setTimeout(function(){if(!battle)$("#enemyBox").classList.add("hidden");if(state.loc==="forest")scheduleEncounter(rnd(1600,3000))},650);
+  setTimeout(function(){if(!battle)$("#enemyBox").classList.add("hidden");if(state.loc!=="village"&&ZONES[state.loc])scheduleEncounter(rnd(1600,3000))},650);
 }
 function renderChat(){
   $("#fairyTab").classList.toggle("hidden",!state.fairyUnlocked);$("#fairySummary").classList.toggle("hidden",!state.fairyUnlocked);if(state.fairyUnlocked){var fv=affectionValue("fairy"),ft=affectionTier(fv);$("#fairyTab").textContent="小精靈 ♥"+ft;$("#fairySummary").textContent="小精靈 ♥"+ft;}
@@ -897,7 +985,7 @@ function fairyIntent(raw){
   return "";
 }
 function fairyCreate(t){
-  var raw=t.trim(),draft=state.fairyDraft||"",full=(draft?draft+"；":"")+raw,me=$("#name").textContent||"修士";
+  progressHiddenQuest("fairy","fairy",1);var raw=t.trim(),draft=state.fairyDraft||"",full=(draft?draft+"；":"")+raw,me=$("#name").textContent||"修士";
   var wants=/給我|我要|想要|幫我|幫忙|可以給|能不能給|能不能做|可不可以做|做一|造一|捏一|來一|來把|來件|來顆|來個|製作|變出|弄一|搞一|送我|需要|想弄|想做|想來/.test(full);
   var absurd=/無敵|秒殺|一擊必殺|無限|不死|全能|999999|一億|最強到/.test(full);
 
