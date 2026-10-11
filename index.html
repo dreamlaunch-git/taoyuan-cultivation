@@ -96,6 +96,9 @@ body{overflow:hidden}
 .worldmap-modal{width:min(1040px,96vw)}.world-map-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.zone-card{position:relative;text-align:left;padding:13px;min-height:142px;border-radius:12px;background:linear-gradient(145deg,rgba(18,28,19,.78),rgba(5,10,7,.68));overflow:hidden}.zone-card:before{content:"";position:absolute;inset:0;opacity:.22;pointer-events:none;background:var(--zone-bg,linear-gradient(135deg,#52644a,#1a261d))}.zone-card>*{position:relative}.zone-card h3{margin:.05rem 0 .2rem;color:#f0d58d}.zone-card p{margin:.25rem 0;line-height:1.4}.zone-card.locked{filter:saturate(.25);opacity:.58}.zone-card .zone-level{float:right;font-size:.72rem}.zone-card .zone-mobs{font-size:.72rem;color:var(--muted)}.npc-dialogue{display:flex;align-items:flex-start;gap:14px}.npc-portrait{width:62px;height:62px;flex:0 0 62px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);background:linear-gradient(#6e774f,#303828);font-size:1.55rem;font-weight:800;color:#f2dea0}.npc-dialogue h2{margin:0}.npc-words{line-height:1.65;min-height:54px}.npc-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
 #game.zone-redvale .bg{filter:brightness(.95) saturate(1.18) sepia(.18) hue-rotate(330deg)}#game.zone-mistmarsh .bg{filter:brightness(.68) saturate(.72) hue-rotate(85deg)}#game.zone-bonewaste .bg{filter:brightness(.60) saturate(.28)}#game.zone-firemount .bg{filter:brightness(.72) saturate(1.6) hue-rotate(330deg)}#game.zone-windplain .bg{filter:brightness(1.12) saturate(.82) hue-rotate(25deg)}#game.zone-moonwood .bg{filter:brightness(.58) saturate(.85) hue-rotate(150deg)}#game.zone-starsea .bg{filter:brightness(.66) saturate(1.2) hue-rotate(175deg)}#game.zone-formless .bg{filter:brightness(.46) saturate(.20) contrast(1.2)}#game.zone-primordial .bg{filter:brightness(.9) saturate(1.35) hue-rotate(245deg)}
 @media(max-width:800px){.npc-map-points{left:4%;right:4%;top:108px;bottom:310px}.npc-pin{padding:.22rem .32rem}.npc-pin span{width:22px;height:22px;font-size:.72rem}.npc-pin b{display:none}.npc-pin.elder{left:43%;top:19%}.npc-pin.smith{left:10%;top:58%}.npc-pin.healer{left:72%;top:45%}.npc-pin.dealer-pin{left:75%;top:72%}.npc-pin.guide{left:29%;top:78%}.world-map-grid{grid-template-columns:1fr}.zone-card{min-height:126px}}
+</style><style id="affection-v7">
+.affection-line{display:flex;align-items:center;gap:8px;margin:.25rem 0}.affection-line>span:first-child{font-size:.78rem;color:#f0d58d;white-space:nowrap}.affection-bar{display:inline-block;width:130px;height:8px;border-radius:99px;overflow:hidden;border:1px solid rgba(255,255,255,.16);background:rgba(0,0,0,.28)}.affection-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8c6b77,#dd9fb7)}.npc-copy{min-width:0;flex:1}.relations-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.relation-card{padding:12px;border:1px solid rgba(255,255,255,.14);border-radius:12px;background:rgba(4,9,5,.48)}.relation-head{display:flex;align-items:center;gap:9px}.relation-icon{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(#677052,#30372a);color:#f1dfa4;font-weight:800}.relation-main{flex:1;min-width:0}.relation-main b{display:block}.relation-tier{font-size:.74rem;color:#f0d58d}.relation-card .affection-bar{width:100%;margin:.55rem 0}.relation-perk{font-size:.75rem;line-height:1.45;color:var(--muted)}.fairy-affection-note{font-size:.68rem;color:#dffcff;margin-left:4px}
+@media(max-width:800px){.relations-grid{grid-template-columns:1fr}.affection-bar{width:96px}.relations-modal{max-height:88dvh;overflow:auto}}
 </style></head>
 <body>
 <section id="login">
@@ -112,7 +115,7 @@ body{overflow:hidden}
 <main id="game" class="hidden">
 <div class="bg"></div><div class="shade"></div>
 <header class="top glass"><div class="identity"><b id="name">散修</b><span id="role" class="badge"></span><button id="locBadge" class="badge loc-btn" type="button">桃源村</button><span id="levelBadge" class="badge">Lv.1</span><span class="xp-mini"><span id="xpFill"></span></span></div><div class="res"><span>靈石 <b id="stone">0</b></span><span>洗髓石 <b id="wash">0</b></span><span>玄鐵 <b id="iron">0</b></span></div></header>
-<nav class="actions glass"><button data-open="status">狀態</button><button data-open="worldmap">地圖</button><button data-open="items">裝備/物品</button><button data-open="forge">打造</button><button data-open="synth">合成</button><button data-open="shop">雜貨店</button><button data-open="casino">賭場</button><button data-open="gems">寶石/符文</button><button data-open="admin" id="adminQuick">管理</button></nav>
+<nav class="actions glass"><button data-open="status">狀態</button><button data-open="relations">人際</button><button data-open="worldmap">地圖</button><button data-open="items">裝備/物品</button><button data-open="forge">打造</button><button data-open="synth">合成</button><button data-open="shop">雜貨店</button><button data-open="casino">賭場</button><button data-open="gems">寶石/符文</button><button data-open="admin" id="adminQuick">管理</button></nav>
 <div id="npcMapPoints" class="npc-map-points">
   <button class="npc-pin elder" data-npc="elder"><span>村</span><b>村長 柳伯</b></button>
   <button class="npc-pin smith" data-npc="smith"><span>鐵</span><b>鐵匠 韓鐵</b></button>
@@ -132,8 +135,9 @@ body{overflow:hidden}
 <details class="chat glass" id="chatBox"><summary class="chat-summary"><span class="summary-channel">世界</span><span id="fairySummary" class="summary-channel hidden">小精靈</span><span class="summary-arrow">⌃</span></summary><div class="chat-body"><div class="chat-tabs"><button id="worldTab" class="chat-tab active" data-channel="world">世界</button><button id="fairyTab" class="chat-tab hidden" data-channel="fairy">小精靈</button></div><div id="chatLog" class="chatlog"></div><div class="chatrow"><input id="chatInput" placeholder="說點什麼…"><button id="chatSend">送出</button></div></div></details>
 
 <section id="createModal" class="modal-layer hidden"><div class="modal glass create-modal"><h2>選擇你的修行之路</h2><p class="muted">每個帳號首次進入時選擇一次。</p><div class="class-grid"><button class="class-choice" data-class-choice="sword"><b>劍仙</b><span>人族</span><small>力量高 · 劍類加成 · 低血量生命護盾</small></button><button class="class-choice" data-class-choice="blood"><b>血魔</b><span>魔族</span><small>體質高 · 防具加成 · 低血量攻擊爆發</small></button><button class="class-choice" data-class-choice="ranger"><b>千里追</b><span>精靈</span><small>敏捷高 · 飾品加成 · 低血量閃避</small></button><button id="creatorChoice" class="class-choice hidden" data-class-choice="creator"><b>創造者</b><span>神族</span><small>管理員專屬 · 智力高 · 光暗分支</small></button></div><div id="alignmentBox" class="card hidden"><h3>創造者分支</h3><div class="align-row"><button data-align="light">光</button><button data-align="dark">暗</button></div></div><div id="createPreview" class="card"><span class="muted">選擇一個職業查看天賦。</span></div><button id="createConfirm" class="primary" disabled>踏上修行路</button></div></section>
+<section id="relationsModal" class="modal-layer hidden"><div class="modal glass relations-modal"><button class="close" data-close>×</button><h2>人際與好感</h2><p class="muted">好感不是靠狂點對話堆出來。日常聊天與幫忙有每日上限，送禮與相處會更有效。</p><div id="relationsGrid" class="relations-grid"></div></div></section>
 <section id="worldmapModal" class="modal-layer hidden"><div class="modal glass worldmap-modal"><button class="close" data-close>×</button><h2>九州行旅圖</h2><p class="muted">每 10 級開啟一個新的修行區域。進入危險區後會自動尋敵。</p><div id="worldMapGrid" class="world-map-grid"></div></div></section>
-<section id="npcModal" class="modal-layer hidden"><div class="modal narrow glass npc-modal"><button class="close" data-close>×</button><div class="npc-dialogue"><div id="npcPortrait" class="npc-portrait">村</div><div><h2 id="npcName">桃源村居民</h2><p id="npcDialogue" class="npc-words"></p></div></div><div id="npcActions" class="npc-actions"></div></div></section>
+<section id="npcModal" class="modal-layer hidden"><div class="modal narrow glass npc-modal"><button class="close" data-close>×</button><div class="npc-dialogue"><div id="npcPortrait" class="npc-portrait">村</div><div class="npc-copy"><h2 id="npcName">桃源村居民</h2><div class="affection-line"><span id="npcAffectionText">初識 0/100</span><span class="affection-bar"><i id="npcAffectionBar"></i></span></div><p id="npcPerk" class="muted small"></p><p id="npcDialogue" class="npc-words"></p></div></div><div id="npcActions" class="npc-actions"></div></div></section>
 <section id="statusModal" class="modal-layer hidden"><div class="modal narrow glass"><button class="close" data-close>×</button><h2>角色狀態</h2><div class="grid2"><div class="card"><div class="stat">職業 <b id="classText"></b></div><div class="stat">種族 <b id="raceText"></b></div><div class="stat">力量 <b id="strText"></b></div><div class="stat">體質 <b id="vitText"></b></div><div class="stat">敏捷 <b id="agiText"></b></div><div class="stat">智力 <b id="intText"></b></div><div class="stat">生命 <span id="hpText"></span></div><div class="bar"><i id="hpBar"></i></div><div class="stat">攻擊 <b id="atkText"></b></div><div class="stat">防禦 <b id="defText"></b></div><div class="stat">攻速 <b id="spdText"></b></div><div class="stat">暴擊 <b id="critText"></b></div><div class="stat">基礎回血 <b id="regenText"></b></div><div class="stat">法力 <b id="manaText"></b></div><div class="bar mana"><i id="manaBar"></i></div><div class="stat">反傷 <b id="reflectText"></b></div><div class="stat">閃避 <b id="dodgeText"></b></div></div><div class="card"><h3>技能配置</h3><div id="passiveText" class="card passive-card"></div><div id="skills"></div><p class="muted small">戰鬥中不可更換。</p></div></div></div></section>
 
 <section id="itemsModal" class="modal-layer hidden"><div class="modal glass items-v3"><button class="close" data-close>×</button><h2>裝備與物品欄 <span id="invCount" class="badge">0 / 60</span></h2><div class="items-layout"><div><div id="slots" class="slots"></div><div class="bag-head"><b>物品欄</b><span class="muted small">點選物品後展開屬性</span></div><div id="inventory" class="inv60"></div></div><div id="detailCard" class="card detail-card hidden"><div class="detail-head"><h3>物品屬性</h3><button id="detailClose" class="detail-close" type="button">收起</button></div><div id="detail" class="muted"></div></div></div></div></section>
@@ -216,13 +220,46 @@ var SLOT_LABEL={mainhand:"主手",offhand:"副手",chest:"衣服",head:"頭部",
 var EN=[100,100,95,90,80,70,60,45,30,18,8], POTION={small:{name:"小還丹",heal:80,price:35},medium:{name:"聚氣丹",heal:180,price:80},large:{name:"回春丹",heal:360,price:150}}, account=null,state=null,battle=null,timer=null,selected=null,fairy=false,activeChannel="world",moveLocked=false,encounterTimer=null,regenTimer=null,lastPotionAt=0;
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a} function chance(p){return Math.random()*100<p} function hpass(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h)^s.charCodeAt(i);return(h>>>0).toString(36)}
 function key(){return "taoyuan_"+account}
-function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,regen:2,stone:800,wash:5,iron:8,inv:[],eq:{mainhand:null,offhand:null,chest:null,head:null,pants:null,shoes:null,ring1:null,ring2:null,necklace:null,belt:null},gems:[],runes:[],skills:[],characterCreated:false,classKey:"",race:"",alignment:"",str:0,vit:0,agi:0,int:0,mana:0,mastery:0,steps:0,boss:0,npcTalk:{},level:1,exp:0,potions:{small:0,medium:0,large:0},autoPotionEnabled:false,autoPotionPct:35,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false,fairyDraft:"",fairyBond:0,fairyMood:0,fairyLastIntent:""}}
-function load(){try{state=JSON.parse(localStorage.getItem(key()))||fresh()}catch(e){state=fresh()}if(!state.chat)state.chat=[];if(!state.fairyChat)state.fairyChat=[];if(typeof state.fairyUnlocked!=="boolean")state.fairyUnlocked=false;if(typeof state.fairyDraft!=="string")state.fairyDraft="";if(typeof state.fairyBond!=="number")state.fairyBond=0;if(typeof state.fairyLastIntent!=="string")state.fairyLastIntent="";if(typeof state.fairyMood!=="number")state.fairyMood=0;if(typeof state.level!=="number")state.level=1;if(typeof state.exp!=="number")state.exp=0;if(typeof state.regen!=="number")state.regen=2;if(!state.potions)state.potions={small:0,medium:0,large:0};if(typeof state.autoPotionEnabled!=="boolean")state.autoPotionEnabled=false;if(typeof state.autoPotionPct!=="number")state.autoPotionPct=35;if(typeof state.characterCreated!=="boolean")state.characterCreated=false;if(!state.npcTalk)state.npcTalk={};if(state.loc==="forest")state.loc="forest";else if(state.loc!=="village"&&!ZONES[state.loc])state.loc="village";if(!state.eq||state.eq.weapon!==undefined||state.eq.armor!==undefined||state.eq.ring!==undefined){var old=state.eq||{};state.eq={mainhand:old.weapon||null,offhand:null,chest:old.armor||null,head:null,pants:null,shoes:null,ring1:old.ring||null,ring2:null,necklace:null,belt:null}}(state.inv||[]).forEach(function(it){if(typeof it.washCount!=="number")it.washCount=0;if(it.type==="weapon")it.type="mainhand";else if(it.type==="armor")it.type="chest"});if(state.characterCreated&&state.classKey&&CLASS_DATA[state.classKey]){var d=CLASS_DATA[state.classKey];state.race=d.race;if(!state.skills||!state.skills.length)state.skills=d.skills.slice();if(!state.str&&!state.vit&&!state.agi&&!state.int){state.str=d.attrs.str;state.vit=d.attrs.vit;state.agi=d.attrs.agi;state.int=d.attrs.int}}fairy=state.fairyUnlocked;activeChannel="world";save()}
+function fresh(){return {loc:"village",hp:180,maxHp:180,atk:22,def:8,spd:1,crit:5,regen:2,stone:800,wash:5,iron:8,inv:[],eq:{mainhand:null,offhand:null,chest:null,head:null,pants:null,shoes:null,ring1:null,ring2:null,necklace:null,belt:null},gems:[],runes:[],skills:[],characterCreated:false,classKey:"",race:"",alignment:"",str:0,vit:0,agi:0,int:0,mana:0,mastery:0,steps:0,boss:0,npcTalk:{},affection:{fairy:0,elder:0,smith:0,healer:0,dealer:0,guide:0},affectionDaily:{},level:1,exp:0,potions:{small:0,medium:0,large:0},autoPotionEnabled:false,autoPotionPct:35,chat:[["世界","桃源村今日依舊靈氣平和。"]],fairyChat:[],fairyUnlocked:false,fairyDraft:"",fairyBond:0,fairyMood:0,fairyLastIntent:""}}
+function load(){try{state=JSON.parse(localStorage.getItem(key()))||fresh()}catch(e){state=fresh()}if(!state.chat)state.chat=[];if(!state.fairyChat)state.fairyChat=[];if(typeof state.fairyUnlocked!=="boolean")state.fairyUnlocked=false;if(typeof state.fairyDraft!=="string")state.fairyDraft="";if(typeof state.fairyBond!=="number")state.fairyBond=0;if(typeof state.fairyLastIntent!=="string")state.fairyLastIntent="";if(typeof state.fairyMood!=="number")state.fairyMood=0;if(typeof state.level!=="number")state.level=1;if(typeof state.exp!=="number")state.exp=0;if(typeof state.regen!=="number")state.regen=2;if(!state.potions)state.potions={small:0,medium:0,large:0};if(typeof state.autoPotionEnabled!=="boolean")state.autoPotionEnabled=false;if(typeof state.autoPotionPct!=="number")state.autoPotionPct=35;if(typeof state.characterCreated!=="boolean")state.characterCreated=false;if(!state.npcTalk)state.npcTalk={};if(!state.affection)state.affection={fairy:Math.min(100,(state.fairyBond||0)*4),elder:0,smith:0,healer:0,dealer:0,guide:0};["fairy","elder","smith","healer","dealer","guide"].forEach(function(k){if(typeof state.affection[k]!=="number")state.affection[k]=0});if(!state.affectionDaily)state.affectionDaily={};if(state.loc==="forest")state.loc="forest";else if(state.loc!=="village"&&!ZONES[state.loc])state.loc="village";if(!state.eq||state.eq.weapon!==undefined||state.eq.armor!==undefined||state.eq.ring!==undefined){var old=state.eq||{};state.eq={mainhand:old.weapon||null,offhand:null,chest:old.armor||null,head:null,pants:null,shoes:null,ring1:old.ring||null,ring2:null,necklace:null,belt:null}}(state.inv||[]).forEach(function(it){if(typeof it.washCount!=="number")it.washCount=0;if(it.type==="weapon")it.type="mainhand";else if(it.type==="armor")it.type="chest"});if(state.characterCreated&&state.classKey&&CLASS_DATA[state.classKey]){var d=CLASS_DATA[state.classKey];state.race=d.race;if(!state.skills||!state.skills.length)state.skills=d.skills.slice();if(!state.str&&!state.vit&&!state.agi&&!state.int){state.str=d.attrs.str;state.vit=d.attrs.vit;state.agi=d.attrs.agi;state.int=d.attrs.int}}fairy=state.fairyUnlocked;activeChannel="world";save()}
 function save(){localStorage.setItem(key(),JSON.stringify(state))}
 function invFull(){return state.inv.length>=60}
 function addItem(it){if(invFull()){log("物品欄已滿（60/60）。","danger");return false}state.inv.push(it);return true}
 function quality(force){if(force)return QS.filter(function(q){return q[0]===force})[0];var n=Math.random()*100,s=0;for(var i=0;i<QS.length;i++){s+=QS[i][2];if(n<s)return QS[i]}return QS[0]}
 function mkItem(force,type){type=type||["mainhand","offhand","chest","head","pants","shoes","ring","necklace","belt"][rnd(0,8)];var q=quality(force),mult=rnd(100,150),names={mainhand:["青竹劍","流雲劍","寒溪劍","破霧長劍"],offhand:["聚靈玉","玄紋法冊","星砂法球","護心靈印"],chest:["青麻道袍","竹紋法衣","玄鐵戰衣"],head:["青羽冠","玄紋兜帽","鎮魂盔"],pants:["踏雲長褲","玄甲護腿","青紋下裳"],shoes:["追風靴","竹影履","玄鐵戰靴"],ring:["青玉戒","聚靈環","松紋戒"],necklace:["流光墜","青玉項鍊","鎖靈鏈"],belt:["玄紋腰帶","聚氣帶","赤銅束帶"]},affNames=["攻擊","防禦","生命","暴擊率","攻擊速度","技能傷害","生命恢復","法力"],aff=[],n=Math.max(1,QS.findIndex(function(x){return x[0]===q[0]})+1);for(var i=0;i<Math.min(n,5);i++)aff.push(affNames[rnd(0,7)]+" +"+rnd(2,12));return{id:Date.now()+"_"+Math.random(),type:type,name:names[type][rnd(0,names[type].length-1)],q:q[0],qn:q[1],mult:mult,enh:0,aff:aff,set:(["purple","orange","platinum"].indexOf(q[0])>=0&&chance(20))?"青竹靈套":null,washCount:0}}
+var AFF_NAMES={fairy:"系統小精靈",elder:"村長 柳伯",smith:"鐵匠 韓鐵",healer:"藥師 蘇禾",dealer:"澳門性感荷官",guide:"驛使 阿嵐"};
+var AFF_ICONS={fairy:"靈",elder:"村",smith:"鐵",healer:"藥",dealer:"賭",guide:"驛"};
+function affectionValue(id){return Math.max(0,Math.min(100,(state.affection&&state.affection[id])||0))}
+function affectionTier(v){if(v>=100)return"羈絆";if(v>=85)return"知己";if(v>=65)return"信賴";if(v>=45)return"親近";if(v>=25)return"熟悉";if(v>=10)return"熟面";return"初識"}
+function localDayKey(){var d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
+function dailyBucket(id){
+  if(!state.affectionDaily[id]||state.affectionDaily[id].date!==localDayKey())state.affectionDaily[id]={date:localDayKey(),talk:0,help:0,fairyChat:0,fairyGift:0};
+  return state.affectionDaily[id]
+}
+function changeAffection(id,delta,reason){
+  if(!state.affection)state.affection={};var before=affectionValue(id),oldTier=affectionTier(before),after=Math.max(0,Math.min(100,before+delta));state.affection[id]=after;
+  if(delta!==0&&after!==before){var sign=after>before?"+":"";log((AFF_NAMES[id]||id)+" 好感 "+sign+(after-before)+(reason?" · "+reason:""),after>before?"drop":"danger")}
+  if(affectionTier(after)!==oldTier)log((AFF_NAMES[id]||id)+" 的關係提升為【"+affectionTier(after)+"】。","drop");
+  save();return after-before
+}
+function dailyAffection(id,kind,amount,cap,reason){
+  var b=dailyBucket(id),used=b[kind]||0,left=Math.max(0,cap-used),gain=Math.min(amount,left);if(gain>0){b[kind]=used+gain;changeAffection(id,gain,reason)}return gain
+}
+function relationPerk(id){
+  var v=affectionValue(id);
+  if(id==="elder")return v>=65?"柳伯信賴：戰鬥經驗 +5%":v>=25?"柳伯熟悉：戰鬥經驗 +2%":"多相處後，柳伯會分享修行心得。";
+  if(id==="smith")return v>=65?"韓鐵信賴：打造靈石費用 -10%":v>=25?"韓鐵熟悉：打造靈石費用 -5%":"幫忙鐵匠鋪，可以得到熟客優惠。";
+  if(id==="healer")return v>=65?"蘇禾信賴：丹藥價格 -10%":v>=25?"蘇禾熟悉：丹藥價格 -5%":"幫忙藥鋪，可以得到熟客藥價。";
+  if(id==="dealer")return v>=65?"荷官信賴：更多私人台詞已解鎖，賭率仍保持公平":v>=25?"荷官熟悉：會用熟客語氣招呼你":"好感不會修改賭率。";
+  if(id==="guide")return v>=65?"阿嵐信賴：已解鎖更多遠方見聞":v>=25?"阿嵐熟悉：會分享各地隱聞":"多幫忙整理驛圖，可以聽到更多見聞。";
+  if(id==="fairy")return v>=65?"小精靈信賴：贈禮回饋機率額外 +10%":v>=25?"小精靈熟悉：贈禮回饋機率額外 +5%":"聊天與贈送裝備都會慢慢拉近距離。";
+  return""
+}
+function affectionRewardBonus(id){var v=affectionValue(id);return v>=65?10:v>=25?5:0}
+function renderRelations(){
+  if(!$("#relationsGrid"))return;var ids=["fairy","elder","smith","healer","dealer","guide"],box=$("#relationsGrid");box.innerHTML="";
+  ids.forEach(function(id){if(id==="fairy"&&!state.fairyUnlocked)return;var v=affectionValue(id),d=document.createElement("div");d.className="relation-card";d.innerHTML="<div class='relation-head'><div class='relation-icon'>"+AFF_ICONS[id]+"</div><div class='relation-main'><b>"+AFF_NAMES[id]+"</b><span class='relation-tier'>"+affectionTier(v)+" · "+v+"/100</span></div></div><span class='affection-bar'><i style='width:"+v+"%'></i></span><div class='relation-perk'>"+relationPerk(id)+"</div>";box.appendChild(d)})
+}
 function itemEquipped(it){return Object.keys(state.eq).some(function(k){return state.eq[k]===it.id})}
 function itemCategory(type){if(["chest","head","pants","shoes"].indexOf(type)>=0)return"armor";if(["ring","necklace","belt"].indexOf(type)>=0)return"accessory";if(type==="mainhand")return"weapon";if(type==="offhand")return"offhand";return"other"}
 function racialGearBonus(it){var cat=itemCategory(it.type);if(state.race==="human"&&cat==="weapon")return 1.15;if(state.race==="demon"&&cat==="armor")return 1.15;if(state.race==="elf"&&cat==="accessory")return 1.15;if(state.race==="god"&&cat==="offhand")return 1.15;return 1}
@@ -254,7 +291,7 @@ function monsterExp(m){
   return Math.max(8,base);
 }
 function gainExp(n){
-  if(state.level>=100)return;
+  if(state.level>=100)return;var eb=affectionValue("elder")>=65?1.05:affectionValue("elder")>=25?1.02:1;n=Math.max(1,Math.round(n*eb));
   state.exp+=n;
   log("獲得 "+n+" 經驗。","drop");
   while(state.level<100){
@@ -285,7 +322,7 @@ function render(){
   $("#forestBtn").classList.toggle("hidden",state.loc!=="village");$("#npcMapPoints").classList.toggle("hidden",state.loc!=="village");$("#game").className=(state.loc==="village"?"":"zone-"+z.theme);
   $("#villageBtn").classList.toggle("hidden",state.loc==="village");
   $("#villageBtn").disabled=!!battle;
-  renderSkills();renderItems();renderChat();renderGems();renderSynthesis();renderShop();renderWorldMap();
+  renderSkills();renderItems();renderChat();renderGems();renderSynthesis();renderShop();renderWorldMap();renderRelations();
   $("#mastery").textContent="鍛造熟練度 Lv."+(Math.floor(state.mastery/5)+1)+"（累計 "+state.mastery+" 次）";
 }
 function renderSkills(){var box=$("#skills");box.innerHTML="";(state.skills||[]).forEach(function(x,i){var s=SK[x];if(!s)return;var r=document.createElement("div");r.className="stat";r.innerHTML="<span>"+(i+1)+". "+s.name+"</span><span class='muted small'>CD "+(s.cd/1000)+"s · 法力 "+s.mana+"</span>";box.appendChild(r);var p=document.createElement("div");p.className="muted small";p.textContent=s.desc;box.appendChild(p)})}
@@ -358,8 +395,8 @@ function giftItem(it){
   var qi=Math.max(0,QS.findIndex(function(q){return q[0]===it.q}));
   unequipItem(it);
   state.inv=state.inv.filter(function(x){return x.id!==it.id});
-  selected=null;state.fairyBond=Math.min(99,(state.fairyBond||0)+1);
-  var rewardChance=18+qi*8+Math.min(8,Math.floor(state.fairyBond/3)),roll=Math.random()*100,msg=fairyPick(["小精靈抱著【"+it.name+"】轉了一圈：「這個我收下啦。」","小精靈接過【"+it.name+"】，對著光看了半天：「嗯，這個有點意思。」","小精靈把【"+it.name+"】往袖子裡一塞：「成交。欸，不對，你是送我。」"]);
+  selected=null;var fg=Math.min(4,1+Math.floor(qi/2));dailyAffection("fairy","fairyGift",fg,10,"收到你送的裝備");
+  var rewardChance=18+qi*8+affectionRewardBonus("fairy"),roll=Math.random()*100,msg=fairyPick(["小精靈抱著【"+it.name+"】轉了一圈：「這個我收下啦。」","小精靈接過【"+it.name+"】，對著光看了半天：「嗯，這個有點意思。」","小精靈把【"+it.name+"】往袖子裡一塞：「成交。欸，不對，你是送我。」"]);
   if(roll<rewardChance){
     var r=Math.random()*100;
     if(r<12){
@@ -383,7 +420,7 @@ function giftItem(it){
   log("你把【"+it.name+"】贈送給了小精靈。");
   save();render();$("#detail").innerHTML="<span class='muted'>裝備已送給小精靈。</span>";
 }
-function forge(){if(invFull())return log("物品欄已滿，無法打造。","danger");if(state.stone<300||state.iron<3)return log("打造材料不足。","danger");state.stone-=300;state.iron-=3;state.mastery++;var it=mkItem(null,$("#forgeType").value);addItem(it);log("鐵匠敲落最後一錘，打造出【"+it.name+"】"+it.qn+"品質 "+it.mult+"%。","drop");save();render()}
+function forge(){if(invFull())return log("物品欄已滿，無法打造。","danger");var sv=affectionValue("smith"),forgeCost=Math.round(300*(sv>=65?.90:sv>=25?.95:1));if(state.stone<forgeCost||state.iron<3)return log("打造材料不足。","danger");state.stone-=forgeCost;dailyAffection("smith","help",1,3,"常來照顧鐵匠鋪生意");state.iron-=3;state.mastery++;var it=mkItem(null,$("#forgeType").value);addItem(it);log("鐵匠敲落最後一錘，打造出【"+it.name+"】"+it.qn+"品質 "+it.mult+"%。","drop");save();render()}
 function nextQuality(q){
   var seq=["white","green","blue","purple","orange","platinum"],i=seq.indexOf(q);
   return i>=0&&i<seq.length-1?seq[i+1]:null;
@@ -423,9 +460,9 @@ function renderShop(){
   $$("[data-use-potion]").forEach(function(b){b.onclick=function(){usePotion(b.dataset.usePotion,false)}});
 }
 function buyPotion(k,qty){
-  var p=POTION[k],cost=p.price*qty;if(!p)return;
+  var p=POTION[k];if(!p)return;var hv=affectionValue("healer"),discount=hv>=65?.90:hv>=25?.95:1,cost=Math.round(p.price*qty*discount);
   if(state.stone<cost)return log("靈石不足，買不起這些藥。","danger");
-  state.stone-=cost;state.potions[k]=(state.potions[k]||0)+qty;
+  state.stone-=cost;state.potions[k]=(state.potions[k]||0)+qty;dailyAffection("healer","help",1,3,"常來照顧藥鋪生意");
   log("你在雜貨店買了 "+qty+" 顆【"+p.name+"】。","drop");
   save();render();
 }
@@ -448,25 +485,43 @@ function maybeAutoPotion(){
 }
 var pendingClass="",pendingAlign="";
 function classPreview(key){var d=CLASS_DATA[key];return d?"<h3>"+d.name+" · "+d.raceName+"</h3><p>"+d.passive+"</p><p class='muted small'>主動技能："+d.skills.map(function(k){return SK[k].name}).join("、")+"</p>":""}
-function chooseClass(key){if(key==="creator"&&account!=="admin")return;pendingClass=key;$$$("[data-class-choice]").forEach(function(b){b.classList.toggle("selected",b.dataset.classChoice===key)});$("#alignmentBox").classList.toggle("hidden",key!=="creator");if(key!=="creator")pendingAlign="";$("#createPreview").innerHTML=classPreview(key);$("#createConfirm").disabled=key==="creator"&&!pendingAlign}
+function chooseClass(key){if(key==="creator"&&account!=="admin")return;pendingClass=key;$$("[data-class-choice]").forEach(function(b){b.classList.toggle("selected",b.dataset.classChoice===key)});$("#alignmentBox").classList.toggle("hidden",key!=="creator");if(key!=="creator")pendingAlign="";$("#createPreview").innerHTML=classPreview(key);$("#createConfirm").disabled=key==="creator"&&!pendingAlign}
 function createCharacter(){if(!pendingClass||pendingClass==="creator"&&!pendingAlign)return;var d=CLASS_DATA[pendingClass];state.characterCreated=true;state.classKey=pendingClass;state.race=d.race;state.alignment=pendingClass==="creator"?pendingAlign:"";state.str=d.attrs.str;state.vit=d.attrs.vit;state.agi=d.attrs.agi;state.int=d.attrs.int;state.skills=d.skills.slice();state.mana=stats().mana;state.hp=stats().hp;save();$("#createModal").classList.add("hidden");render();log("你選擇成為【"+d.name+"】，修行之路正式開始。","drop")}
 function gamble(stake){if(invFull())return log("物品欄已滿，荷官把籌碼推回給你。","danger");if(state.stone<stake)return log("靈石不足，澳門性感荷官笑而不語。","danger");state.stone-=stake;var r=Math.random()*100,q;if(stake===100)q=r<65?"white":r<90?"green":r<99?"blue":"purple";else if(stake===300)q=r<50?"white":r<80?"green":r<96?"blue":"purple";else q=r<35?"white":r<70?"green":r<92?"blue":"purple";var type=["mainhand","offhand","chest","head","pants","shoes","ring","necklace","belt"][rnd(0,8)],it=mkItem(q,type);addItem(it);$("#dealerLine").textContent=fairyPick(["「牌面不說謊，人會。」","「這把算你運氣不錯。」","「再來？我可沒叫你追。」","「修仙靠悟性，賭裝靠膽量。」"]);$("#casinoResult").innerHTML="你押了 "+stake+" 靈石，得到 <b>【"+it.qn+"】"+it.name+"</b>（"+(SLOT_LABEL[type]||"戒指")+"）。";save();render()}
 var NPCS={
-elder:{name:"村長 柳伯",icon:"村",lines:["「桃源村看著小，但外面的路可長得很。每十級左右，你就該換個地方磨刀。」","「修行最怕貪快。打不動就回村，靈泉又不收你錢。」","「到了新的境界，記得去找阿嵐。她比村裡誰都熟路。」"],actions:[["查看世界地圖","worldmap"]]},
-smith:{name:"鐵匠 韓鐵",icon:"鐵",lines:["「刀劍不說謊。你給我玄鐵和靈石，我給你一件至少能砍東西的傢伙。」","「三件同品質能合上一階。捨不得？那就繼續背著佔格子。」","「強化這事，成了叫技術，炸了叫修行。」"],actions:[["進入鐵匠鋪","forge"],["裝備合成","synth"]]},
-healer:{name:"藥師 蘇禾",icon:"藥",lines:["「出去之前把藥帶夠。活著回來，比省那幾枚靈石重要。」","「自動喝藥的門檻別設太低，妖獸可不會等你慢慢想。」","「你要是又空血跑回來，我就把藥方貼你額頭上。」"],actions:[["購買丹藥","shop"]]},
-dealer:{name:"澳門性感荷官",icon:"賭",lines:["「坐。今天手氣好不好，不問天，只問你敢押多少。」","「白到紫，牌桌上都可能翻出來。白金？那不是這張桌子的規矩。」","「輸贏都是靈石，別把道心一起押上。」"],actions:[["坐上牌桌","casino"]]},
-guide:{name:"驛使 阿嵐",icon:"驛",lines:["「路我都記得。你等級到了，我就送你去下一片地界。」","「青竹林只是門口。真正難走的路，在五十級以後才開始。」","「九十級之後去太初天域？可以。先確定你的遺言不是寫給我。」"],actions:[["展開九州行旅圖","worldmap"]]}
+elder:{name:"村長 柳伯",icon:"村",closeLines:["「你這孩子，我看著你從青竹林一路走出去。別只顧著變強，也記得回來吃口熱飯。」","「外頭的人喊你高手，我還是比較習慣叫你小傢伙。」"],bondLines:["「桃源村永遠給你留著位置。不是客房，是自己人的位置。」"],lines:["「桃源村看著小，但外面的路可長得很。每十級左右，你就該換個地方磨刀。」","「修行最怕貪快。打不動就回村，靈泉又不收你錢。」","「到了新的境界，記得去找阿嵐。她比村裡誰都熟路。」"],actions:[["查看世界地圖","worldmap"]]},
+smith:{name:"鐵匠 韓鐵",icon:"鐵",closeLines:["「你這把武器我一眼就認得。你身上的傢伙，十有八九都讓我操過心。」","「別客氣，爐子還熱著。你來了我就多打一壺鐵。」"],bondLines:["「要是哪天你真成了傳說，記得告訴別人，你第一把像樣的傢伙是我打的。」"],lines:["「刀劍不說謊。你給我玄鐵和靈石，我給你一件至少能砍東西的傢伙。」","「三件同品質能合上一階。捨不得？那就繼續背著佔格子。」","「強化這事，成了叫技術，炸了叫修行。」"],actions:[["進入鐵匠鋪","forge"],["裝備合成","synth"]]},
+healer:{name:"藥師 蘇禾",icon:"藥",closeLines:["「你又帶傷回來了？坐好。嘴可以硬，脈象不會陪你演。」","「藥我都替你分好了。你要是忘記喝，我真的會生氣。」"],bondLines:["「你平安回村，比你帶回多少稀有材料都重要。這句不用跟別人說。」"],lines:["「出去之前把藥帶夠。活著回來，比省那幾枚靈石重要。」","「自動喝藥的門檻別設太低，妖獸可不會等你慢慢想。」","「你要是又空血跑回來，我就把藥方貼你額頭上。」"],actions:[["購買丹藥","shop"]]},
+dealer:{name:"澳門性感荷官",icon:"賭",closeLines:["「老位置給你留著了。放心，好感歸好感，牌桌上的機率我一點都不改。」","「熟客也沒有暗牌。最多多送你一句：今天氣色不錯。」"],bondLines:["「你來不來下注其實都行。坐著陪我收幾副牌，也不算浪費晚上。」"],lines:["「坐。今天手氣好不好，不問天，只問你敢押多少。」","「白到紫，牌桌上都可能翻出來。白金？那不是這張桌子的規矩。」","「輸贏都是靈石，別把道心一起押上。」"],actions:[["坐上牌桌","casino"]]},
+guide:{name:"驛使 阿嵐",icon:"驛",closeLines:["「你的腳程我熟了。哪條路適合你，我閉著眼都能指出來。」","「你每次回來，我都會先看看你少沒少胳膊腿。職業習慣。」"],bondLines:["「等你走完太初天域，我還有一條沒畫在公圖上的路想帶你看。」"],lines:["「路我都記得。你等級到了，我就送你去下一片地界。」","「青竹林只是門口。真正難走的路，在五十級以後才開始。」","「九十級之後去太初天域？可以。先確定你的遺言不是寫給我。」"],actions:[["展開九州行旅圖","worldmap"]]}
 };
 function renderWorldMap(){
   if(!$("#worldMapGrid"))return;var box=$("#worldMapGrid");box.innerHTML="";
   Object.keys(ZONES).forEach(function(k){var z=ZONES[k],open=state.level>=z.min,b=document.createElement("button");b.className="zone-card"+(open?"":" locked");b.style.setProperty("--zone-bg",z.bg);b.disabled=!open;b.innerHTML="<span class='zone-level'>Lv."+z.min+"-"+z.max+"</span><h3>"+z.name+"</h3><p>"+z.desc+"</p><div class='zone-mobs'>妖物："+z.normal.join("、")+"<br>首領："+z.boss+"</div>"+(open?"":"<p class='danger'>Lv."+z.min+" 解鎖</p>");if(open)b.onclick=function(){enterZone(k)};box.appendChild(b)})
 }
+function npcSocialLine(id){
+  var lines={
+    elder:["你陪柳伯坐在橋邊聊了會村裡近況。","柳伯一邊喝茶，一邊把你小時候似的糗事講得煞有介事。"],
+    smith:["你替韓鐵拉了一陣風箱，他嘴上嫌你節奏不穩，手上倒是多遞了一杯茶。","你幫忙整理鐵料，韓鐵難得點了點頭。"],
+    healer:["你幫蘇禾曬藥、分藥包，她終於肯坐下歇一會。","蘇禾讓你聞了幾味藥材，結果你連錯三個，她笑了很久。"],
+    dealer:["你沒下注，只陪荷官收了幾副牌。她說這比看人上頭有意思。","荷官教你一個洗牌花手，然後補一句：別拿去騙人。"],
+    guide:["你幫阿嵐重新標了幾條驛路，她順便講了兩個地圖上沒有的小故事。","阿嵐把旅途中最難走的一段路畫給你看，說以後你會用上。"]
+  };return fairyPick(lines[id]||["你們聊了一會。"])
+}
+function npcHelp(id){
+  var got=dailyAffection(id,"help",3,3,"今天幫了忙");$("#npcDialogue").textContent=npcSocialLine(id)+(got? " 好感有所提升。":" 今天已經幫很多了，先休息吧。");renderNpcAffection(id);renderRelations();save()
+}
+function renderNpcAffection(id){
+  var v=affectionValue(id);$("#npcAffectionText").textContent=affectionTier(v)+" · "+v+"/100";$("#npcAffectionBar").style.width=v+"%";$("#npcPerk").textContent=relationPerk(id)
+}
 function talkNpc(id){
-  if(state.loc!=="village")return;var n=NPCS[id];if(!n)return;state.npcTalk[id]=(state.npcTalk[id]||0)+1;
-  $("#npcPortrait").textContent=n.icon;$("#npcName").textContent=n.name;$("#npcDialogue").textContent=n.lines[(state.npcTalk[id]-1)%n.lines.length];
-  var box=$("#npcActions");box.innerHTML="";n.actions.forEach(function(a){var b=document.createElement("button");b.textContent=a[0];b.onclick=function(){openModal(a[1])};box.appendChild(b)});
-  save();$$$(".modal-layer").forEach(function(x){x.classList.add("hidden")});$("#npcModal").classList.remove("hidden")
+  if(state.loc!=="village")return;var n=NPCS[id];if(!n)return;state.npcTalk[id]=(state.npcTalk[id]||0)+1;dailyAffection(id,"talk",1,2,"日常交談");
+  var v=affectionValue(id),pool=v>=85&&n.bondLines?n.bondLines:v>=45&&n.closeLines?n.closeLines:n.lines;
+  $("#npcPortrait").textContent=n.icon;$("#npcName").textContent=n.name;$("#npcDialogue").textContent=pool[(state.npcTalk[id]-1)%pool.length];renderNpcAffection(id);
+  var box=$("#npcActions");box.innerHTML="";
+  var social=document.createElement("button");social.textContent="陪他聊聊／幫個忙";social.onclick=function(){npcHelp(id)};box.appendChild(social);
+  n.actions.forEach(function(a){var b=document.createElement("button");b.textContent=a[0];b.onclick=function(){openModal(a[1])};box.appendChild(b)});
+  save();$$(".modal-layer").forEach(function(x){x.classList.add("hidden")});$("#npcModal").classList.remove("hidden")
 }
 function renderGems(){var gc={},rc={};state.gems.forEach(function(x){gc[x]=(gc[x]||0)+1});state.runes.forEach(function(x){rc[x]=(rc[x]||0)+1});$("#gemsList").innerHTML=Object.keys(gc).map(function(k){return "<div>"+k+" × "+gc[k]+"</div>"}).join("")||"<span class='muted'>尚無寶石</span>";$("#runesList").innerHTML=Object.keys(rc).map(function(k){return "<div>"+k+" × "+rc[k]+"</div>"}).join("")||"<span class='muted'>尚無符文</span>"}
 function stopEncounterLoop(){if(encounterTimer){clearTimeout(encounterTimer);encounterTimer=null}}
@@ -516,7 +571,7 @@ function win(){
   setTimeout(function(){if(!battle)$("#enemyBox").classList.add("hidden");if(state.loc==="forest")scheduleEncounter(rnd(1600,3000))},650);
 }
 function renderChat(){
-  $("#fairyTab").classList.toggle("hidden",!state.fairyUnlocked);$("#fairySummary").classList.toggle("hidden",!state.fairyUnlocked);
+  $("#fairyTab").classList.toggle("hidden",!state.fairyUnlocked);$("#fairySummary").classList.toggle("hidden",!state.fairyUnlocked);if(state.fairyUnlocked){var fv=affectionValue("fairy"),ft=affectionTier(fv);$("#fairyTab").textContent="小精靈 ♥"+ft;$("#fairySummary").textContent="小精靈 ♥"+ft;}
   $$(".chat-tab").forEach(function(b){b.classList.toggle("active",b.dataset.channel===activeChannel)});
   var box=$("#chatLog"),list=activeChannel==="fairy"?state.fairyChat:state.chat;
   box.innerHTML=list.slice(-30).map(function(x){return "<div class='"+(activeChannel==="fairy"?"fairyline":"")+"'>【"+x[0]+"】"+x[1]+"</div>"}).join("");
@@ -604,8 +659,9 @@ function fairyAffixes(t){
 }
 function fairyPick(a){return a[rnd(0,a.length-1)]}
 function fairyTone(){
-  if(state.fairyBond>=12)return "close";
-  if(state.fairyBond>=5)return "warm";
+  var v=affectionValue("fairy");
+  if(v>=65)return "close";
+  if(v>=25)return "warm";
   return "new";
 }
 function fairyMoodName(){
@@ -773,15 +829,15 @@ function fairyCreate(t){
 
   var ci=fairyIntent(raw);
   if(ci){
-    if(ci==="thanks"||ci==="praise"||ci==="cute"||ci==="hug"||ci==="apology"||ci==="company"){state.fairyBond=Math.min(99,state.fairyBond+1);fairyMoodShift(1)}
-    if(ci==="insult"){state.fairyBond=Math.max(0,state.fairyBond-1);fairyMoodShift(-2)}
+    if(ci==="thanks"||ci==="praise"||ci==="cute"||ci==="hug"||ci==="apology"||ci==="company"){dailyAffection("fairy","fairyChat",1,5,"今天聊得很合拍");fairyMoodShift(1)}
+    if(ci==="insult"){changeAffection("fairy",-1,"被你氣到了");fairyMoodShift(-2)}
     if(ci==="guilt")fairyMoodShift(chance(45)?1:-1);
     if(ci==="playerangry")fairyMoodShift(-1);
     state.fairyLastIntent=ci;state.fairyDraft="";
     fairySay(fairyReact(ci,raw));return;
   }
   if(/愛你|喜歡你|想你/.test(raw)){
-    state.fairyBond=Math.min(99,state.fairyBond+1);state.fairyLastIntent="affection";state.fairyDraft="";
+    dailyAffection("fairy","fairyChat",1,5,"被你哄開心了");state.fairyLastIntent="affection";state.fairyDraft="";
     fairySay(fairyPick([
       "這種話不要突然丟過來，我會當真的欸。",
       "嗯……收到了。頻道燈好像亮了一點。",
@@ -880,10 +936,10 @@ function fairyCreate(t){
     "好，我先不當系統，當你旁邊那個嘴很多的朋友。"
   ]));
 }
-function openModal(name){if((name==="shop"||name==="casino")&&state.loc!=="village"){log("這個 NPC 只在桃源村。","danger");return}$$(".modal-layer").forEach(function(x){x.classList.add("hidden")});if(name==="synth")renderSynthesis();if(name==="shop")renderShop();if(name==="worldmap")renderWorldMap();$("#"+name+"Modal").classList.remove("hidden")}
-function close(){ $$$(".modal-layer").forEach(function(x){x.classList.add("hidden")}) }
+function openModal(name){if((name==="shop"||name==="casino")&&state.loc!=="village"){log("這個 NPC 只在桃源村。","danger");return}$$(".modal-layer").forEach(function(x){x.classList.add("hidden")});if(name==="synth")renderSynthesis();if(name==="shop")renderShop();if(name==="worldmap")renderWorldMap();if(name==="relations")renderRelations();$("#"+name+"Modal").classList.remove("hidden")}
+function close(){ $$(".modal-layer").forEach(function(x){x.classList.add("hidden")}) }
 function admin(a){if(account!=="admin")return;if(a==="rich")state.stone+=10000;if(a==="mats"){state.wash+=50;state.iron+=50}if(a==="plat"){if(!addItem(mkItem("platinum")))return}if(a==="gem")state.gems.push("五階天雷石");if(a==="rune")state.runes.push("青玄御劍符");if(a==="heal")state.hp=stats().hp;if(a==="elite"){var z=currentZone();close();startBattle(z.eliteKey)}if(a==="boss"){var z2=currentZone();close();startBattle(z2.bossKey)}save();render()}
-$("#loginBtn").onclick=login;$$("[data-npc]").forEach(function(b){b.onclick=function(){talkNpc(b.dataset.npc)}});$$("[data-class-choice]").forEach(function(b){b.onclick=function(){chooseClass(b.dataset.classChoice)}});$$("[data-align]").forEach(function(b){b.onclick=function(){pendingAlign=b.dataset.align;$$("[data-align]").forEach(function(x){x.classList.toggle("selected",x.dataset.align===pendingAlign)});$("#createConfirm").disabled=!pendingClass||pendingClass==="creator"&&!pendingAlign}});$("#createConfirm").onclick=createCharacter;$$("[data-gamble]").forEach(function(b){b.onclick=function(){gamble(parseInt(b.dataset.gamble,10))}});$("#locBadge").onclick=healAtVillage;$("#user").onkeydown=function(e){if(e.key==="Enter")$("#pass").focus()};$("#pass").onkeydown=function(e){if(e.key==="Enter")login()};$("#forestBtn").onclick=enterForest;$("#villageBtn").onclick=returnVillage;$$("[data-open]").forEach(function(b){b.onclick=function(){openModal(b.dataset.open)}});$$("[data-close]").forEach(function(b){b.onclick=close});$$$(".modal-layer").forEach(function(m){m.onmousedown=function(e){if(e.target===m)close()}});document.onkeydown=function(e){if(e.key==="Escape")close()};$("#forgeBtn").onclick=forge;$("#synthBtn").onclick=synthesize;$("#synthQuality").onchange=renderSynthesis;$("#synthType").onchange=renderSynthesis;$("#autoPotionEnabled").onchange=function(){state.autoPotionEnabled=this.checked;save();render()};$("#autoPotionPct").oninput=function(){state.autoPotionPct=parseInt(this.value,10);$("#autoPotionPctText").textContent=state.autoPotionPct+"%";$("#autoPotionBadge").textContent=state.autoPotionEnabled?"自動藥 "+state.autoPotionPct+"%":"自動藥 關";save()};document.querySelectorAll(".chat-tab").forEach(function(b){b.onclick=function(){switchChannel(b.dataset.channel)}});$("#chatSend").onclick=sendChat;$("#chatInput").onkeydown=function(e){if(e.key==="Enter")sendChat()};$$("[data-admin]").forEach(function(b){b.onclick=function(){admin(b.dataset.admin)}})
+$("#loginBtn").onclick=login;$$("[data-npc]").forEach(function(b){b.onclick=function(){talkNpc(b.dataset.npc)}});$$("[data-class-choice]").forEach(function(b){b.onclick=function(){chooseClass(b.dataset.classChoice)}});$$("[data-align]").forEach(function(b){b.onclick=function(){pendingAlign=b.dataset.align;$$("[data-align]").forEach(function(x){x.classList.toggle("selected",x.dataset.align===pendingAlign)});$("#createConfirm").disabled=!pendingClass||pendingClass==="creator"&&!pendingAlign}});$("#createConfirm").onclick=createCharacter;$$("[data-gamble]").forEach(function(b){b.onclick=function(){gamble(parseInt(b.dataset.gamble,10))}});$("#locBadge").onclick=healAtVillage;$("#user").onkeydown=function(e){if(e.key==="Enter")$("#pass").focus()};$("#pass").onkeydown=function(e){if(e.key==="Enter")login()};$("#forestBtn").onclick=enterForest;$("#villageBtn").onclick=returnVillage;$$("[data-open]").forEach(function(b){b.onclick=function(){openModal(b.dataset.open)}});$$("[data-close]").forEach(function(b){b.onclick=close});$$(".modal-layer").forEach(function(m){m.onmousedown=function(e){if(e.target===m)close()}});document.onkeydown=function(e){if(e.key==="Escape")close()};$("#forgeBtn").onclick=forge;$("#synthBtn").onclick=synthesize;$("#synthQuality").onchange=renderSynthesis;$("#synthType").onchange=renderSynthesis;$("#autoPotionEnabled").onchange=function(){state.autoPotionEnabled=this.checked;save();render()};$("#autoPotionPct").oninput=function(){state.autoPotionPct=parseInt(this.value,10);$("#autoPotionPctText").textContent=state.autoPotionPct+"%";$("#autoPotionBadge").textContent=state.autoPotionEnabled?"自動藥 "+state.autoPotionPct+"%":"自動藥 關";save()};document.querySelectorAll(".chat-tab").forEach(function(b){b.onclick=function(){switchChannel(b.dataset.channel)}});$("#chatSend").onclick=sendChat;$("#chatInput").onkeydown=function(e){if(e.key==="Enter")sendChat()};$$("[data-admin]").forEach(function(b){b.onclick=function(){admin(b.dataset.admin)}})
 })();
 </script>
 </body></html>
